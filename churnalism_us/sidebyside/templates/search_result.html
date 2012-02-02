@@ -60,18 +60,5 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            console.log('document::ready');
-
-            $("ul#results-listing li").click(function(evt){
-                var item_id = $(evt.currentTarget).attr('id');
-                var div_id = item_id.replace(/match-title-/, 'match-text-');
-                $("div.match-text:visible").hide();
-                $("div#" + div_id).show();
-                console.log(item_id);
-                console.log(div_id);
-            });
-        });
-    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>
 {% endblock js %}

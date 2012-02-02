@@ -1,7 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/styles/reset.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/reset.css">
         {% block head %}
         {% endblock head %}
         <title>{% block title %}{% endblock %}</title>
@@ -14,7 +15,6 @@
 
     
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}/scripts/backbone.js"></script>
     {% block js %}
     {% endblock js %}
 </html>
