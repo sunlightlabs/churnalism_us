@@ -1,0 +1,14 @@
+mysql-python
+django
+django-debug-toolbar
+lepl
+httplib2
+lxml
+readability
+requests
+ipython
+
+# These are for publicity machine are aren't strictly required
+python-dateutil
+feedparser
+
