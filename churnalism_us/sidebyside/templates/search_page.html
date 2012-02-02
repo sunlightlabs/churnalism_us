@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}
+    <style type="text/css">
+        #ui-items {
+            list-style-type: none;
+        }
+        #text-item > span {
+            display: inline-block;
+            margin: 1em 0;
+        }
+    </style>
+{% endblock %}
+{% block title %}Search{% endblock title%}
+{% block body %}
+<form action="{% url sidebyside-search %}" method="POST">
+<ul id="ui-items">
+    <li id="url-item">
+        {% csrf_token %}
+        <label for="url">Enter URL:</label>
+        <br>
+        <input type="text" name="url" id="url">
+    </li>
+    <li id="text-item">
+        <span>or</span>
+        <br>
+        {% csrf_token %}
+        <label for="text">Paste in text:</label>
+        <br>
+        <textarea cols="32" rows="10" id="text" name="text"></textarea>
+    </li>
+    <li id="submit-item">
+        <input type="submit" value="Search">
+    </li>
+</ul>
+</form>
+{% endblock body %}

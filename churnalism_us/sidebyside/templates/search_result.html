@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block head %}
+    <style type="text/css">
+        #source-box { 
+            position: absolute;
+            width: 400px;
+            white-space: pre-line;
+        }
+        #results-box {
+            border-width: 0;
+            border-left: 1px solid black;
+            position: absolute;
+            top: 0;
+            width: 200px;
+            left: 400px;
+        }
+        #match-box {
+            border-width: 0;
+            border-left: 1px dashed gray;
+            position: absolute;
+            top: 0;
+            width: 400px;
+            left: 600px;
+        }
+        .match-text {
+            display: none;
+        }
+        #results-listing {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+{% block title %}Search Results{% endblock title%}
+{% block body %}
+<div style="position: relative;">
+    <div id="source-box">
+        {% if source_url %}<header>From: {{ source_url }}</header>{% endif %}
+        {% if source_title %}<header>{{ source_title }}</header>{% endif %}
+        <div id="source-text">
+            {{ source_text }}
+        </div>
+        <div id="results-box">
+            {{ results.documents.rows|length }} results
+            <ul id="results-listing">
+            {% for row in results.documents.rows %}
+                <li id="match-title-{{ row.doctype }}-{{ row.docid }}">{{ row.title }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div id="match-box">
+            {% for row in results.documents.rows %}
+            <div class="match-text" id="match-text-{{ row.doctype }}-{{ row.docid }}">
+                {{ row.text }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            console.log('document::ready');
+
+            $("ul#results-listing li").click(function(evt){
+                var item_id = $(evt.currentTarget).attr('id');
+                var div_id = item_id.replace(/match-title-/, 'match-text-');
+                $("div.match-text:visible").hide();
+                $("div#" + div_id).show();
+                console.log(item_id);
+                console.log(div_id);
+            });
+        });
+    </script>
+{% endblock js %}
