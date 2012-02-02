@@ -14,4 +14,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^sidebyside/', include('sidebyside.urls')),
+    url(r'^api/', include('apiproxy.urls')),
 )
