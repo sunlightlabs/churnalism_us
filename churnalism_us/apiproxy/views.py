@@ -14,9 +14,11 @@ import json
 
 import readability
 import lxml
+
 from datetime import datetime
 from django.http import (HttpResponse, HttpResponseNotAllowed, 
                          HttpResponseBadRequest, HttpResponseServerError)
+from django.core import urlresolvers
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
@@ -80,7 +82,7 @@ def fetch_and_clean(url):
         stored_doc.url = url
         created = True
 
-    if created or (datetime.now() - stored_doc.updated) >= settings.DOCUMENT_STALENESS_TIMEOUT:
+    if created or (datetime.now() - stored_doc.updated) >= settings.APIPROXY['document_timeout']:
         html = slurp_url(url)
         if not html:
             if created:
@@ -137,11 +139,9 @@ def search(request, doctype=None):
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
-        response['text'] = text
-        if title:
+        if 'text' not in response:
+            response['text'] = text
+        if title and 'title' not in response:
             response['title'] = title
-        for row in response['documents']['rows']:
-            doc = sfm.document(row['doctype'], row['docid'])
-            row['text'] = doc['text']
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
