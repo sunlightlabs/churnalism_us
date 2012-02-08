@@ -159,6 +159,14 @@ LOGGING = {
     }
 }
 
+SUPERFASTMATCH = {
+        'url': 'http://127.0.0.1:8080',
+        'username': '',
+        'password': '',
+        'parse_response': ''
+    
+    }
+
 try:
     from local_settings import *
 except ImportError, exp:    
