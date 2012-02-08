@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -18,3 +19,8 @@ urlpatterns = patterns('',
     url(r'^sidebyside/', include('sidebyside.urls')),
     url(r'^api/', include('apiproxy.urls')),
 )
+
+if settings.DEBUG:
+    pattern = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL.lstrip('/'))
+    urlpatterns += patterns('django.contrib.staticfiles.views',
+                            url(pattern, 'serve'))

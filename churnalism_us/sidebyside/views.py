@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import lxml.html
+from operator import itemgetter
 from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseBadRequest, Http404
-from django.core.cache import cache
-
-import requests
-from readability import readability
+from django.http import Http404
 
 import superfastmatch
-
 
 from django.conf import settings
 
@@ -26,28 +22,6 @@ def ensure_url(url):
         return url
     
     raise ValueError('{url} is not a valid URL.'.format(url=url))
-
-
-def slurp_url(url, use_cache=False):
-    def _slurp_url(url):
-        resp = requests.get(url)
-        if resp.status_code == 200:
-            return resp.content.decode('utf-8')
-        else:
-            return None
-
-    cache_key = 'slurp_url:' + url
-    if use_cache == True:
-        cached_content = cache.get(cache_key)
-        if cached_content is not None:
-            return cached_content
-
-    content = _slurp_url(url)
-
-    if use_cache == True and content is not None:
-        cache.set(cache_key, content)
-
-    return content
 
 
 def render_text(el):
@@ -82,22 +56,15 @@ def render_text(el):
     return txt
 
 
-def sfm_search(text, url=None):
-    """
-    Searches text against superfastmatch.
-    TODO: Intelligently handle doctypes from settings
-    TODO: Cache results?
-    """
-    sfm = superfastmatch.DjangoClient()
-    result = sfm.search(text)
-    if result['success'] == False:
-        return None
-    return result
+def attach_document_text(results, maxdocs=None):
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    if maxdocs:
+        results['documents']['rows'].sort(key=itemgetter('characters'))
 
+    for (idx, row) in enumerate(results['documents']['rows']):
+        if maxdocs and idx >= maxdocs:
+            return
 
-def attach_document_text(results):
-    sfm = superfastmatch.DjangoClient()
-    for row in results['documents']['rows']:
         doc_result = sfm.document(row['doctype'], row['docid'])
         if doc_result['success'] == True:
             row['text'] = doc_result['text']
@@ -135,8 +102,9 @@ def search(request, url=None):
 
 
 def search_against_text(request, text):
-    sfm_results = sfm_search(text)
-    attach_document_text(sfm_results)
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm_results = sfm.search(text)
+    attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return search_result_page(request, sfm_results, text)
 
 
@@ -148,20 +116,10 @@ def search_against_url(request, url):
     to superfastmatch for comparison.
     """
 
-    url = ensure_url(url)
-
-    html = slurp_url(url, use_cache=True)
-    if html is None:
-        return render(request, 'slurp_fail.html', {'url': url})
-
-    doc = readability.Document(html)
-    title = doc.short_title()
-    content_dom = lxml.html.fromstring(doc.summary())
-    text = render_text(content_dom)
-
-    sfm_results = sfm_search(text, url)
-    attach_document_text(sfm_results)
-    return search_result_page(request, sfm_results, text,
-                              source_title=title, source_url=url)
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm_results = sfm.search(text=None, url=url)
+    attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
+    return search_result_page(request, sfm_results, sfm_results['text'],
+                              source_title=sfm_results['title'], source_url=url)
 
 

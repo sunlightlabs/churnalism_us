@@ -1,6 +1,7 @@
 # Django settings for churnalism_us project.
 
 import os
+from datetime import timedelta
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -134,6 +135,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'debug_toolbar',
+
+    # devserver provides a threaded/forked replacement for runserver
+    # This enables the server to handle simultaneous requests, which is
+    # required by the sidebyside app, since it dogfoods the apiproxy app.
+    'devserver',
+
+    'sidebyside',
+    'apiproxy',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -159,13 +168,24 @@ LOGGING = {
     }
 }
 
+SIDEBYSIDE = {
+    'max_doc_prefetch': 3
+}
+
+APIPROXY = {
+    'document_timeout': timedelta(hours=4)
+}
+
 SUPERFASTMATCH = {
+    'default': {
         'url': 'http://127.0.0.1:8080',
-        'username': '',
-        'password': '',
-        'parse_response': ''
-    
+        'parse_response': True
+    },
+    'sidebyside': {
+        'url': 'http://127.0.0.1:7000/api',
+        'parse_response': True
     }
+}
 
 try:
     from local_settings import *
