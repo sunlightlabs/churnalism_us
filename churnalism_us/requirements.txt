@@ -4,7 +4,7 @@ django-debug-toolbar
 lepl
 httplib2
 lxml
-readability
+readability-lxml
 requests
 ipython
 django-devserver
