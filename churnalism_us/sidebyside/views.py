@@ -162,6 +162,7 @@ def chromeext_search(request):
 
     (match, match_pct) = select_best_match(sfm_results)
     if match is not None:
+        match['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in match['fragments']]
         match_doc = sfm.document(match['doctype'], match['docid'])
         if match_doc['success'] == True:
             match_text = match_doc['text']
