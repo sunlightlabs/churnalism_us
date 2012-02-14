@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import re
 import lxml.html
 from operator import itemgetter
+
+import stream
 from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
 from django.http import Http404
+from django.views.decorators.csrf import csrf_exempt
 
 import superfastmatch
 
@@ -52,6 +56,9 @@ def render_text(el):
 
     if el.tag=='br' or tag not in inline_tags:
         txt += u"\n";
+
+    txt = re.sub(r'[\r\n]{2,}', '\n\n', txt)
+    txt = re.sub(r'[\r\n]\s+[\r\n]', '\n\n', txt)
 
     return txt
 
@@ -123,3 +130,55 @@ def search_against_url(request, url):
                               source_title=sfm_results['title'], source_url=url)
 
 
+def select_best_match(sfm_results):
+    rows = sfm_results['documents']['rows']
+    text = sfm_results['text']
+
+    def fragment_match_percentage(row):
+        chars_matched = sum((frag[2] for frag in row['fragments']))
+        pct_of_match = float(chars_matched) / float(row['characters'])
+        pct_of_source = float(chars_matched) / float(len(text))
+        return (row, max(pct_of_match, pct_of_source))
+
+    def longer(a, b):
+        (row_a, pct_a) = a
+        (row_b, pct_b) = b
+        print "%f vs %f" % (pct_a, pct_b)
+        return a if pct_a >= pct_b else b
+
+    return (stream.Stream(rows)
+            >> stream.map(fragment_match_percentage)
+            >> stream.reduce(longer, (None, 0)))
+
+
+@csrf_exempt
+def chromeext_search(request):
+    text = request.POST.get('text') or request.GET.get('text') or ''
+    url = request.POST.get('url') or request.GET.get('url') or ''
+    title = request.POST.get('title') or request.GET.get('title') or ''
+
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm_results = sfm.search(text=text, url=url)
+
+    (match, match_pct) = select_best_match(sfm_results)
+    if match is not None:
+        match_doc = sfm.document(match['doctype'], match['docid'])
+        if match_doc['success'] == True:
+            match_text = match_doc['text']
+            match_title = match.get('title', '')
+            match_url = match.get('url', '')
+    else:
+        match_text = ''
+        match_title = ''
+        match_url = ''
+        
+    resp = render(request, 'chrome.html',
+                           {'results': sfm_results,
+                            'source_text': text,
+                            'source_title': title,
+                            'source_url': url,
+                            'match': match,
+                            'match_text': match_text,
+                            'match_title': match_title,
+                            'match_url': match_url})
+    return resp

@@ -60,5 +60,7 @@
 
 {% block js %}
     {{ block.super }}
+
+    {# TODO: Output partial search results as JSON object #}
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>
 {% endblock js %}
