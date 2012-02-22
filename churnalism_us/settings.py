@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     # required by the sidebyside app, since it dogfoods the apiproxy app.
     'devserver',
 
+    'generictags',
     'sidebyside',
     'apiproxy',
 )

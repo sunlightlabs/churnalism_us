@@ -1,5 +1,6 @@
 import re
-import hashlib
+from hashlib import sha1
+from uuid import uuid4, uuid5, NAMESPACE_URL
 
 from urlparse import urlparse
 from django.db import models
@@ -17,8 +18,8 @@ class SearchDocumentManager(models.Manager):
     """
 
     def lookup_by_url(self, url):
-        awesome_hash = SearchDocument.hash_url(url)
-        matches = self.filter(hashed_url=awesome_hash)
+        hashtext = sha1(url).hexdigest()
+        matches = self.filter(hashed_url=hashtext)
         real_matches = [m for m in matches if m.url == url]
 
         if len(real_matches) == 0:
@@ -36,8 +37,13 @@ class SearchDocument(models.Model):
 
     objects = SearchDocumentManager()
 
-    # Concatenation of the MD5 and SHA1 hashes of the URL
-    hashed_url = models.CharField(max_length=72,
+    uuid = models.CharField(max_length=32,
+                            null=False,
+                            blank=False,
+                            unique=True,
+                            db_index=True)
+
+    hashed_url = models.CharField(max_length=40,
                                   null=False,
                                   blank=False,
                                   unique=False,
@@ -74,16 +80,17 @@ class SearchDocument(models.Model):
         ordering = ['-updated', '-created']
 
     def save(self):
-        self.hashed_url= SearchDocument.hash_url(self.url)
+        if not self.uuid:
+            if self.url:
+                self.uuid = uuid5(NAMESPACE_URL, self.url)
+            else:
+                self.uuid = uuid4()
 
-        (scheme, netloc, path, params, query, frag) = urlparse(self.url)
-        if netloc:
-            self.domain = re.sub('/:\d+$', '', netloc)
+        self.hashed_url = SearchDocument.double_hash(self.url)
+
+        if self.url:
+            (scheme, netloc, path, params, query, frag) = urlparse(self.url)
+            if netloc:
+                self.domain = re.sub('/:\d+$', '', netloc)
 
         super(SearchDocument, self).save()
-   
-    @staticmethod
-    def hash_url(url):
-        md5 = hashlib.md5(url)
-        sha1 = hashlib.sha1(url)
-        return md5.hexdigest() + sha1.hexdigest()

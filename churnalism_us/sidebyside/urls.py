@@ -14,5 +14,6 @@ urlpatterns = patterns('sidebyside.views',
 
     url(r'^$', 'search_page', name='sidebyside-search-page'),
     url(r'^search/$', 'search', name='sidebyside-search'),
+    url(r'^chrome/search/$', 'chromeext_search', name='sidebyside-chrome-search'),
 )
 

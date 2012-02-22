@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^api/', include('apiproxy.urls')),
 )
 
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 if settings.DEBUG:
-    pattern = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL.lstrip('/'))
-    urlpatterns += patterns('django.contrib.staticfiles.views',
-                            url(pattern, 'serve'))
+    urlpatterns += staticfiles_urlpatterns()
+
