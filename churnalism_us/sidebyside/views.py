@@ -90,11 +90,15 @@ def search_result_page(request, results, source_text,
                    'source_url': source_url})
 
 
-def search(request, url=None):
+def search(request, url=None, uuid=None):
     if request.method == 'GET':
         url = url or request.GET.get('url')
         if url not in ('', None):
             return search_against_url(request, url)
+
+        uuid = uuid or request.GET.get('uuid')
+        if uuid not in ('', None):
+            return search_against_uuid(request, uuid)
 
     elif request.method == 'POST':
         url = request.POST.get('url')
@@ -115,6 +119,13 @@ def search_against_text(request, text):
     return search_result_page(request, sfm_results, text)
 
 
+def search_against_uuid(request, uuid):
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm_results = sfm.search(text=None, uuid=uuid)
+    return search_result_page(request, sfm_results, 
+                              source_text=sfm_results.get('text'), 
+                              source_title=sfm_results.get('title'))
+
 def search_against_url(request, url):
     """
     Accepts a URL as either a suffix of the URI or a POST request 
@@ -130,9 +141,25 @@ def search_against_url(request, url):
                               source_title=sfm_results['title'], source_url=url)
 
 
-def select_best_match(sfm_results):
+def permalink(request, uuid, doctype, docid):
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm_results = sfm.search(text=None, uuid=uuid)
+
+    for row in sfm_results['documents']['rows']:
+        if row['doctype'] == doctype and row['docid'] == docid:
+            if not row.get('text'):
+                doc = sfm.document(doctype, docid)
+                if doc:
+                    row['text'] = doc['text']
+
+    return search_result_page(request, sfm_results,
+                              source_text=sfm_results['text'],
+                              source_title=sfm_results.get('title'),
+                              source_url=sfm_results.get('url'))
+
+
+def select_best_match(text, sfm_results):
     rows = sfm_results['documents']['rows']
-    text = sfm_results['text']
 
     def fragment_match_percentage(row):
         chars_matched = sum((frag[2] for frag in row['fragments']))
@@ -143,7 +170,6 @@ def select_best_match(sfm_results):
     def longer(a, b):
         (row_a, pct_a) = a
         (row_b, pct_b) = b
-        print "%f vs %f" % (pct_a, pct_b)
         return a if pct_a >= pct_b else b
 
     return (stream.Stream(rows)
@@ -159,27 +185,37 @@ def chromeext_search(request):
 
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=text, url=url)
+    if url and not text:
+        text = sfm_results['text']
+    if url and not title:
+        title = sfm_results['title']
 
-    (match, match_pct) = select_best_match(sfm_results)
+    if not text:
+        text = sfm_results['text']
+
+    (match, match_pct) = select_best_match(text, sfm_results)
     if match is not None:
-        match['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in match['fragments']]
+        match['snippets'] = [text[frag[0]:frag[0]+frag[2]] for frag in match['fragments']]
         match_doc = sfm.document(match['doctype'], match['docid'])
         if match_doc['success'] == True:
             match_text = match_doc['text']
             match_title = match.get('title', '')
             match_url = match.get('url', '')
+        sfm_results['documents']['rows'] = [match]
     else:
         match_text = ''
         match_title = ''
         match_url = ''
         
     resp = render(request, 'chrome.html',
-                           {'results': sfm_results,
-                            'source_text': text,
-                            'source_title': title,
-                            'source_url': url,
-                            'match': match,
-                            'match_text': match_text,
-                            'match_title': match_title,
-                            'match_url': match_url})
+                  {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
+                   'results': sfm_results,
+                   'source_text': text,
+                   'source_title': title,
+                   'source_url': url,
+                   'uuid': sfm_results['uuid'],
+                   'match': match,
+                   'match_text': match_text,
+                   'match_title': match_title,
+                   'match_url': match_url})
     return resp

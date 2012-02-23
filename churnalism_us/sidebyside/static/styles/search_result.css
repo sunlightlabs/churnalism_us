@@ -1,0 +1,30 @@
+#source-box { 
+	position: absolute;
+	width: 400px;
+}
+#results-box {
+	border-width: 0;
+	border-right: 1px solid black;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	bottom: 0;
+}
+#match-box {
+	border-width: 0;
+	border-left: 1px dashed gray;
+	position: absolute;
+	top: 0;
+	left: 200px;
+	width: 600px;
+}
+.match-text {
+	display: none;
+}
+#results-listing {
+	cursor: pointer;
+}
+.highlight {
+}
+
