@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 import re
+import logging
 from hashlib import sha1
 from uuid import uuid4, uuid5, NAMESPACE_URL
 
@@ -82,11 +85,11 @@ class SearchDocument(models.Model):
     def save(self):
         if not self.uuid:
             if self.url:
-                self.uuid = uuid5(NAMESPACE_URL, self.url)
+                self.uuid = unicode(uuid5(NAMESPACE_URL, self.url.encode('ascii', 'ignore')).get_hex())
             else:
-                self.uuid = uuid4()
+                self.uuid = unicode(uuid4().get_hex())
 
-        self.hashed_url = SearchDocument.double_hash(self.url)
+        self.hashed_url = sha1(self.url).hexdigest()
 
         if self.url:
             (scheme, netloc, path, params, query, frag) = urlparse(self.url)
