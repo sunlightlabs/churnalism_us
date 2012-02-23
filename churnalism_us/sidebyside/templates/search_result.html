@@ -1,56 +1,26 @@
 {% extends "base.html" %}
+{% load jsonify %}
 {% block head %}
-    <style type="text/css">
-        #source-box { 
-            position: absolute;
-            width: 400px;
-            white-space: pre-line;
-        }
-        #results-box {
-            border-width: 0;
-            border-left: 1px solid black;
-            position: absolute;
-            top: 0;
-            width: 200px;
-            left: 400px;
-        }
-        #match-box {
-            border-width: 0;
-            border-left: 1px dashed gray;
-            position: absolute;
-            top: 0;
-            width: 400px;
-            left: 600px;
-        }
-        .match-text {
-            display: none;
-        }
-        #results-listing {
-            cursor: pointer;
-        }
-    </style>
+<link rel="stylesheet" href="{{ STATIC_URL }}styles/search_result.css">
 {% endblock %}
 {% block title %}Search Results{% endblock title%}
 {% block body %}
 <div style="position: relative;">
     <div id="source-box">
-        {% if source_url %}<header>From: {{ source_url }}</header>{% endif %}
-        {% if source_title %}<header>{{ source_title }}</header>{% endif %}
-        <div id="source-text">
-            {{ source_text }}
-        </div>
         <div id="results-box">
             {{ results.documents.rows|length }} results
             <ul id="results-listing">
             {% for row in results.documents.rows %}
-                <li id="match-title-{{ row.doctype }}-{{ row.docid }}">{{ row.title }}</li>
+			<li id="match-title-{{ row.doctype }}-{{ row.docid }}">{{ row.title }}</li>
             {% endfor %}
             </ul>
         </div>
         <div id="match-box">
+			<header class="match-url">Originally from: <a class="match-url"></a></header>
+			<header id="match-title"></header>
             {% for row in results.documents.rows %}
             <div class="match-text" id="match-text-{{ row.doctype }}-{{ row.docid }}">
-                {{ row.text }}
+				{% firstof row.text '' %}
             </div>
             {% endfor %}
         </div>
@@ -61,6 +31,11 @@
 {% block js %}
     {{ block.super }}
 
-    {# TODO: Output partial search results as JSON object #}
+	<script type="text/javascript" src="{{ STATIC_URL }}scripts/highlight.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			window.search_results = {{ results|jsonify|safe }};
+		});
+	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>
 {% endblock js %}

@@ -13,6 +13,8 @@ urlpatterns = patterns('sidebyside.views',
     # url(r'^admin/', include(admin.site.urls)),
 
     url(r'^$', 'search_page', name='sidebyside-search-page'),
+    url(r'^(?P<uuid>[a-z0-9]{32})/$', 'search', name='sidebyside-uuid-search'),
+    url(r'^(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'permalink', name='sidebyside-permalink'),
     url(r'^search/$', 'search', name='sidebyside-search'),
     url(r'^chrome/search/$', 'chromeext_search', name='sidebyside-chrome-search'),
 )

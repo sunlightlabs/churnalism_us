@@ -10,6 +10,7 @@ so all links output must be absolute.
 
 <html>
     <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <style type="text/css">
             iframe, html, body { padding: 0; margin: 0; }
             ul { margin: 0; padding-top: 0; padding-bottom: 0; }
@@ -27,7 +28,6 @@ so all links output must be absolute.
                 padding: 0;
             }
             #doc-text, #pr-text {
-                white-space: pre-line;
             }
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
@@ -56,97 +56,43 @@ so all links output must be absolute.
                     </div>
                 </div>
             </div>
+			<div id="footer">
+				<a href="{% url sidebyside-search %}?uuid={{ uuid }}">See more results</a>
+			</div>
         </div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
         <script type="text/javascript">
             var search_results = {{ results|jsonify|safe }};
 
-            var PREFIX_LENGTH = 3;
-            var SUFFIX_LENGTH = 3;
-            var OPEN_TAG = '<i style="background: yellow none;">';
-            var CLOSE_TAG = '</i>';
-
-            var eat_chars = function (text, expected) {
-                var chars_eaten = 0;
-                var found = "";
-
-                var textstream = new String(text);
-                var expected_c = expected.substr(0, 1);
-                while ((found != expected) && (textstream.length > 0)) {
-                    var c = textstream.substr(0, 1);
-                    var textstream = textstream.slice(1);
-
-                    if (c == expected_c) {
-                        found += c;
-                        expected_c = expected.substr(found.length, 1);
-                    } else {
-                        chars_eaten += 1;
-                    }
-                }
-
-                if (found == expected) {
-                    return [true, chars_eaten];
-                } else {
-                    return [false, found];
-                }
-            };
-
-            var highlight_match = function (p, match) {
-                /* This function finds the `match` text in the html of the the
-                * `p` element. The boundaries of the text are determined, then
-                * the html corresponding to the text is wrapped in `OPEN_TAG`
-                * and `CLOSE_TAG`
-                */
-
-                var text_offset = $(p).text().indexOf(match);
-                if (text_offset == -1) {
-                    /* Throw an exception to force callers to limit their calls to 
-                    * when they know the `match` text is in the `p` paragraph.
-                    */
-                    throw "highlight_match: given match text not found in given paragraph"
-                }
-
-                var match_length = match.length;
-                var matches = [];
-                while ((matches.length == 0) && (match_length >= PREFIX_LENGTH)) {
-                    var html = $(p).html();
-                    var prefix = match.substr(0, match_length);
-                    var html_offset = html.indexOf(prefix);
-                    if (html_offset >= 0) {
-                        var meal = eat_chars(html.slice(html_offset), match);
-                        if (meal[0]) {
-                            var prelude = html.slice(0, html_offset);
-                            var suffix_boundary = html_offset + match.length + meal[1];
-                            var matched = html.slice(html_offset, suffix_boundary);
-                            var postlude = html.slice(suffix_boundary);
-                            $(p).html(prelude +
-                                OPEN_TAG +
-                                matched +
-                                CLOSE_TAG +
-                            postlude);
-                        return;
-                        }
-                    }
-
-                    if (match_length <= (PREFIX_LENGTH * 2)) {
-                        match_length -= 2;
-                    } else {
-                        match_length = Math.ceil(match_length / 2);
-                    }
-                }
-            };
+			var markupArticleText = function (txt) {
+				var trimmed = txt.trim();
+				var normalizedWhitespace = trimmed.replace(/^\s+$/gm, '');
+				var hasConsecutiveLineBreaks = /[\r\n]{2,}/g.test(normalizedWhitespace);
+				var lineBreakPatternText = '(\\r|\\n|\\r\\n|\\n\\r)';
+				if (hasConsecutiveLineBreaks)
+					lineBreakPatternText = lineBreakPatternText + '{2,}';
+				var lineBreakPattern = new RegExp(lineBreakPatternText, "g");
+				var withPTags = normalizedWhitespace.replace(lineBreakPattern, '</p><p>');
+				return '<p>' + withPTags + '</p>';
+			};
 
             $(document).ready(function(){
                 var doc_text_el = document.getElementById('doc-text');
-                var match_text_el = document.getElementById('pr-text');
+				var match_text_el = document.getElementById('pr-text');
+				$(doc_text_el).html(markupArticleText($(doc_text_el).text()));
+				$(match_text_el).html(markupArticleText($(match_text_el).text()));
                 $.each(search_results['documents']['rows'], function(idx, row){
-                    $.each(row['snippets'], function(idx, snippet){
-                        highlight_match(doc_text_el, snippet);
-                        highlight_match(match_text_el, snippet);
-                    });
-                });
-            });
+					$.each(row['snippets'], function(idx, snippet){
+						var sub_snippets = snippet.split(/[\r\n]+/);
+						$.each(sub_snippets, function(idx, sub_snippet){
+							highlight_match(match_text_el, sub_snippet);
+							highlight_match(doc_text_el, sub_snippet);
+						});
+					});
+				});
+			});
         </script>        
     </body>
 </html>
