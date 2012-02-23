@@ -13,11 +13,6 @@ $(document).ready(function(){
         return '<p>' + withPTags + '</p>';
     };
 
-    var markup_element_text = function (el) {
-        console.log(markup_text(el.text()));
-        el.html(markup_text(el.text()));
-    };
-
     var fetch_document = function (doctype, docid, next) {
         var url = '/api/document/DOCTYPE/DOCID/'.replace('DOCTYPE', doctype).replace('DOCID', docid);
         $.get(url, {
@@ -48,6 +43,16 @@ $(document).ready(function(){
         textdiv = match_text_el(doctype, docid);
         textdiv.html(markup_text(document_response['text']));
         textdiv.show();
+        $.each(search_results['documents']['rows'], function(idx, row){
+            $.each(row['snippets'], function(idx, snippet){
+                var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
+                $.each(sub_snippets, function(idx, sub_snippet){
+                    if (sub_snippet.length > 0) {
+                        highlight_match($("div.match-text")[0], sub_snippet);
+                    }
+                });
+            });
+        });
     };
 
     var select_document = function (doctype, docid) {
@@ -93,13 +98,11 @@ $(document).ready(function(){
     });
 
     var permalink_matches = permalink_pattern.exec(window.location.pathname);
-    if (permalink_matches.length == 4) {
+    if ((permalink_matches != null) && (permalink_matches.length == 4)) {
         var doctype = permalink_matches[2];
         var docid = permalink_matches[3];
         select_document(doctype, docid);
     }
 
     sourcediv = $("div#source-text");
-
-    markup_element_text($("div#source-text"));
 });

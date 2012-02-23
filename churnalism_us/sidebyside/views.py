@@ -136,6 +136,8 @@ def search_against_url(request, url):
 
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=None, url=url)
+    for row in sfm_results['documents']['rows']:
+        row['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in row['fragments']]
     attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return search_result_page(request, sfm_results, sfm_results['text'],
                               source_title=sfm_results['title'], source_url=url)
