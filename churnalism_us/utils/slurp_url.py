@@ -6,7 +6,7 @@ def slurp_url(url, use_cache=False):
     def _slurp_url(url):
         resp = requests.get(url)
         if resp.status_code == 200:
-            return resp.content.decode('utf-8')
+            return resp.content.decode('utf-8', 'ignore')
         else:
             return None
 
