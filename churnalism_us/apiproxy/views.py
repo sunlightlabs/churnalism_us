@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 These views expose an API that provides a subset of the Superfastmatch 
 API. It provides a few opportunities:
@@ -15,10 +16,13 @@ import json
 import readability
 import lxml
 
+from operator import itemgetter
+from copy import deepcopy
 from datetime import datetime
 from django.http import (HttpResponse, HttpResponseNotAllowed, 
                          HttpResponseBadRequest, HttpResponseServerError)
 from django.core import urlresolvers
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
@@ -70,7 +74,55 @@ def document(request, doctype, docid):
 
 
 def reduce_fragments(fragments):
-    return fragments
+    begin = itemgetter(0)
+    origbegin = itemgetter(1)
+    length = itemgetter(2)
+    end = lambda f: begin(f) + length(f)
+
+    def compare_bounds(a, b):
+        if begin(a) == begin(b):
+            return end(b) - end(a)
+        else:
+            return begin(a) - begin(b)
+
+    def subsumes(a, b):
+        return begin(a) <= begin(b) and end(b) <= end(a)
+
+    def overlaps(a, b):
+        if begin(a) <= begin(b) <= end(a):
+            return True
+        elif begin(b) <= begin(a) <= end(b):
+            return True
+        else:
+            return False
+
+    frags = deepcopy(fragments)
+    frags.sort(cmp=compare_bounds)
+
+    new_frags = []
+    while len(frags) > 0:
+        a = frags.pop(0)
+
+        if len(frags) == 0:
+            new_frags.append(a)
+        else:
+            while len(frags) > 0:
+                b = frags.pop(0)
+                if subsumes(a, b):
+                    pass # Ignore b
+                elif subsumes(b, a):
+                    a = deepcopy(b)
+                elif overlaps(a, b):
+                    a = [min(begin(a), begin(b)),
+                         min(origbegin(a), origbegin(b)),
+                         max(end(a), end(b)),
+                         None] # Neither hash applies
+                else:
+                    frags = [b] + frags
+                    break
+            new_frags.append(a)
+
+    return new_frags
 
 
 def fetch_and_clean(url):
@@ -84,6 +136,7 @@ def fetch_and_clean(url):
 
     if created or (datetime.now() - stored_doc.updated) >= settings.APIPROXY['document_timeout']:
         html = slurp_url(url)
+        print html
         if not html:
             if created:
                 raise Exception('Failed to fetch {0}'.format(url))
@@ -94,9 +147,9 @@ def fetch_and_clean(url):
         cleaned_html = doc.summary()
         content_dom = lxml.html.fromstring(cleaned_html)
 
-        stored_doc.html = html
-        stored_doc.title = doc.short_title()
-        stored_doc.text = render_text(content_dom)
+        stored_doc.src = html
+        stored_doc.title = doc.short_title().strip()
+        stored_doc.text = render_text(content_dom).strip().encode('utf-8', 'replace').decode('utf-8')
         stored_doc.save()
         return stored_doc
     else:
@@ -120,8 +173,10 @@ def search(request, doctype=None):
     # `text` and `url` are mutually exclusive. `text` has priority over `url`.
     text = request.POST.get('text') or request.GET.get('text')
     url = request.POST.get('url') or request.GET.get('url')
+    uuid = request.POST.get('uuid') or request.GET.get('uuid')
+
     title = None
-    if not text and not url:
+    if not text and not url and not uuid:
         return HttpResponseBadRequest()
 
     elif url and not text:
@@ -130,8 +185,27 @@ def search(request, doctype=None):
             doc = fetch_and_clean(url)
             text = doc.text
             title = doc.title
+        except UnicodeDecodeError:
+            raise
         except Exception, e:
             return HttpResponseServerError(str(e))
+
+    elif uuid and not text:
+        try:
+            doc = get_object_or_404(SearchDocument, uuid=uuid)
+            text = doc.text
+            title = doc.title
+        except UnicodeDecodeError:
+            raise
+        except Exception, e:
+            return HttpResponseServerError(str(e))
+
+    elif text:
+        # Even if they are searching by text, create a document so it can
+        # be recalled by uuid.
+        doc = SearchDocument()
+        doc.text = text
+        doc.save()
 
     # The actual proxying:
     sfm = superfastmatch.DjangoClient()
@@ -139,9 +213,12 @@ def search(request, doctype=None):
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
-        if 'text' not in response:
+        response['uuid'] = doc.uuid
+        if (url or uuid) and text and 'text' not in response:
             response['text'] = text
         if title and 'title' not in response:
             response['title'] = title
+        for row in response['documents']['rows']:
+            row['fragments'] = reduce_fragments(row['fragments'])
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
