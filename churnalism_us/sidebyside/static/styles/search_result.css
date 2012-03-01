@@ -1,3 +1,6 @@
+body {
+	z-index: 2137483605;
+}
 #source-box { 
 	position: absolute;
 	width: 400px;

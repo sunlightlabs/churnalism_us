@@ -105,4 +105,9 @@ $(document).ready(function(){
     }
 
     sourcediv = $("div#source-text");
+
+    $('body').scroll(function(event){
+        event.preventDefault();
+    });
 });
+
