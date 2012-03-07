@@ -48,7 +48,7 @@ $(document).ready(function(){
                 var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
                 $.each(sub_snippets, function(idx, sub_snippet){
                     if (sub_snippet.length > 0) {
-                        highlight_match($("div.match-text")[0], sub_snippet);
+                        highlight_match(match_text_el(doctype, docid), sub_snippet);
                     }
                 });
             });
