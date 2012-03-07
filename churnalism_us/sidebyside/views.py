@@ -122,6 +122,8 @@ def search_against_text(request, text):
 def search_against_uuid(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=None, uuid=uuid)
+    for row in sfm_results['documents']['rows']:
+        row['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in row['fragments']]
     return search_result_page(request, sfm_results, 
                               source_text=sfm_results.get('text'), 
                               source_title=sfm_results.get('title'))
@@ -136,6 +138,7 @@ def search_against_url(request, url):
 
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=None, url=url)
+
     for row in sfm_results['documents']['rows']:
         row['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in row['fragments']]
     attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
