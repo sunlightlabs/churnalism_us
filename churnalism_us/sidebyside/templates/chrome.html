@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load jsonify %}
+{% load trailingslash %}
 
 {% comment %}
 This template stands alone because the chrome extension performs a POST request
@@ -57,7 +58,7 @@ so all links output must be absolute.
                 </div>
             </div>
 			<div id="footer">
-				<a href="{% url sidebyside-search %}?uuid={{ uuid }}">See more results</a>
+				<a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-search-page %}{{ uuid }}/" target="_blank">See more results</a>
 			</div>
         </div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>

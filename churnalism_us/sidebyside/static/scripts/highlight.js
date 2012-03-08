@@ -2,9 +2,8 @@ var OPEN_TAG = '<i style="background: yellow none;">';
 var CLOSE_TAG = '</i>';
 
 var highlight_match = function (p, match) {
-    // TODO: Add all other HTML entities
     var html = jQuery(p).html();
-    var haystack = html.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/[\x00-\x2F]/g, ' ').toLowerCase();
+    var haystack = html.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
     var needle = match.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
     var offset = haystack.indexOf(needle);
     if (offset >= 0) {

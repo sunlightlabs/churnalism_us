@@ -214,6 +214,7 @@ def chromeext_search(request):
         
     resp = render(request, 'chrome.html',
                   {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
+                   'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
                    'results': sfm_results,
                    'source_text': text,
                    'source_title': title,
