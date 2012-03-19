@@ -11,7 +11,7 @@ body {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 200px;
+	width: 270px;
 	bottom: 0;
 }
 #match-box {
@@ -19,14 +19,28 @@ body {
 	border-left: 1px dashed gray;
 	position: absolute;
 	top: 0;
-	left: 200px;
+	left: 270px;
 	width: 600px;
 }
 .match-text {
 	display: none;
 }
+.match-coverage-pct {
+	font-size: 120%;
+	font-weight: bold;
+}
+.match-coverage-chars, .match-source-details {
+	font-size: 90%;
+	margin-bottom: 10px;
+}
+.match-title-text {
+	font-weight: bold;
+}
 #results-listing {
 	cursor: pointer;
+}
+#results-listing li {
+	margin: 18px 12px 18px 0;
 }
 .highlight {
 }

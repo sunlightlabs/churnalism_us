@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
+
 import re
 import lxml.html
+import readability
 from operator import itemgetter
 
 import stream
@@ -9,6 +12,8 @@ from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
+from apiproxy.embellishments import embellish
+from utils.slurp_url import slurp_url
 
 import superfastmatch
 
@@ -83,6 +88,12 @@ def search_page(request):
 
 def search_result_page(request, results, source_text, 
                        source_url=None, source_title=None):
+    embellish(source_text, 
+              results, 
+              reduce_frags=True,
+              add_coverage=True, 
+              add_snippets=True,
+              prefetch_documents=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return render(request, 'search_result.html',
                   {'results': results,
                    'source_text': source_text,
@@ -115,18 +126,16 @@ def search(request, url=None, uuid=None):
 def search_against_text(request, text):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text)
-    attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return search_result_page(request, sfm_results, text)
 
 
 def search_against_uuid(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=None, uuid=uuid)
-    for row in sfm_results['documents']['rows']:
-        row['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in row['fragments']]
     return search_result_page(request, sfm_results, 
                               source_text=sfm_results.get('text'), 
                               source_title=sfm_results.get('title'))
+
 
 def search_against_url(request, url):
     """
@@ -136,12 +145,21 @@ def search_against_url(request, url):
     to superfastmatch for comparison.
     """
 
-    sfm = superfastmatch.DjangoClient('sidebyside')
-    sfm_results = sfm.search(text=None, url=url)
+    def fetch_and_clean(url):
+        html = slurp_url(url)
+        if not html:
+            raise Exception('Failed to fetch {0}'.format(url))
 
-    for row in sfm_results['documents']['rows']:
-        row['snippets'] = [sfm_results['text'][frag[0]:frag[0]+frag[2]] for frag in row['fragments']]
-    attach_document_text(sfm_results, maxdocs=settings.SIDEBYSIDE.get('max_doc_prefetch'))
+        doc = readability.Document(html)
+        cleaned_html = doc.summary()
+        content_dom = lxml.html.fromstring(cleaned_html)
+        title = doc.short_title()
+        return (title, render_text(content_dom).strip().encode('utf-8', 'replace').decode('utf-8'))
+
+    sfm = superfastmatch.DjangoClient('sidebyside')
+    (title, text) = fetch_and_clean(url)
+    sfm_results = sfm.search(text=text, title=title, url=url)
+
     return search_result_page(request, sfm_results, sfm_results['text'],
                               source_title=sfm_results['title'], source_url=url)
 
@@ -182,6 +200,7 @@ def select_best_match(text, sfm_results):
             >> stream.reduce(longer, (None, 0)))
 
 
+
 @csrf_exempt
 def chromeext_search(request):
     text = request.POST.get('text') or request.GET.get('text') or ''
@@ -200,13 +219,13 @@ def chromeext_search(request):
 
     (match, match_pct) = select_best_match(text, sfm_results)
     if match is not None:
-        match['snippets'] = [text[frag[0]:frag[0]+frag[2]] for frag in match['fragments']]
         match_doc = sfm.document(match['doctype'], match['docid'])
         if match_doc['success'] == True:
             match_text = match_doc['text']
             match_title = match.get('title', '')
             match_url = match.get('url', '')
         sfm_results['documents']['rows'] = [match]
+        embellish(text, sfm_results, add_snippets=True)
     else:
         match_text = ''
         match_title = ''
