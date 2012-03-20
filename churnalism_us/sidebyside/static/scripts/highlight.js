@@ -1,8 +1,8 @@
-var OPEN_TAG = '<i style="background: yellow none;">';
+var OPEN_TAG = '<i class="churnalism-highlight">';
 var CLOSE_TAG = '</i>';
 
 var highlight_match = function (p, match) {
-    var html = jQuery(p).html();
+    var html = jQuery(p).html().replace(/&nbsp;/g, ' ');
     var haystack = html.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
     var needle = match.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
     var offset = haystack.indexOf(needle);

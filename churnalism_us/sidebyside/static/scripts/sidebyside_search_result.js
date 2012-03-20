@@ -147,7 +147,7 @@ $(document).ready(function(){
         textdiv.show();
         $.each(search_results['documents']['rows'], function(idx, row){
             $.each(row['snippets'], function(idx, snippet){
-                var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
+                var sub_snippets = snippet.split(/[\r\n]+/g).map(function(ss){ return ss.trim(); });
                 $.each(sub_snippets, function(idx, sub_snippet){
                     if (sub_snippet.length > 0) {
                         highlight_match(match_text_el(doctype, docid), sub_snippet);
