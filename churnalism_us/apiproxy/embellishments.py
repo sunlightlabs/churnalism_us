@@ -1,6 +1,7 @@
 
 from __future__ import division
 
+from copy import deepcopy
 from operator import itemgetter
 
 import superfastmatch
@@ -20,7 +21,7 @@ def calculate_coverage(text, row):
 
 
 def snippets_for_fragments(text, fragments):
-    return [text[frag[0]:frag[0]+frag[2]] for frag in fragments]
+    return list(set([text[frag[0]:frag[0]+frag[2]] for frag in fragments]))
 
 
 def reduce_fragments(fragments):
