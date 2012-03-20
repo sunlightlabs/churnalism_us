@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load jsonify %}
+{% load trailingslash %}
 
 {% comment %}
 This template stands alone because the chrome extension performs a POST request
@@ -57,7 +58,7 @@ so all links output must be absolute.
                 </div>
             </div>
 			<div id="footer">
-				<a href="{% url sidebyside-search %}?uuid={{ uuid }}">See more results</a>
+				<a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-search-page %}{{ uuid }}/" target="_blank">See more results</a>
 			</div>
         </div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -85,10 +86,12 @@ so all links output must be absolute.
 				$(match_text_el).html(markupArticleText($(match_text_el).text()));
                 $.each(search_results['documents']['rows'], function(idx, row){
 					$.each(row['snippets'], function(idx, snippet){
-						var sub_snippets = snippet.split(/[\r\n]+/);
+						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
 						$.each(sub_snippets, function(idx, sub_snippet){
-							highlight_match(match_text_el, sub_snippet);
-							highlight_match(doc_text_el, sub_snippet);
+							if (sub_snippet.length > 0) {
+								highlight_match(match_text_el, sub_snippet);
+								highlight_match(doc_text_el, sub_snippet);
+							}
 						});
 					});
 				});

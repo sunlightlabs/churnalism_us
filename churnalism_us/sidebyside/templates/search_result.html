@@ -11,7 +11,15 @@
             {{ results.documents.rows|length }} results
             <ul id="results-listing">
             {% for row in results.documents.rows %}
-			<li id="match-title-{{ row.doctype }}-{{ row.docid }}">{{ row.title }}</li>
+			<li id="match-title-{{ row.doctype }}-{{ row.docid }}">
+				<div class="match-coverage-pct">
+					{{ row.coverage.1|floatformat:0 }}% Pasted
+				</div>
+				<div class="match-coverage-chars">
+					{{ row.coverage.0 }} Characters overlap
+				</div>
+				<span class="match-title-text">{{ row.title }}</span>
+			</li>
             {% endfor %}
             </ul>
         </div>
@@ -31,6 +39,7 @@
 {% block js %}
     {{ block.super }}
 
+	<script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.scrollintoview.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}scripts/highlight.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){

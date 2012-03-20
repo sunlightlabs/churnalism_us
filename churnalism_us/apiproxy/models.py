@@ -40,12 +40,14 @@ class SearchDocument(models.Model):
 
     objects = SearchDocumentManager()
 
+    # uuid is derived from url generated randomly in .save()
     uuid = models.CharField(max_length=32,
                             null=False,
                             blank=False,
                             unique=True,
                             db_index=True)
 
+    # hashed_url is derived from url in .save()
     hashed_url = models.CharField(max_length=40,
                                   null=False,
                                   blank=False,
@@ -58,13 +60,11 @@ class SearchDocument(models.Model):
                            db_index=False,
                            unique=False)
 
+    # domain is derived from url in .save()
     domain = models.CharField(max_length=255,
                               null=True,
                               blank=False,
                               db_index=True)
-
-    src = models.TextField(null=False,
-                           blank=False)
 
     text = models.TextField(null=False,
                             blank=False)
@@ -97,3 +97,5 @@ class SearchDocument(models.Model):
                 self.domain = re.sub('/:\d+$', '', netloc)
 
         super(SearchDocument, self).save()
+
+
