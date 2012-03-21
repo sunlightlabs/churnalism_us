@@ -45,11 +45,6 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			window.search_results = {{ results|jsonify|safe }};
-            $("#results-listing li").click(function(){
-                $(this).siblings().removeClass("active");
-                $(this).toggleClass('active');
-            });
-
 		});
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>

@@ -170,7 +170,7 @@ LOGGING = {
 }
 
 SIDEBYSIDE = {
-    'max_doc_prefetch': 3
+    'max_doc_prefetch': 0
 }
 
 APIPROXY = {

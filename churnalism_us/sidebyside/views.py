@@ -160,6 +160,11 @@ def search_against_url(request, url):
     (title, text) = fetch_and_clean(url)
     sfm_results = sfm.search(text=text, title=title, url=url)
 
+    #if they submit a url, don't return the exact same url in the results
+    for r in sfm_results['documents']['rows']:
+        if r['url'] == url:
+            sfm_results['documents']['rows'].remove(r)
+
     return search_result_page(request, sfm_results, sfm_results['text'],
                               source_title=sfm_results['title'], source_url=url)
 
