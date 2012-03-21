@@ -125,7 +125,7 @@ $(document).ready(function(){
         });
     };
 
-    var show_document_response = function (doctype, docid, document_response) {
+    var show_document_response = function (doctype, docid, document_response) { 
         $("div.match-text:visible").hide();
         var title = document_response['title'];
         if (title != null) {
@@ -133,7 +133,6 @@ $(document).ready(function(){
         } else {
             $("header#match-title:visible").hide();
         }
-
         var url = document_response['url'];
         if (url != null) {
             $("a.match-url").attr("href", url).text(url);
@@ -212,5 +211,13 @@ $(document).ready(function(){
     $('body').scroll(function(event){
         event.preventDefault();
     });
+
+
+     $("#results-listing li").click(function(){
+        $(this).siblings().removeClass("active");
+        $(this).toggleClass('active');
+     });
+
+     $("#results-listing li:first").trigger('click');
 });
 

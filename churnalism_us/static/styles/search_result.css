@@ -20,6 +20,7 @@ body {
 .match-text {
 	display: none;
 }
+
 .match-coverage-pct {
 	font-size: 120%;
 	font-weight: bold;
