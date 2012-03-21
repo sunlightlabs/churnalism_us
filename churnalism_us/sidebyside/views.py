@@ -199,25 +199,13 @@ def select_best_match(text, sfm_results):
             >> stream.map(fragment_match_percentage)
             >> stream.reduce(longer, (None, 0)))
 
-
-
-@csrf_exempt
-def chromeext_search(request):
-    text = request.POST.get('text') or request.GET.get('text') or ''
-    url = request.POST.get('url') or request.GET.get('url') or ''
-    title = request.POST.get('title') or request.GET.get('title') or ''
-
+def chromeext_recall(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
-    sfm_results = sfm.search(text=text, url=url)
-    if url and not text:
-        text = sfm_results['text']
-    if url and not title:
-        title = sfm_results['title']
+    sfm_results = sfm.search(text=None, uuid=uuid)
 
-    if not text:
-        text = sfm_results['text']
+    match_count = len(sfm_results['documents']['rows'])
 
-    (match, match_pct) = select_best_match(text, sfm_results)
+    (match, match_pct) = select_best_match(sfm_results['text'], sfm_results)
     if match is not None:
         match_doc = sfm.document(match['doctype'], match['docid'])
         if match_doc['success'] == True:
@@ -225,22 +213,19 @@ def chromeext_search(request):
             match_title = match.get('title', '')
             match_url = match.get('url', '')
         sfm_results['documents']['rows'] = [match]
-        embellish(text, sfm_results, add_snippets=True)
-    else:
-        match_text = ''
-        match_title = ''
-        match_url = ''
-        
+        embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
     resp = render(request, 'sidebyside/chrome.html',
                   {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
                    'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
                    'results': sfm_results,
-                   'source_text': text,
-                   'source_title': title,
-                   'source_url': url,
-                   'uuid': sfm_results['uuid'],
+                   'source_text': sfm_results['text'],
+                   'source_title': sfm_results['title'],
+                   'source_url': sfm_results.get('url'),
+                   'uuid': uuid,
+                   'match_count': match_count, # Raw match count, unrelated to 'match' variables below
                    'match': match,
                    'match_text': match_text,
                    'match_title': match_title,
                    'match_url': match_url})
     return resp
+
