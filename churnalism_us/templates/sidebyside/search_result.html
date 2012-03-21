@@ -5,9 +5,10 @@
 {% endblock %}
 {% block title %}Search Results{% endblock title%}
 {% block body %}
-<div style="position: relative;">
+<div id="main-content">
+    <h2>Possible Churns</h2>
     <div id="source-box">
-        <div id="results-box">
+        <div id="left-rail">
             {{ results.documents.rows|length }} results
             <ul id="results-listing">
             {% for row in results.documents.rows %}
@@ -44,6 +45,11 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			window.search_results = {{ results|jsonify|safe }};
+            $("#results-listing li").click(function(){
+                $(this).siblings().removeClass("active");
+                $(this).toggleClass('active');
+            });
+
 		});
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>

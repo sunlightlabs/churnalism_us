@@ -1,0 +1,23 @@
+h1 { margin: 20px; padding: 10px; border-bottom: solid 1px #5d5d5d; width: 100%; float:left; }
+span#empire-nav ul { float:right; width: 300px; list-style-type:none; font-size: .7em; margin: 0;}
+span#empire-nav ul li {list-style-type: none; float:left; padding:10px; margin:0px; }
+
+#left-rail { width: 250px;; float:left; }
+#left-rail ul { margin-left: 0px; padding-left: 0px; }
+#left-rail ul li { list-style-type: none; padding: 20px;border-bottom: 1px solid #676767; font-size: 1.1em; }
+#left-rail ul li a { color: white; text-decoration: none; }
+#left-rail ul li a:hover { font-weight: bold; }
+#left-rail ul li.active { background-color:#676767; color: white; }
+
+#main-content { margin: 20px; float:left; padding:10px; width:100%; }
+#main-content h2 { margin-top: 0px; }
+#main-content p { margin-bottom: 30px; }
+
+#ui-items { list-style-type: none; padding-left: 0; margin-left: 0;}
+#ui-items label { display:block; font-size: 1.2em; margin: 15px 0px; }
+#ui-items input { width: 660px; border: 1px solid #B6B4B4; }
+#ui-items input.submit { width: 70px; }
+#ui-items textarea { width: 660px; height: 300px; margin-bottom: 20px; border: 1px solid #B6B4B4; }
+
+
+

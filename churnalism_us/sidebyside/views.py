@@ -83,7 +83,7 @@ def attach_document_text(results, maxdocs=None):
 
 
 def search_page(request):
-    return render(request, 'search_page.html', {})
+    return render(request, 'sidebyside/search_page.html', {})
 
 
 def search_result_page(request, results, source_text, 
@@ -94,7 +94,7 @@ def search_result_page(request, results, source_text,
               add_coverage=True, 
               add_snippets=True,
               prefetch_documents=settings.SIDEBYSIDE.get('max_doc_prefetch'))
-    return render(request, 'search_result.html',
+    return render(request, 'sidebyside/search_result.html',
                   {'results': results,
                    'source_text': source_text,
                    'source_title': source_title,
@@ -231,7 +231,7 @@ def chromeext_search(request):
         match_title = ''
         match_url = ''
         
-    resp = render(request, 'chrome.html',
+    resp = render(request, 'sidebyside/chrome.html',
                   {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
                    'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
                    'results': sfm_results,

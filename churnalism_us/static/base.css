@@ -1,0 +1,7 @@
+h1 { margin: 20px; padding: 10px; }
+#main-content { margin: 20px; padding 10px; }
+
+
+#ui-items { list-style-type: none;}
+#text-item > span { display: inline-block; margin: 1em 0; }
+

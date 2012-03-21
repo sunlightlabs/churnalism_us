@@ -3,12 +3,22 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/reset.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/base.css">
         {% block head %}
         {% endblock head %}
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title %}Churnalism - US{% endblock %}</title>
     </head>
 
     <body>
+        <h1>Churnalism - US
+            <span id="empire-nav">
+                <ul>
+                    <li><a href="{% url about %}">About</a></li>
+                    <li><a href="{% url contact %}">Contact</a></li>
+                    <li><a href="{% url index %}">Search</a></li>
+                </ul>
+            </span>
+        </h1>
         {% block body %}
         {% endblock body %}
     </body>
