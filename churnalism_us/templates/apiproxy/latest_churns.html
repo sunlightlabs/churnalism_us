@@ -1,0 +1,10 @@
+<ul id="stat-list">
+    <li class="header">Latest Churned Stories</li>
+{% for churn in latest %}
+    {% if churn.docid %}
+        <li>
+            <a href="{% url sidebyside-permalink uuid=churn.uuid doctype=churn.doctype docid=churn.docid  %}">{% if churn.title %} {{churn.title}} {% else %} {{churn.text|truncatewords:15 }} {%endif %}</a>
+        </li>
+    {% endif %}
+{% endfor %}
+</ul>

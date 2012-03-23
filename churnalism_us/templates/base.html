@@ -1,4 +1,5 @@
 {% load static %}
+{% load churnstats %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,6 +22,10 @@
         </h1>
         {% block body %}
         {% endblock body %}
+
+        <div id="churn-stats">
+            {% latest 4 %}
+        </div>
     </body>
 
     

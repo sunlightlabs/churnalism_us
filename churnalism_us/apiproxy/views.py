@@ -20,8 +20,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 import superfastmatch
-from apiproxy.models import SearchDocument
-
+from apiproxy.models import SearchDocument, MatchedDocument, Match
+from apiproxy.embellishments import calculate_coverage
 
 def association(request, doctype=None):
     """
@@ -64,7 +64,7 @@ def document(request, doctype, docid):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-def recall_document(title, url, uuid):
+def recall_document(title, url, uuid, text):
     doc = None
 
     if url:
@@ -72,6 +72,11 @@ def recall_document(title, url, uuid):
             doc = SearchDocument.objects.lookup_by_url(url)
         except SearchDocument.DoesNotExist:
             pass
+
+    elif text:
+        doc = SearchDocument.objects.filter(text__icontains=text)
+        if len(doc) > 0:
+            doc = doc[0]
 
     if uuid and not doc:
         doc = get_object_or_404(SearchDocument, uuid=uuid)
@@ -106,9 +111,9 @@ def search(request, doctype=None):
     if not text and not url and not uuid:
         return HttpResponseBadRequest()
 
-    elif url or uuid:
+    elif url or uuid or text:
         try:
-            doc = recall_document(title, url, uuid)
+            doc = recall_document(title, url, uuid, text)
 
             if not title:
                 title = doc.title
@@ -128,12 +133,23 @@ def search(request, doctype=None):
         if not text:
             return HttpResponseNotFound(str(url or uuid))
         else:
-            doc = SearchDocument()
+            try:
+                #primitive match on exact text
+                doc = SearchDocument.objects.filter(text__icontains=text)
+                if len(doc) > 0:
+                    doc = doc[0]
+                else:
+                    doc = SearchDocument()
+            except:
+                doc = SearchDocument()
+
             doc.text = text
             doc.title = title
             if url:
                 doc.url = url
             doc.save()
+    
+        
 
     # The actual proxying:
     sfm = superfastmatch.DjangoClient()
@@ -146,5 +162,42 @@ def search(request, doctype=None):
             response['text'] = doc.text
         if title and 'title' not in response:
             response['title'] = doc.title
+
+        for r in response['documents']['rows']:
+            try:
+                md = MatchedDocument.objects.get(doc_id=r['docid'], doc_type=r['doctype'])
+            except:
+                md = MatchedDocument(doc_type=r['doctype'], 
+                                    doc_id=r['docid'], 
+                                    source_url=r['url'],
+                                    source_name=r['docid'], #will change this later, for now just use the doc id
+                                    source_headline=r['title'])
+                md.save() 
+
+            matches = Match.objects.filter(search_document=doc, matched_document=md)
+            if len(matches) > 0:
+                matches[0].number_matches += 1
+                matches[0].save()
+            else:
+                stats = calculate_coverage(text, r)
+                match = Match(search_document=doc, 
+                              matched_document=md,
+                              percent_sourced=0, #leaving this as zero since we need to make another request for the full text
+                              percent_churned=str(stats[1]),
+                              number_matches=1)
+                match.save()
+
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
+
+
+
+
+
+
+
+
+
+
+
+
 

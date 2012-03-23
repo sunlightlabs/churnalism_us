@@ -32,7 +32,6 @@ class SearchDocumentManager(models.Manager):
         else:
             raise SearchDocument.MultipleObjectsReturned()
 
-
 class SearchDocument(models.Model):
     """
     This stores the text of documents that have been searched for.
@@ -97,5 +96,60 @@ class SearchDocument(models.Model):
                 self.domain = re.sub('/:\d+$', '', netloc)
 
         super(SearchDocument, self).save()
+
+class MatchedDocument(models.Model):
+    """ This caches metadata about matched documents in SFM """ 
+    
+    doc_type = models.IntegerField(blank=False, 
+                                   null=False)
+
+    doc_id = models.IntegerField(blank=False, 
+                                 null=False)
+
+    source_url = models.TextField(blank=False, 
+                                  null=False)
+
+    source_name = models.CharField(max_length=200, 
+                                   null=True, 
+                                   blank=False)
+
+    source_headline = models.CharField(max_length=200,
+                                        null=True,
+                                        blank=False)
+
+    created = models.DateTimeField(auto_now_add=True,
+                                   db_index=True)
+
+    updated = models.DateTimeField(auto_now=True,
+                                   db_index=True)
+
+
+
+class Match(models.Model):
+
+    search_document = models.ForeignKey(SearchDocument,
+                                        db_index=True)
+    
+    matched_document = models.ForeignKey(MatchedDocument,
+                                         db_index=True)
+
+    #This is the percentage of the MatchedDocument (the source doc) that is in the SearchDocument (character overlap)
+    percent_sourced = models.DecimalField(max_digits=5, 
+                                          decimal_places=2)
+       
+    #This is the percentage of the SearchDocument that is included in the MatchedDocument (source doc) using character overlap
+    percent_churned = models.DecimalField(max_digits=5, 
+                                          decimal_places=2)
+
+    #This is the number of matches between the same SearchDocument and the same MatchedDocument
+    number_matches = models.IntegerField(null=False, blank=False)
+
+    created = models.DateTimeField(auto_now_add=True,
+                                   db_index=True)
+
+    updated = models.DateTimeField(auto_now=True,
+                                   db_index=True)
+
+
 
 
