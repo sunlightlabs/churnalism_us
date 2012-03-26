@@ -10,10 +10,12 @@ from operator import itemgetter
 import stream
 from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseServerError
 from django.views.decorators.csrf import csrf_exempt
 from apiproxy.embellishments import embellish
 from utils.slurp_url import slurp_url
+
+from apiproxy.models import SearchDocument
 
 import superfastmatch
 
@@ -233,4 +235,18 @@ def chromeext_recall(request, uuid):
                    'match_title': match_title,
                    'match_url': match_url})
     return resp
+
+def shared(request, uuid):
+    """ Mark a SearchDocument as shared -- for analytics and footer modules """
+    
+    try:
+        doc = SearchDocument.objects.get(uuid=uuid)
+        if doc.times_shared: 
+            doc.times_shared += 1
+        else:
+            doc.times_shared = 1
+        doc.save()
+        return HttpResponse("OK", content_type="text/html")
+    except:
+        return HttpResponseServerError()
 

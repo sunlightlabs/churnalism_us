@@ -1,6 +1,6 @@
 <ul id="stat-list">
-    <li class="header">Latest Churned Stories</li>
-{% for churn in latest %}
+    <li class="header">Most Viewed</li>
+{% for churn in viewed %}
         <li>
             <a href="{% url sidebyside-uuid-search uuid=churn.uuid %}">{% if churn.title %} {{churn.title}} {% else %} {{churn.text|truncatewords:15 }} {%endif %}</a>
         </li>

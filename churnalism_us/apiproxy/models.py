@@ -78,6 +78,8 @@ class SearchDocument(models.Model):
     updated = models.DateTimeField(auto_now=True,
                                    db_index=True)
 
+    times_shared = models.IntegerField(null=True, blank=True)
+
     class Meta:
         ordering = ['-updated', '-created']
 

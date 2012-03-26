@@ -7,6 +7,7 @@
 {% block body %}
 <div id="main-content">
     <h2>Possible Churns</h2>
+    <span class="share">Share this url:<form action="{% url sidebyside-shared uuid=results.uuid %}" > <input type="text" value="{%url sidebyside-uuid-search uuid=results.uuid %}" /><input type="submit" value="share" /></form></span>
     <div id="source-box">
         <div id="left-rail">
             {{ results.documents.rows|length }} results

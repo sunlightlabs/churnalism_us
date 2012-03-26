@@ -2,6 +2,8 @@ h1 { margin: 20px; padding: 10px; border-bottom: solid 1px #5d5d5d; width: 100%;
 span#empire-nav ul { float:right; width: 300px; list-style-type:none; font-size: .7em; margin: 0;}
 span#empire-nav ul li {list-style-type: none; float:left; padding:10px; margin:0px; }
 
+
+
 #left-rail { width: 250px;; float:left; }
 #left-rail ul { margin-left: 0px; padding-left: 0px; }
 #left-rail ul li { list-style-type: none; padding: 20px;border-bottom: 1px solid #676767; font-size: 1.1em; }
@@ -10,8 +12,12 @@ span#empire-nav ul li {list-style-type: none; float:left; padding:10px; margin:0
 #left-rail ul li.active { background-color:#676767; color: white; }
 
 #main-content { margin: 20px 50px; float:left; padding:10px; width:100%; }
-#main-content h2 { margin-top: 0px; }
+#main-content h2 { margin-top: 0px; float: left; width: 300px; }
+#main-content span.share {float:right; width: 400px;}
+
 #main-content p { margin-bottom: 30px; }
+
+#source-box { clear:both;}
 
 #ui-items { list-style-type: none; padding-left: 0; margin-left: 0;}
 #ui-items label { display:block; font-size: 1.2em; margin: 15px 0px; }

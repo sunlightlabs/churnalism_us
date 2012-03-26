@@ -23,7 +23,7 @@ body {
 
 .match-coverage-pct {
 	font-size: 120%;
-	font-weight: bold;
+	font-weight: bold
 }
 .match-coverage-chars, .match-source-details {
 	font-size: 90%;
