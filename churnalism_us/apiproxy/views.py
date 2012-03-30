@@ -74,7 +74,7 @@ def recall_document(title, url, uuid, text):
             pass
 
     elif text:
-        doc = SearchDocument.objects.filter(text__icontains=text)
+        doc = SearchDocument.objects.filter(text=text)
         if len(doc) > 0:
             doc = doc[0]
 
@@ -182,7 +182,7 @@ def search(request, doctype=None):
                 stats = calculate_coverage(text, r)
                 match = Match(search_document=doc, 
                               matched_document=md,
-                              percent_sourced=0, #leaving this as zero since we need to make another request for the full text
+                              percent_sourced=0, #don't need this since churn function picks higher of sourced or churned
                               percent_churned=str(stats[1]),
                               number_matches=1)
                 match.save()
