@@ -4,7 +4,7 @@ import re
 import logging
 from hashlib import sha1
 from uuid import uuid4, uuid5, NAMESPACE_URL
-
+from datetime import datetime
 from urlparse import urlparse
 from django.db import models
 
@@ -96,6 +96,8 @@ class SearchDocument(models.Model):
             (scheme, netloc, path, params, query, frag) = urlparse(self.url)
             if netloc:
                 self.domain = re.sub('/:\d+$', '', netloc)
+
+        self.updated = datetime.now()
 
         super(SearchDocument, self).save()
 

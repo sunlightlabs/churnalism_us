@@ -1,41 +1,54 @@
 {% extends "base.html" %}
 {% load jsonify %}
 {% block head %}
-<link rel="stylesheet" href="{{ STATIC_URL }}styles/search_result.css">
 {% endblock %}
-{% block title %}Search Results{% endblock title%}
+{% block bodyclass %}home{% endblock %}
+{% block title %}Churnalism - Search Results{% endblock title%}
+{% block share_url %}<li><label>Share this page:</label><input type="text" value="{%url sidebyside-uuid-search uuid=results.uuid %}"></input></li>{% endblock %}
 {% block body %}
-<div id="main-content">
-    <h2>Possible Churns</h2>
-    <span class="share">Share this url:<form action="{% url sidebyside-shared uuid=results.uuid %}" > <input type="text" value="{%url sidebyside-uuid-search uuid=results.uuid %}" /><input type="submit" value="share" /></form></span>
-    <div id="source-box">
-        <div id="left-rail">
-            {{ results.documents.rows|length }} results
-            <ul id="results-listing">
+<div id="ltColumn">
+    <h2 class="smallHeader">Possible Churns</h2>
+        <ol id="matches">
             {% for row in results.documents.rows %}
-			<li id="match-title-{{ row.doctype }}-{{ row.docid }}">
-				<div class="match-coverage-pct">
-					{{ row.coverage.1|floatformat:0 }}% Pasted
-				</div>
-				<div class="match-coverage-chars">
-					{{ row.coverage.0 }} Characters overlap
-				</div>
-				<span class="match-title-text">{{ row.title }}</span>
-			</li>
+                <li id="match-title-{{ row.doctype }}-{{ row.docid }}">
+                    <span class="textReplace" id="scissorTop">Scissor image</span>
+                    <a class="percentChurn" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
+                    <span class="characters">{{ row.coverage.0 }} Characters overlap</span>
+                    <dl>
+                        <dt>From:</dt>
+                        <dd>
+                            <a class="articleTitle" id="match-url"></a>
+                            <div class="entryMetaData">
+                                <address class="author"></address>
+                                <time datetime="" class="published" pubdate=""></time>
+                            </div>
+                        </dd>
+                    </dl>
+                    <span class="textReplace" id="scissorBottom">Scissor image</span>
+                </li>
             {% endfor %}
-            </ul>
+        </ol>
+    </div>
+    <div id="rtColumn">
+        <div id="confirm">
+            <span>Help us make our matches as accurate as possible. Do these articles match? If so confirm it for us now.</span>   
+            <a class="textReplace" id="btnConfirm" href="#">Confirm Match</a> 
+        </div>    
+        <div class="clear"></div>
+
+        <h2 class="smallHeader">Text Entered</h2>
+        <h3 class="withTip" id="match-title">No Matches</h3>
+        <div class="entryMetaData">
+            <address class="author"></address>
+            <time datetime="2012-03-22T10:00:01" class="published" pubdate=""></time>
         </div>
-        <div id="match-box">
-			<header class="match-url">Originally from: <a class="match-url"></a></header>
-			<header id="match-title"></header>
-            {% for row in results.documents.rows %}
-            <div class="match-text" id="match-text-{{ row.doctype }}-{{ row.docid }}">
-				{% firstof row.text '' %}
-            </div>
-            {% endfor %}
+        <div id="match-text">
+
         </div>
     </div>
 </div>
+<div class="clear"></div>
+
 {% endblock body %}
 
 {% block js %}

@@ -1,14 +1,35 @@
 {% extends "base.html" %}
 {% block head %}
 {% endblock %}
+{% block bodyclass %}contact{% endblock %}
 {% block title %}Contact Us{% endblock title%}
 {% block body %}
-
-<div id="main-content">
-    <h2>Contact Us</h2>
-    <div class="content">
-        contact form goes here
+<div id="fullColumn">
+    <div id="halfColumnRt">
+        <h2 class="withTip">Contact Us</h2>
+        <span class="tip">Have comments or questions? We'd love to hear from you.</span>
+        <form action="" method="post">
+            <ul class="withSpace">
+                <li>
+                    <label for="name">Name</label>
+                    <input type="text" name="q" id="name">
+                </li>
+                <li>
+                    <label for="email">Email</label>
+                    <input type="text" name="q" id="email">
+                </li>
+                <li>
+                    <label for="text">Comment</label>
+                    <textarea cols="32" id="text" name="text" rows="10"></textarea>
+                </li>
+                <li>
+                    <button type="submit" id="submitBtn">
+                            <span>Search</span>
+                    </button>
+                <li>
+            </ul>
+        </form>
     </div>
-
+    <div class="clear"></div>
 </div>
 {% endblock body %}

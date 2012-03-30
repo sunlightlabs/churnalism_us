@@ -134,24 +134,25 @@ $(document).ready(function(){
     };
 
     var show_document_response = function (doctype, docid, document_response) { 
-        $("div.match-text:visible").hide();
         var title = document_response['title'];
         if (title != null) {
-            $("header#match-title").text(title).show();
-        } else {
-            $("header#match-title:visible").hide();
-        }
+            $("#match-title").text(title);
+        } 
         var url = document_response['url'];
         if (url != null) {
-            $("a.match-url").attr("href", url).text(url);
-            $("header.match-url:hidden").show();
-        } else {
-            $("header.match-url:visible").hide();
-        }
+            $("a#match-url").attr("href", url).text(title);
 
+        } 
+        else {
+            $("a#match-url").text(title);
+        }
+   
+        var dateline = document_response['date']
+        $('time').attr('datetime', dateline).text(dateline);
+        
+ 
         textdiv = match_text_el(doctype, docid);
         textdiv.html(markup_text(document_response['text']));
-        textdiv.show();
         with_search_row(doctype, docid, function(row){
             $.each(row['snippets'], function(idx, snippet){
                 var sub_snippets = snippet.split(/[\r\n]+/g).map(function(ss){ return ss.trim(); });
@@ -186,7 +187,7 @@ $(document).ready(function(){
     };
 
     var match_text_el = function (doctype, docid) {
-        return $('div#' + build_text_idstr(doctype, docid));
+        return $('div#match-text')
     };
 
     var extract_document_attrs = function (idstr) {
@@ -199,7 +200,7 @@ $(document).ready(function(){
         }
     };
 
-    $("ul#results-listing li").click(function(click){
+    $("ol#matches li").click(function(click){
         var idstr = $(click.currentTarget).attr('id');
         var docattrs = extract_document_attrs(idstr);
         if (docattrs) {
@@ -221,11 +222,12 @@ $(document).ready(function(){
     });
 
 
-     $("#results-listing li").click(function(){
+     $("#matches li").click(function(){
         $(this).siblings().removeClass("active");
         $(this).toggleClass('active');
+        return false;
      });
 
-     $("#results-listing li:first").trigger('click');
+     $("#matches li:first").trigger('click');
 });
 

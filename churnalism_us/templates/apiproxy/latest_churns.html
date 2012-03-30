@@ -1,8 +1,12 @@
-<ul id="stat-list">
-    <li class="header">Latest Churned Stories</li>
-{% for churn in latest %}
-        <li>
-            <a href="{% url sidebyside-uuid-search uuid=churn.uuid %}">{% if churn.title %} {{churn.title}} {% else %} {{churn.text|truncatewords:15 }} {%endif %}</a>
+<section>
+    <h4>Latest Churned Stories</h4>
+    <ul>
+
+    {% for item in latest %}
+        <li class="clear">
+            <span class="percentChurned">{{item.percent|floatformat:0}}%</span>
+            <a href="{% url sidebyside-uuid-search uuid=item.uuid %}">{% if item.title %} {{item.title}} {% else %} {{item.text|truncatewords:15 }} {%endif %}</a>
         </li>
 {% endfor %}
-</ul>
+    </ul>
+</section>

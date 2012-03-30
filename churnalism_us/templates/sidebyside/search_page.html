@@ -3,31 +3,34 @@
 {% endblock %}
 {% block title %}Search{% endblock title%}
 {% block nav-search %}<li class="active">Search</li>{% endblock %}
-
+{% block bodyclass %}home{% endblock %}
 {% block body %}
-
-
-<div id="main-content">
-    <h2>Enter a URL or Story Text</h2>
-    <p>Here's some more description. Lorem ipsum bla bla. </p>
-    <div class="content">
+<div id="fullColumn">
+    <div id="halfColumn">
+        <p id="introText">Ever wonder if the news story your reading is a product of real journalism or just a spin off of another story posted elsewhere? Discover the journalism you can trust and what you should question.</p>
+    </div>
+    <div id="halfColumnRt">
         <form action="{% url sidebyside-search %}" method="POST">
-        <ul id="ui-items">
-            <li>
-                {% csrf_token %}
-                <label for="url">Paste URL</label>
-                <input type="text" name="url" id="url">
-            </li>
-            <li>
-                {% csrf_token %}
-                <label for="text">Paste in text:</label>
-                <textarea cols="32" rows="10" id="text" name="text"></textarea>
-            </li>
-            <li>
-                <input type="submit" value="Search" class="submit">
-            </li>
-        </ul>
+            <ul class="withSpace">
+                <li>
+                    {% csrf_token %}
+                    <label for="url">Enter URL:</label>
+                    <input type="text" name="url" id="url">
+                    <span class="tip">or</span>
+                </li>
+                <li>
+                    {% csrf_token %}
+                    <label for="text">Paste in Text:</label>
+                    <textarea cols="32" id="text" name="text" rows="10"></textarea>
+                </li>
+                <li>
+                    <button type="submit" id="submitBtn">
+                            <span>Submit</span>
+                    </button>
+                <li>
+            </ul>
         </form>
     </div>
+    <div class="clear"></div>
 </div>
 {% endblock body %}

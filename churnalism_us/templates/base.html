@@ -3,31 +3,80 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/reset.css">
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/base.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/main.css">
         {% block head %}
         {% endblock head %}
         <title>{% block title %}Churnalism - US{% endblock %}</title>
     </head>
 
-    <body>
-        <h1>Churnalism - US
-            <span id="empire-nav">
-                <ul>
-                    <li><a href="{% url about %}">About</a></li>
-                    <li><a href="{% url contact %}">Contact</a></li>
-                    <li><a href="{% url index %}">Search</a></li>
-                </ul>
-            </span>
-        </h1>
-        {% block body %}
-        {% endblock body %}
+    <body class="{% block bodyclass %}{% endblock %}">
 
-        <div id="churn-stats">
-            {% latest 4 %}
-            {% most_read 4 %}
-            {% most_shared 4 %}
+        <header>
+            <nav>
+                <ul>
+                    <li id="about"><a class="textReplace" href="{% url about %}">About</a></li>
+                    <li id="contact"><a class="textReplace" href="{% url contact %}">Contact</a></li>
+<!--                    <li id="api"><a class="textReplace" href="#">Api</a></li>-->
+                    <li id="sunlight"><a class="textReplace" href="http://sunlightfoundation.com">Product of: Sunlight Foundation</a></li>
+                </ul>    
+            </nav>   
+            <div class="clear"></div> 
+            <h1><a class="textReplace" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a></h1>
+            <div id="share">
+                <ul>
+                    {% block share_url %}{% endblock %}
+                    <li>
+                        <a class="textReplace" id="facebook" href="#">share with facebook</a>
+                    </li>
+                    <li>
+                        <a class="textReplace" id="twitter" href="#">share with twitter</a>
+                    </li>
+                </ul>
+            </div>    
+        </header>  
+        <div class="clear" id="container">
+                {% block body %}
+                {% endblock body %}
         </div>
+        <div id="resourcesWrapper">
+            <div id="resourcesWrapper2">
+                <div id="resources">
+                    {% latest 4 %}
+                    {% most_read 4 %}
+                    {% most_shared 4 %}
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div id="privacy">
+                <a class="textReplace" id="foundationLogo" href="http://sunlightfoundation.com">Sunlight Foundation</a>
+                <p>Founded in 2006, the Sunlight Foundation is a non-partisan non-profit that uses cutting-edge technology and ideas to make government transparent and accountable. Visit <a href="http://sunlightfoundation.com">SunlightFoundation.com</a> to learn more.
+            </div>    
+            <div id="emailSignup">
+                <h5>Like This Project and Want to Discover Others Like It?</h5>
+                <span class="tip">Join the Sunlight Foundation's open government community to learn more</span>
+                <form action="/search/" method="get" id="signUp">
+                    <ul>
+                        <li>
+                            <label class="hidden">Email Address</label>
+                            <input type="text" name="q" id="email" placeholder="enter your email address">
+                        </li>
+                        <li>
+                            <label class="hidden">Zip Code</label>
+                            <input type="text" name="q" id="zip" placeholder="your zip code">
+                        </li>
+                        <li>
+                            <button type="submit">
+                                <span>Search</span>
+                            </button>
+                        <li>
+                    </ul>
+                </form>
+            </div>    
+            <div class="clear"></div>
+        </footer>    
+
     </body>
 
     
