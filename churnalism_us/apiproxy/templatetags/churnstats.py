@@ -8,7 +8,7 @@ def latest(number_latest):
     churns = []
     dedupe = []
     t = template.loader.get_template('apiproxy/latest_churns.html')
-    recent_matches = Match.objects.all().order_by('-updated')
+    recent_matches = Match.objects.all().order_by('-updated')[:20]
     for rm in recent_matches:
         if rm.search_document not in dedupe and len(churns) < number_latest:
             churns.append({'percent': rm.percent_churned, 'title': rm.search_document.title, 'text': rm.search_document.text, 'uuid': rm.search_document.uuid})
@@ -19,7 +19,7 @@ def latest(number_latest):
 @register.simple_tag
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
-    matches = Match.objects.all().order_by('-number_matches')
+    matches = Match.objects.all().order_by('-number_matches')[:20]
     churns = []
     dedupe = []
     for m in matches:
