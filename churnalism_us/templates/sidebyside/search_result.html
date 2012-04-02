@@ -4,13 +4,13 @@
 {% endblock %}
 {% block bodyclass %}home{% endblock %}
 {% block title %}Churnalism - Search Results{% endblock title%}
-{% block share_url %}<li><label>Share this page:</label><input type="text" value="{%url sidebyside-uuid-search uuid=results.uuid %}"></input></li>{% endblock %}
+{% block share_url %}<li><label>Share this page:</label><input type="text" value="{{domain}}{%url sidebyside-uuid-search uuid=results.uuid %}"></input></li>{% endblock %}
 {% block body %}
 <div id="ltColumn">
     <h2 class="smallHeader">Possible Churns</h2>
         <ol id="matches">
             {% for row in results.documents.rows %}
-                <li id="match-title-{{ row.doctype }}-{{ row.docid }}">
+                <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
                     <span class="textReplace" id="scissorTop">Scissor image</span>
                     <a class="percentChurn" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
                     <span class="characters">{{ row.coverage.0 }} Characters overlap</span>
@@ -30,14 +30,14 @@
         </ol>
     </div>
     <div id="rtColumn">
-        <div id="confirm">
+        <div id="confirm" style="display:none;">
             <span>Help us make our matches as accurate as possible. Do these articles match? If so confirm it for us now.</span>   
             <a class="textReplace" id="btnConfirm" href="#">Confirm Match</a> 
         </div>    
         <div class="clear"></div>
 
-        <h2 class="smallHeader">Text Entered</h2>
-        <p>{{source_text}}</p>
+        <h2 class="smallHeader">Text Submitted</h2>
+        <p id="truncate">{{source_text}}</p>
         <h2 class="smallHeader">Text Matched</h2>
         <h3 class="withTip" id="match-title">No Matches</h3>
         <div class="entryMetaData">
@@ -61,7 +61,10 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			window.search_results = {{ results|jsonify|safe }};
+            
+            $('#truncate').condense({ condensedLength: 300});
 		});
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.condense.js" %}></script>
 {% endblock js %}

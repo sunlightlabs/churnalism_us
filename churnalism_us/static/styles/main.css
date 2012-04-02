@@ -63,7 +63,7 @@ html { overflow-y: scroll; }
 iframe { display: block; margin: 10px 0; }
 
 a:hover, a:active { outline: none; }
-a, a:active, a:visited { color: #24838e; }
+a, a:active, a:visited, .condense_control { color: #24838e; }
 a:hover { color: #04434a; }
 
 nav ul, nav li { margin: 0; } 
@@ -125,7 +125,7 @@ h1 { width: 197px; height: 70px; float: left; margin: 15px 0 20px 20px;}
 h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
-.smallHeader { text-transform: uppercase; font-size: 120%; color: #454542; margin-bottom: 15px; line-height: 18px;}
+.smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px;}
 h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px;}
 h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 140%; font-weight: normal; margin-bottom: 15px; color: #393434;}
 h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: normal; font-size: 125%; margin-bottom: 5px;}
@@ -183,6 +183,7 @@ dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercas
 #confirm a { background: url(../images/btn_confirm.png) top left no-repeat; width: 80px; height: 35px; float: right; }
 #confirm a:hover { background: url(../images/btn_confirm.png) bottom left no-repeat; }
 
+
 #fullColumn label { display: block; }
 
 #resourcesWrapper { background: url(../images/bg_resourceChurn.jpg) left bottom repeat-x; }
@@ -208,6 +209,6 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #email { width: 170px; }
 #zip { width: 80px;}
 .churnalism-highlight {
-	background-color: #ecc13d;
+	background-color: #F6F93A;
 }
 

@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from apiproxy.embellishments import embellish
 from utils.slurp_url import slurp_url
 
-from apiproxy.models import SearchDocument
+from apiproxy.models import SearchDocument, Match, MatchedDocument
 
 import superfastmatch
 
@@ -100,7 +100,8 @@ def search_result_page(request, results, source_text,
                   {'results': results,
                    'source_text': source_text,
                    'source_title': source_title,
-                   'source_url': source_url})
+                   'source_url': source_url,
+                   'domain': settings.DOMAIN })
 
 
 def search(request, url=None, uuid=None):
@@ -246,6 +247,18 @@ def shared(request, uuid):
         else:
             doc.times_shared = 1
         doc.save()
+        return HttpResponse("OK", content_type="text/html")
+    except:
+        return HttpResponseServerError()
+
+def confirmed(request, match_id):
+    try:
+        match = Match.objects.get(id=match_id)
+        if match.confirmed:
+            match.confirmed += 1
+        else:
+            match.confirmed = 1
+        match.save()
         return HttpResponse("OK", content_type="text/html")
     except:
         return HttpResponseServerError()

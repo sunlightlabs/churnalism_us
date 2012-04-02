@@ -154,6 +154,9 @@ def search(request, doctype=None):
     # The actual proxying:
     sfm = superfastmatch.DjangoClient()
     response = sfm.search(text, doctype)
+    
+    #if we get an error here, we should just return matches from the database
+
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
@@ -174,10 +177,12 @@ def search(request, doctype=None):
                                     source_headline=r['title'])
                 md.save() 
 
+            match_id = None
             matches = Match.objects.filter(search_document=doc, matched_document=md)
             if len(matches) > 0:
                 matches[0].number_matches += 1
                 matches[0].save()
+                match_id = matches[0].id
             else:
                 stats = calculate_coverage(text, r)
                 match = Match(search_document=doc, 
@@ -186,6 +191,9 @@ def search(request, doctype=None):
                               percent_churned=str(stats[1]),
                               number_matches=1)
                 match.save()
+                match_id = match.id
+            
+            r['match_id'] = match_id
 
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 

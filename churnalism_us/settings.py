@@ -4,7 +4,7 @@ import os
 from datetime import timedelta
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-
+DOMAIN = 'http://us.churnalism.com'
 DEBUG = True
 
 TEMPLATE_DEBUG = DEBUG
