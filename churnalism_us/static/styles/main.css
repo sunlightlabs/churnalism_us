@@ -91,7 +91,7 @@ input:invalid, textarea:invalid { border-radius: 1px;  -moz-box-shadow: 0px 0px 
 
 ::-moz-selection{ background: #f6f93a; text-shadow: none; }
 ::selection { background:#f6f93a; text-shadow: none; } 
-a:link { -webkit-tap-highlight-color: #CA5703; } 
+/*a:link { -webkit-tap-highlight-color: #CA5703; } */
 
 button, .buttonLink { width: auto; text-indent: -9999em; display: block; border: none; cursor: pointer; }
 .ie7 img { -ms-interpolation-mode: bicubic; }
