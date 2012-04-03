@@ -149,12 +149,13 @@ $(document).ready(function(){
        // }
   
         var dateline = document_response['date']
-        $('div#rtColumn').find('time').attr('datetime', dateline);
-        $('div#rtColumn').find('time').attr('pubdate', dateline);
-        dateline = document_response['source'] + ' | ' + dateline.substring(5,7) + '/' + dateline.substring(8,10) + '/' + dateline.substring(0,4);
+        if (dateline != null && dateline != '') {
+            $('div#rtColumn').find('time').attr('datetime', dateline);
+            $('div#rtColumn').find('time').attr('pubdate', dateline);
+            dateline = document_response['source'] + ' | ' + dateline.substring(5,7) + '/' + dateline.substring(8,10) + '/' + dateline.substring(0,4);
         
-        $('div#rtColumn').find('time').text(dateline);
-        
+            $('div#rtColumn').find('time').text(dateline);
+        }
     
         if (match_id != null){
             if ($("ol#matches li.active").hasClass('confirmed') == false ){    
