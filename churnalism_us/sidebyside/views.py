@@ -85,7 +85,7 @@ def attach_document_text(results, maxdocs=None):
 
 
 def search_page(request):
-    return render(request, 'sidebyside/search_page.html', {})
+    return render(request, 'sidebyside/search_page.html', {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
 
 
 def search_result_page(request, results, source_text, 
