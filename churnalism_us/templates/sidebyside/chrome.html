@@ -1,6 +1,8 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+
 {% load jsonify %}
 {% load trailingslash %}
+{% block title %}Churnalism - Side by Side View {% endblock %}
 
 {% comment %}
 This template stands alone because the chrome extension performs a POST request
@@ -9,9 +11,7 @@ relative links inside the injected iframe to be relative to the containing page,
 so all links output must be absolute.
 {% endcomment %}
 
-<html>
-    <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    {% block head %}
         <style type="text/css">
             iframe, html, body { padding: 0; margin: 0; }
             ul { margin: 0; padding-top: 0; padding-bottom: 0; }
@@ -67,8 +67,8 @@ so all links output must be absolute.
 			}
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
-    </head>
-    <body>
+    {% endblock %}
+    {% block body %}
         <div style="position: relative;">
 			<div id="explain-bar">
 				<div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap by {{ match.coverage.1|floatformat:0 }}%.</div>
@@ -143,5 +143,4 @@ so all links output must be absolute.
 				});
 			});
         </script>        
-    </body>
-</html>
+    {% endblock %}
