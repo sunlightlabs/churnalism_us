@@ -101,7 +101,8 @@ def search_result_page(request, results, source_text,
                    'source_text': source_text,
                    'source_title': source_title,
                    'source_url': source_url,
-                   'domain': settings.DOMAIN })
+                   'domain': settings.DOMAIN,
+                   'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
 
 
 def search(request, url=None, uuid=None):
