@@ -29,8 +29,18 @@ so all links output must be absolute.
 				margin: 0 0 1em 0;
 				width: 85%;
 			}
+			#match-bar {
+				border-bottom: 1px solid #353671;
+				font-family: Helvetica,Arial,sans-serif;
+				font-size: 2.5em;
+				font-weight: bold;
+			}
+			span#overlap-label {
+				position: relative;
+				top: -1em;
+				left: 550px;
+			}
 			.link-separator {
-				margin: 0 1em;
 				letter-spacing: 117%;
 				font-weight: bold;
 			}
@@ -70,11 +80,14 @@ so all links output must be absolute.
     {% endblock %}
     {% block body %}
         <div style="position: relative;">
-			<div id="explain-bar">
-				<div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap by {{ match.coverage.1|floatformat:0 }}%.</div>
+<!--			<div id="explain-bar">
+				<div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap {{ match.coverage.1|floatformat:0 }}%.</div>
 				{% if match_count > 1 %}
 				{{ match_count|add:-1 }} other documents also match. <a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-permalink uuid match.doctype match.docid %}" target="_blank">See those results</a>
 				{% endif %}
+			</div> -->
+			<div id="match-bar">
+				<span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
 			</div>
 			<div id="sidebyside-title-box">
 				<div id="doc-title-box">
