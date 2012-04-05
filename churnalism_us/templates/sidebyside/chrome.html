@@ -128,8 +128,8 @@ so all links output must be absolute.
             $(document).ready(function(){
                 var doc_text_el = document.getElementById('doc-text');
 				var match_text_el = document.getElementById('pr-text');
-				$(doc_text_el).html(markupArticleText($(doc_text_el).text()));
-				$(match_text_el).html(markupArticleText($(match_text_el).text()));
+				$(doc_text_el).html($(doc_text_el).text());
+				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
 					$.each(row['snippets'], function(idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
@@ -141,6 +141,8 @@ so all links output must be absolute.
 						});
 					});
 				});
+				$(doc_text_el).html(markupArticleText($(doc_text_el).html()));
+				$(match_text_el).html(markupArticleText($(match_text_el).html()));
 			});
         </script>        
     {% endblock %}
