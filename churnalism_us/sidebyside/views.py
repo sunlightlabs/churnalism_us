@@ -3,6 +3,7 @@
 from __future__ import division
 
 import re
+import httplib
 import lxml.html
 import readability
 from operator import itemgetter
@@ -10,7 +11,7 @@ from operator import itemgetter
 import stream
 from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
-from django.http import Http404, HttpResponse, HttpResponseServerError
+from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from apiproxy.embellishments import embellish
 from utils.slurp_url import slurp_url
@@ -133,10 +134,16 @@ def search_against_text(request, text):
 
 def search_against_uuid(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
-    sfm_results = sfm.search(text=None, uuid=uuid)
-    return search_result_page(request, sfm_results, 
-                              source_text=sfm_results.get('text'), 
-                              source_title=sfm_results.get('title'))
+    try:
+        sfm_results = sfm.search(text=None, uuid=uuid)
+        return search_result_page(request, sfm_results, 
+                                  source_text=sfm_results.get('text'), 
+                                  source_title=sfm_results.get('title'))
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            return document404(request, uuid=uuid)
+        else:
+            raise
 
 
 def search_against_url(request, url):
@@ -160,33 +167,51 @@ def search_against_url(request, url):
 
     sfm = superfastmatch.DjangoClient('sidebyside')
     (title, text) = fetch_and_clean(url)
-    sfm_results = sfm.search(text=text, title=title, url=url)
+    try:
+        sfm_results = sfm.search(text=text, title=title, url=url)
 
-    #if they submit a url, don't return the exact same url in the results
-    for r in sfm_results['documents']['rows']:
-        if r['url'] == url:
-            sfm_results['documents']['rows'].remove(r)
+        #if they submit a url, don't return the exact same url in the results
+        for r in sfm_results['documents']['rows']:
+            if r['url'] == url:
+                sfm_results['documents']['rows'].remove(r)
 
-    return search_result_page(request, sfm_results, sfm_results['text'],
-                              source_title=sfm_results['title'], source_url=url)
+        return search_result_page(request, sfm_results, sfm_results['text'],
+                                  source_title=sfm_results['title'], source_url=url)
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            return document404(request, url=url)
+        else:
+            raise
 
 
 def permalink(request, uuid, doctype, docid):
     sfm = superfastmatch.DjangoClient('sidebyside')
-    sfm_results = sfm.search(text=None, uuid=uuid)
+    try:
+        sfm_results = sfm.search(text=None, uuid=uuid)
 
-    for row in sfm_results['documents']['rows']:
-        if row['doctype'] == doctype and row['docid'] == docid:
-            if not row.get('text'):
-                doc = sfm.document(doctype, docid)
-                if doc:
-                    row['text'] = doc['text']
+        for row in sfm_results['documents']['rows']:
+            if row['doctype'] == doctype and row['docid'] == docid:
+                if not row.get('text'):
+                    doc = sfm.document(doctype, docid)
+                    if doc:
+                        row['text'] = doc['text']
 
-    return search_result_page(request, sfm_results,
-                              source_text=sfm_results['text'],
-                              source_title=sfm_results.get('title'),
-                              source_url=sfm_results.get('url'))
+        return search_result_page(request, sfm_results,
+                                  source_text=sfm_results['text'],
+                                  source_title=sfm_results.get('title'),
+                                  source_url=sfm_results.get('url'))
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            return document404(request, uuid=uuid)
+        else:
+            raise
 
+
+def document404(request, uuid=None, url=None):
+    return render(request, 'documentmissing.html',
+                  {'uuid': uuid,
+                   'url': url
+                  })
 
 def select_best_match(text, sfm_results):
     rows = sfm_results['documents']['rows']
@@ -213,14 +238,17 @@ def chromeext_recall(request, uuid):
     match_count = len(sfm_results['documents']['rows'])
 
     (match, match_pct) = select_best_match(sfm_results['text'], sfm_results)
-    if match is not None:
-        match_doc = sfm.document(match['doctype'], match['docid'])
-        if match_doc['success'] == True:
-            match_text = match_doc['text']
-            match_title = match.get('title', '')
-            match_url = match.get('url', '')
-        sfm_results['documents']['rows'] = [match]
-        embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
+    if match is None:
+        return HttpResponseNotFound('No documents overlap with search document {uuid}'.format(uuid=uuid))
+
+    match_doc = sfm.document(match['doctype'], match['docid'])
+    if match_doc['success'] == True:
+        match_text = match_doc['text']
+        match_title = match.get('title', '')
+        match_url = match.get('url', '')
+    sfm_results['documents']['rows'] = [match]
+    embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
+
     resp = render(request, 'sidebyside/chrome.html',
                   {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
                    'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
