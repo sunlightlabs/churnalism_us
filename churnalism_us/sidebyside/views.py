@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from apiproxy.embellishments import embellish
 from utils.slurp_url import slurp_url
 
-from apiproxy.models import SearchDocument
+from apiproxy.models import SearchDocument, Match, MatchedDocument
 
 import superfastmatch
 
@@ -86,7 +86,7 @@ def attach_document_text(results, maxdocs=None):
 
 
 def search_page(request):
-    return render(request, 'sidebyside/search_page.html', {})
+    return render(request, 'sidebyside/search_page.html', {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
 
 
 def search_result_page(request, results, source_text, 
@@ -101,7 +101,9 @@ def search_result_page(request, results, source_text,
                   {'results': results,
                    'source_text': source_text,
                    'source_title': source_title,
-                   'source_url': source_url})
+                   'source_url': source_url,
+                   'domain': settings.DOMAIN,
+                   'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
 
 
 def search(request, url=None, uuid=None):
@@ -274,6 +276,18 @@ def shared(request, uuid):
         else:
             doc.times_shared = 1
         doc.save()
+        return HttpResponse("OK", content_type="text/html")
+    except:
+        return HttpResponseServerError()
+
+def confirmed(request, match_id):
+    try:
+        match = Match.objects.get(id=match_id)
+        if match.confirmed:
+            match.confirmed += 1
+        else:
+            match.confirmed = 1
+        match.save()
         return HttpResponse("OK", content_type="text/html")
     except:
         return HttpResponseServerError()

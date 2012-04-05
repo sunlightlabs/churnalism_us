@@ -17,6 +17,7 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'permalink', name='sidebyside-permalink'),
     url(r'^search/$', 'search', name='sidebyside-search'),
     url(r'^shared/(?P<uuid>[a-z0-9]{32})/$', 'shared' , name='sidebyside-shared'),
+    url(r'^confirmed/(?P<match_id>[0-9]+)/$', 'confirmed' , name='sidebyside-confirmed'),
     url(r'^chrome/(?P<uuid>[a-z0-9]{32})/$', 'chromeext_recall', name='sidebyside-chrome-uuid-recall'),
 )
 

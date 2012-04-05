@@ -17,8 +17,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'sidebyside.views.search_page', name='index'),
-    url(r'^about/$', direct_to_template, {'template': 'about.html'}, name='about'),
-    url(r'^contact/$', direct_to_template, {'template': 'contact.html'}, name='contact'),
+    url(r'^about/$', direct_to_template, {'template': 'about.html', 'extra_context': {'ABSOLUTE_STATIC_URL': settings.DOMAIN + settings.STATIC_URL}}, name='about'),
+    url(r'^contact/$', direct_to_template, {'template': 'contact.html', 'extra_context':{ 'ABSOLUTE_STATIC_URL': settings.DOMAIN + settings.STATIC_URL}}, name='contact'),
     url(r'^sidebyside/', include('sidebyside.urls')),
     url(r'^api/', include('apiproxy.urls')),
 )

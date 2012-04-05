@@ -126,7 +126,7 @@ class MatchedDocument(models.Model):
 
     updated = models.DateTimeField(auto_now=True,
                                    db_index=True)
-
+    
 
 
 class Match(models.Model):
@@ -155,5 +155,6 @@ class Match(models.Model):
                                    db_index=True)
 
 
+    confirmed = models.IntegerField(blank=True, null=True)
 
 

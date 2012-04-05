@@ -123,34 +123,48 @@ $(document).ready(function(){
         });
     };
 
-    var fetch_document = function (doctype, docid, next) {
+    var fetch_document = function (doctype, docid, match_id, next) {
         var url = '/api/document/DOCTYPE/DOCID/'.replace('DOCTYPE', doctype).replace('DOCID', docid);
         $.get(url, {
             crossDomain: false,
             cache: true,
         }).success(function(resp){
-            next(doctype, docid, resp); 
+            console.log(resp)
+            next(doctype, docid, match_id, resp); 
         });
     };
 
-    var show_document_response = function (doctype, docid, document_response) { 
+    var show_document_response = function (doctype, docid, match_id, document_response) { 
         var title = document_response['title'];
         if (title != null) {
             $("#match-title").text(title);
         } 
         var url = document_response['url'];
         if (url != null) {
-            $("a#match-url").attr("href", url).text(title);
+            $("div#rtColumn").find('h3.withTip').html('<a href="' + url + '">' + title + '</a>');
 
         } 
-        else {
-            $("a#match-url").text(title);
-        }
-   
+//        else {
+  //          $("a#match-url").text(title);
+       // }
+  
         var dateline = document_response['date']
-        $('time').attr('datetime', dateline).text(dateline);
+        if (dateline != null && dateline != '') {
+            $('div#rtColumn').find('time').attr('datetime', dateline);
+            $('div#rtColumn').find('time').attr('pubdate', dateline);
+            dateline = document_response['source'] + ' | ' + dateline.substring(5,7) + '/' + dateline.substring(8,10) + '/' + dateline.substring(0,4);
         
- 
+            $('div#rtColumn').find('time').text(dateline);
+        }
+    
+        if (match_id != null){
+            if ($("ol#matches li.active").hasClass('confirmed') == false ){    
+                $("#confirm").find('a#btnConfirm').attr('href', '/sidebyside/confirmed/'+ match_id + '/').css('background-image', 'url(/static/images/btn_confirm.png)').end().show();
+            } else {
+                $("#confirm").find('a#btnConfirm').attr('href', '/sidebyside/confirmed/'+ match_id + '/').css('background-image', 'url(/static/images/btn_thanks.png)').end().show();
+            }
+        }
+
         textdiv = match_text_el(doctype, docid);
         textdiv.html(markup_text(document_response['text']));
         with_search_row(doctype, docid, function(row){
@@ -166,11 +180,12 @@ $(document).ready(function(){
         textdiv.find('i:first').scrollintoview();
     };
 
-    var select_document = function (doctype, docid) {
-        fetch_document(doctype, docid, show_document_response);
+    var select_document = function (doctype, docid, match_id) {
+        fetch_document(doctype, docid, match_id, show_document_response);
         selected = {
             'doctype': doctype,
-            'docid': docid
+            'docid': docid,
+            'matchid': match_id,
         };
     };
 
@@ -201,18 +216,25 @@ $(document).ready(function(){
     };
 
     $("ol#matches li").click(function(click){
+
+        $(this).siblings().removeClass("active");
+        $(this).toggleClass('active');
+
+        var match_id = $(click.currentTarget).attr('match');
         var idstr = $(click.currentTarget).attr('id');
         var docattrs = extract_document_attrs(idstr);
         if (docattrs) {
-            select_document(docattrs['doctype'], docattrs['docid']);
+            select_document(docattrs['doctype'], docattrs['docid'], match_id);
         }
+
+        return false;
     });
 
     var permalink_matches = permalink_pattern.exec(window.location.pathname);
     if ((permalink_matches != null) && (permalink_matches.length == 4)) {
         var doctype = permalink_matches[2];
         var docid = permalink_matches[3];
-        select_document(doctype, docid);
+        select_document(doctype, docid, null);
     }
 
     sourcediv = $("div#source-text");
@@ -222,12 +244,20 @@ $(document).ready(function(){
     });
 
 
-     $("#matches li").click(function(){
-        $(this).siblings().removeClass("active");
-        $(this).toggleClass('active');
-        return false;
-     });
-
      $("#matches li:first").trigger('click');
+
+     $("#btnConfirm").click(function(){
+        if ($('ol#matches li.active').hasClass('confirmed') == false) {
+            var that = this
+            $.get( $(that).attr('href'), {
+                crossDomain: false,
+                cache: false,
+            }).success(function(resp){
+                $("ol#matches li.active").addClass('confirmed');
+                $(that).css('background-image', 'url(/static/images/btn_thanks.png)');
+            });
+        }
+        return false; 
+      });
 });
 

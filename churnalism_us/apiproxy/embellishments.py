@@ -6,7 +6,6 @@ from operator import itemgetter
 
 import superfastmatch
 
-
 def document_text(sfm, row):
     doc_result = sfm.document(row['doctype'], row['docid'])
     if doc_result['success'] == True:
