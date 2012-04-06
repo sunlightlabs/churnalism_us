@@ -72,7 +72,10 @@ so all links output must be absolute.
             #doc-text, #pr-text {
 			}
 			.churnalism-highlight {
-				background-color: #ecc13d;
+				background-color: #F6F93A;
+				padding: 0;
+				margin: 0;
+				font-style: italic;
 			}
 			.clear {
 				clear: both;
@@ -130,7 +133,9 @@ so all links output must be absolute.
 			<div id="footer">
 			</div>
         </div>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        {% endblock %}
+{% block js %}
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
         <script type="text/javascript">
@@ -154,18 +159,36 @@ so all links output must be absolute.
 				$(doc_text_el).html($(doc_text_el).text());
 				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
+
+					var count = 1;
 					$.each(row['snippets'], function(idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
 						$.each(sub_snippets, function(idx, sub_snippet){
+							console.log(count);
 							if (sub_snippet.length > 0) {
-								highlight_match(match_text_el, sub_snippet);
-								highlight_match(doc_text_el, sub_snippet);
+								highlight_match(match_text_el, sub_snippet, count);
+								highlight_match(doc_text_el, sub_snippet, count);
 							}
 						});
+						count = count + 1;
 					});
 				});
 				$(doc_text_el).html(markupArticleText($(doc_text_el).html()));
 				$(match_text_el).html(markupArticleText($(match_text_el).html()));
+				$('.churnalism-highlight').hover(function(){
+					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
+					$('.' + frag_class).css('background-color', '#E7CC29');
+					console.log(frag_class);
+				});
+				$('.churnalism-highlight').mouseout(function(){
+					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
+					$('.' + frag_class).css('background-color', '#F6F93A');
+					console.log(frag_class);
+				});
+
+
 			});
-        </script>        
-    {% endblock %}
+
+        </script>
+{% endblock %}        
+

@@ -252,12 +252,17 @@ def chromeext_recall(request, uuid):
     sfm_results['documents']['rows'] = [match]
     embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
 
+    if sfm_results.has_key('title'):
+        title = sfm_results['title']
+    else:
+        title = '(No Title Found)'
+
     resp = render(request, 'sidebyside/chrome.html',
                   {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
                    'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
                    'results': sfm_results,
                    'source_text': sfm_results['text'],
-                   'source_title': sfm_results['title'],
+                   'source_title': title,
                    'source_url': sfm_results.get('url'),
                    'uuid': uuid,
                    'match_count': match_count, # Raw match count, unrelated to 'match' variables below

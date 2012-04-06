@@ -1,11 +1,11 @@
-var OPEN_TAG = '<i class="churnalism-highlight">';
-var CLOSE_TAG = '</i>';
+var OPEN_TAG = '<p class="churnalism-highlight fragment-FRAG_NUMBER">';
+var CLOSE_TAG = '</p>';
 
 RegExp.escape = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 
-var highlight_match = function (p, match) {
+var highlight_match = function (p, match, frag_number) {
     var html = jQuery(p).html().replace(/&nbsp;/g, ' ');
     var haystack = html.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
     var needle = match.replace(/[\x00-\x2F]/g, '\x00').toLowerCase();
@@ -20,7 +20,7 @@ var highlight_match = function (p, match) {
             var prelude = html.slice(0, offset);
             var matched = html.slice(offset, offset + html_match[0].length);
             var postlude = html.slice(offset + html_match[0].length);
-            jQuery(p).html(prelude + OPEN_TAG + matched + CLOSE_TAG + postlude);
+            jQuery(p).html(prelude + OPEN_TAG.replace('FRAG_NUMBER', frag_number) + matched + CLOSE_TAG + postlude);
         } else {
             console.log('No match for already-found needle: ', html_match[0]);
         }
