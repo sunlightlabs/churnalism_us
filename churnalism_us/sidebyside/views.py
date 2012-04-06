@@ -248,6 +248,7 @@ def chromeext_recall(request, uuid):
         match_text = match_doc['text']
         match_title = match.get('title', '')
         match_url = match.get('url', '')
+	match_source = match.get('source', '')
     sfm_results['documents']['rows'] = [match]
     embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
 
@@ -263,7 +264,8 @@ def chromeext_recall(request, uuid):
                    'match': match,
                    'match_text': match_text,
                    'match_title': match_title,
-                   'match_url': match_url})
+                   'match_url': match_url,
+                   'match_source': match_source })
     return resp
 
 def shared(request, uuid):

@@ -30,15 +30,16 @@ so all links output must be absolute.
 				width: 85%;
 			}
 			#match-bar {
-				border-bottom: 1px solid #353671;
 				font-family: Helvetica,Arial,sans-serif;
-				font-size: 2.5em;
+				font-size: 2.8em;
 				font-weight: bold;
+				float: right;
 			}
 			span#overlap-label {
 				position: relative;
-				top: -1em;
-				left: 550px;
+				float: right;
+				margin-top: 1.3em;
+				
 			}
 			.link-separator {
 				letter-spacing: 117%;
@@ -60,6 +61,7 @@ so all links output must be absolute.
 				margin: 0;
 				padding: 1%;
 			}
+			#pr-title, #doc-title { font-size: 1.8em; }
             #doc-box, #pr-box {
                 float: left;
                 width: 48%;
@@ -75,9 +77,18 @@ so all links output must be absolute.
 			.clear {
 				clear: both;
 			}
+	    #container { border-top: 1px solid #E5E1DD; } 
+	    #share { display: none; }
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
     {% endblock %}
+
+    {% block overlap %}
+	<div id="match-bar">
+	<span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
+	</div>
+    {% endblock %}
+
     {% block body %}
         <div style="position: relative;">
 <!--			<div id="explain-bar">
@@ -86,19 +97,18 @@ so all links output must be absolute.
 				{{ match_count|add:-1 }} other documents also match. <a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-permalink uuid match.doctype match.docid %}" target="_blank">See those results</a>
 				{% endif %}
 			</div> -->
-			<div id="match-bar">
-				<span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
-			</div>
+			
 			<div id="sidebyside-title-box">
 				<div id="doc-title-box">
-					<h1 id="doc-title">
+					<h2 id="doc-title">
 						{{ source_title }}
-					</h1>
+					</h2>
 				</div>
 				<div id="pr-title-box">
-					<h1 id="pr-title">
+					<h2 id="pr-title">
 						{{ match_title }}
-					</h1>
+					</h2>
+                                      <em>Source: {{match_source}}</em>
 				</div>
 				<div class="clear">
 				</div>
