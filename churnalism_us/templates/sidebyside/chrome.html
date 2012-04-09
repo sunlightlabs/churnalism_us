@@ -164,7 +164,6 @@ so all links output must be absolute.
 					$.each(row['snippets'], function(idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
 						$.each(sub_snippets, function(idx, sub_snippet){
-							console.log(count);
 							if (sub_snippet.length > 0) {
 								highlight_match(match_text_el, sub_snippet, count);
 								highlight_match(doc_text_el, sub_snippet, count);
@@ -178,12 +177,10 @@ so all links output must be absolute.
 				$('.churnalism-highlight').hover(function(){
 					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
 					$('.' + frag_class).css('background-color', '#E7CC29');
-					console.log(frag_class);
 				});
 				$('.churnalism-highlight').mouseout(function(){
 					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
 					$('.' + frag_class).css('background-color', '#F6F93A');
-					console.log(frag_class);
 				});
 
 

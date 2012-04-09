@@ -150,6 +150,9 @@ $(document).ready(function(){
   
         var dateline = document_response['date']
         if (dateline != null && dateline != '') {
+            if (typeof dateline == 'number') {
+                dateline = (new Date(dateline)).toDateString();
+            }
             $('div#rtColumn').find('time').attr('datetime', dateline);
             $('div#rtColumn').find('time').attr('pubdate', dateline);
             dateline = document_response['source'] + ' | ' + dateline.substring(5,7) + '/' + dateline.substring(8,10) + '/' + dateline.substring(0,4);
