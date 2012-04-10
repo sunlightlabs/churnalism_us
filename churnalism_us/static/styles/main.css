@@ -56,7 +56,7 @@ input, select { vertical-align:middle; }
 body { color: #7c7c7b; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 19px; font-size: 14px; } 
 button.disabled { opacity: 0.3; filter: alpha(opacity=30); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"; }
 pre, code, kbd, samp { font-family: monospace, sans-serif; }
-p { margin-bottom: 1.3em; line-height: 22px;}
+p { margin-bottom: 1.3em; line-height: 23px;}
 
 html { overflow-y: scroll; }
 
@@ -211,7 +211,17 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #signUp button:hover, #submitBtn:hover { background: url(../images/btn_submit.png) bottom left no-repeat; }
 #email { width: 170px; }
 #zip { width: 80px;}
+#doc-text p, #pr-text p {
+	line-height: 24px;
+	font-size: 16px;
+}
 .churnalism-highlight {
+	border-style: solid;
+	border-color: transparent;
+	border-top-width: 3px;
+	border-bottom-width: 3px;
 	background-color: #F6F93A;
+	font-size: 16px;
+	line-height: 24px;
 }
 

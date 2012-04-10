@@ -1,5 +1,5 @@
-var OPEN_TAG = '<p class="churnalism-highlight fragment-FRAG_NUMBER">';
-var CLOSE_TAG = '</p>';
+var OPEN_TAG = '<span class="churnalism-highlight fragment-FRAG_NUMBER">';
+var CLOSE_TAG = '</span>';
 
 RegExp.escape = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");

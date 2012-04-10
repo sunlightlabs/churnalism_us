@@ -160,20 +160,19 @@ so all links output must be absolute.
 				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
 
-					var count = 1;
-					$.each(row['snippets'], function(idx, snippet){
+					$.each(row['snippets'], function(snippet_idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
-						$.each(sub_snippets, function(idx, sub_snippet){
+						$.each(sub_snippets, function(subsnippet_idx, sub_snippet){
 							if (sub_snippet.length > 0) {
-								highlight_match(match_text_el, sub_snippet, count);
-								highlight_match(doc_text_el, sub_snippet, count);
+								highlight_match(match_text_el, sub_snippet, snippet_idx);
+								highlight_match(doc_text_el, sub_snippet, snippet_idx);
 							}
 						});
-						count = count + 1;
 					});
 				});
 				$(doc_text_el).html(markupArticleText($(doc_text_el).html()));
 				$(match_text_el).html(markupArticleText($(match_text_el).html()));
+				
 				$('.churnalism-highlight').hover(function(){
 					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
 					$('.' + frag_class).css('background-color', '#E7CC29');
@@ -182,8 +181,6 @@ so all links output must be absolute.
 					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
 					$('.' + frag_class).css('background-color', '#F6F93A');
 				});
-
-
 			});
 
         </script>
