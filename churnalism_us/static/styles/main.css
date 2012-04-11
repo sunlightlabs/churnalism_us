@@ -125,7 +125,7 @@ h1 { width: 197px; height: 70px; float: left; margin: 15px 0 20px 20px;}
 h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
-.smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px;}
+.smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px; margin-top:20px;}
 h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px;}
 h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 140%; font-weight: normal; margin-bottom: 15px; color: #393434;}
 h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: normal; font-size: 125%; margin-bottom: 5px;}
