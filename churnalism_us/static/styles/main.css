@@ -56,7 +56,7 @@ input, select { vertical-align:middle; }
 body { color: #7c7c7b; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; line-height: 19px; font-size: 14px; } 
 button.disabled { opacity: 0.3; filter: alpha(opacity=30); -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"; }
 pre, code, kbd, samp { font-family: monospace, sans-serif; }
-p { margin-bottom: 1.3em; line-height: 22px;}
+p { margin-bottom: 1.3em; line-height: 23px;}
 
 html { overflow-y: scroll; }
 
@@ -132,17 +132,19 @@ h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font
 #ltColumn h2 { padding-left: 25px;}
 
 nav { float: right;}
-nav li { width: 88px; height: 35px; float: left;}
-nav li a { width: 88px; height: 35px; }
+nav li { width: 88px; height: 45px; float: left;}
+nav li a { width: 88px; height: 45px; }
 #about a { background: url(../images/nav_about.jpg) top left no-repeat;  }
 #about a:hover { background: url(../images/nav_about.jpg) bottom left no-repeat; } 
 #contact a { background: url(../images/nav_contact.jpg) top left no-repeat; }
 #contact a:hover { background: url(../images/nav_contact.jpg) bottom left no-repeat; }
 #api a { background: url(../images/nav_api.jpg) top left no-repeat; }
 #api a:hover { background: url(../images/nav_api.jpg) bottom left no-repeat; }
-#sunlight { width: 217px;}
-#sunlight a { background: url(../images/nav_sunlight.jpg) top left no-repeat; width: 217px; }
-#sunlight a:hover { background: url(../images/nav_sunlight.jpg) bottom left no-repeat; }
+#sunlight { width: 293px;}
+#sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; width: 293px; }
+#logo_mst { background: url(../images/logo_mst.jpg) left 3px no-repeat; margin-left: 100px; float: left; width: 65px;}
+#logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
+#sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; }
 
 #share { float: right; margin-top: 75px; font-size: 95%; margin-right: 15px;}
 #share li { float: left; margin-left: 10px;}
@@ -156,7 +158,8 @@ nav li a { width: 88px; height: 35px; }
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 #fullColumn input, #fullColumn textarea { width: 380px; padding: 10px 10px 5px; font-size: 110%; color: #7C7C7B; margin-bottom: 15px;}
 
-#introText { font-size: 180%; line-height: 30px;}
+#introText { font-size: 280%; line-height: 45px;}
+.introHighlight { background-color: #f6f93a;}
 
 .withSpace li { margin-bottom: 15px;}
 
@@ -208,7 +211,17 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #signUp button:hover, #submitBtn:hover { background: url(../images/btn_submit.png) bottom left no-repeat; }
 #email { width: 170px; }
 #zip { width: 80px;}
+#doc-text p, #pr-text p {
+	line-height: 24px;
+	font-size: 16px;
+}
 .churnalism-highlight {
+	border-style: solid;
+	border-color: transparent;
+	border-top-width: 3px;
+	border-bottom-width: 3px;
 	background-color: #F6F93A;
+	font-size: 16px;
+	line-height: 24px;
 }
 

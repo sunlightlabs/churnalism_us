@@ -3,10 +3,14 @@
 <!DOCTYPE html>
 <html>
     <head>
+		<link rel="icon" type="image/x-icon" href="/favicon.ico">
         <link rel="stylesheet" type="text/css" href="{{ ABSOLUTE_STATIC_URL }}styles/main.css">
         {% block head %}
         {% endblock head %}
         <title>{% block title %}Churnalism - US{% endblock %}</title>
+        
+        <script type="text/javascript" src="http://use.typekit.com/afk5tze.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     </head>
 
     <body class="{% block bodyclass %}{% endblock %}">
@@ -16,11 +20,14 @@
                     <li id="about"><a class="textReplace" href="{% url about %}">About</a></li>
                     <li id="contact"><a class="textReplace" href="{% url contact %}">Contact</a></li>
 <!--                    <li id="api"><a class="textReplace" href="#">Api</a></li>-->
-                    <li id="sunlight"><a class="textReplace" href="http://sunlightfoundation.com">Product of: Sunlight Foundation</a></li>
+                    <li id="sunlight" class="textReplace" >Product of: <a class="textReplace" id="logo_mst" href="http://mediastandardstrust.org/">Media Standards Trust</a> <a id="logo_sunlight" class="textReplace" href="http://sunlightfoundation.com">Sunlight Foundation</a></li>
                 </ul>    
             </nav>   
             <div class="clear"></div> 
             <h1><a class="textReplace" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a></h1>
+
+	   {% block overlap %}{% endblock %}
+
             <div id="share">
                 <ul>
                     {% block share_url %}{% endblock %}
@@ -79,8 +86,8 @@
     </body>
 
     
-    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="{{ABSOLUTE_STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
     {% block js %}
     {% endblock js %}
 </html>

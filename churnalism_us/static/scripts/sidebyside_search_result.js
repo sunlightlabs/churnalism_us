@@ -150,6 +150,9 @@ $(document).ready(function(){
   
         var dateline = document_response['date']
         if (dateline != null && dateline != '') {
+            if (typeof dateline == 'number') {
+                dateline = (new Date(dateline)).toDateString();
+            }
             $('div#rtColumn').find('time').attr('datetime', dateline);
             $('div#rtColumn').find('time').attr('pubdate', dateline);
             dateline = document_response['source'] + ' | ' + dateline.substring(5,7) + '/' + dateline.substring(8,10) + '/' + dateline.substring(0,4);
@@ -166,7 +169,7 @@ $(document).ready(function(){
         }
 
         textdiv = match_text_el(doctype, docid);
-        textdiv.html(markup_text(document_response['text']));
+        textdiv.html(document_response['text']);
         with_search_row(doctype, docid, function(row){
             $.each(row['snippets'], function(idx, snippet){
                 var sub_snippets = snippet.split(/[\r\n]+/g).map(function(ss){ return ss.trim(); });
@@ -177,6 +180,7 @@ $(document).ready(function(){
                 });
             });
         });
+        textdiv.html(markup_text(textdiv.html()));
         textdiv.find('i:first').scrollintoview();
     };
 

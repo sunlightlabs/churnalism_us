@@ -29,8 +29,19 @@ so all links output must be absolute.
 				margin: 0 0 1em 0;
 				width: 85%;
 			}
+			#match-bar {
+				font-family: Helvetica,Arial,sans-serif;
+				font-size: 2.8em;
+				font-weight: bold;
+				float: right;
+			}
+			span#overlap-label {
+				position: relative;
+				float: right;
+				margin-top: 1.3em;
+				
+			}
 			.link-separator {
-				margin: 0 1em;
 				letter-spacing: 117%;
 				font-weight: bold;
 			}
@@ -50,6 +61,7 @@ so all links output must be absolute.
 				margin: 0;
 				padding: 1%;
 			}
+			#pr-title, #doc-title { font-size: 1.8em; }
             #doc-box, #pr-box {
                 float: left;
                 width: 48%;
@@ -60,22 +72,35 @@ so all links output must be absolute.
             #doc-text, #pr-text {
 			}
 			.churnalism-highlight {
-				background-color: #ecc13d;
+				background-color: #F6F93A;
+				padding: 0;
+				margin: 0;
+				font-style: italic;
 			}
 			.clear {
 				clear: both;
 			}
+	    #container { border-top: 1px solid #E5E1DD; } 
+	    #share { display: none; }
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
     {% endblock %}
+
+    {% block overlap %}
+	<div id="match-bar">
+	<span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
+	</div>
+    {% endblock %}
+
     {% block body %}
         <div style="position: relative;">
-			<div id="explain-bar">
-				<div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap by {{ match.coverage.1|floatformat:0 }}%.</div>
+<!--			<div id="explain-bar">
+				<div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap {{ match.coverage.1|floatformat:0 }}%.</div>
 				{% if match_count > 1 %}
 				{{ match_count|add:-1 }} other documents also match. <a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-permalink uuid match.doctype match.docid %}" target="_blank">See those results</a>
 				{% endif %}
-			</div>
+			</div> -->
+			
 			<div id="sidebyside-title-box">
 				<div id="doc-title-box">
 					<h2 id="doc-title">
@@ -86,6 +111,7 @@ so all links output must be absolute.
 					<h2 id="pr-title">
 						{{ match_title }}
 					</h2>
+                    <em>Source: {{match_source}}</em>
 				</div>
 				<div class="clear">
 				</div>
@@ -107,7 +133,9 @@ so all links output must be absolute.
 			<div id="footer">
 			</div>
         </div>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        {% endblock %}
+{% block js %}
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
         <script type="text/javascript">
@@ -128,19 +156,33 @@ so all links output must be absolute.
             $(document).ready(function(){
                 var doc_text_el = document.getElementById('doc-text');
 				var match_text_el = document.getElementById('pr-text');
-				$(doc_text_el).html(markupArticleText($(doc_text_el).text()));
-				$(match_text_el).html(markupArticleText($(match_text_el).text()));
+				$(doc_text_el).html($(doc_text_el).text());
+				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
-					$.each(row['snippets'], function(idx, snippet){
+
+					$.each(row['snippets'], function(snippet_idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
-						$.each(sub_snippets, function(idx, sub_snippet){
+						$.each(sub_snippets, function(subsnippet_idx, sub_snippet){
 							if (sub_snippet.length > 0) {
-								highlight_match(match_text_el, sub_snippet);
-								highlight_match(doc_text_el, sub_snippet);
+								highlight_match(match_text_el, sub_snippet, snippet_idx);
+								highlight_match(doc_text_el, sub_snippet, snippet_idx);
 							}
 						});
 					});
 				});
+				$(doc_text_el).html(markupArticleText($(doc_text_el).html()));
+				$(match_text_el).html(markupArticleText($(match_text_el).html()));
+				
+				$('.churnalism-highlight').hover(function(){
+					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
+					$('.' + frag_class).css('background-color', '#E7CC29');
+				});
+				$('.churnalism-highlight').mouseout(function(){
+					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
+					$('.' + frag_class).css('background-color', '#F6F93A');
+				});
 			});
-        </script>        
-    {% endblock %}
+
+        </script>
+{% endblock %}        
+
