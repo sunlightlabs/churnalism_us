@@ -1,16 +1,28 @@
 import sys
 import os
+from optparse import make_option
 from pprint import pprint
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 from django.core.management.base import BaseCommand
+
+import progressbar
+import progressbar.widgets
+
 import superfastmatch
 
 class Command(BaseCommand):
     help = 'Dumps a set of documents from SuperFastMatch into a JSON file, similar to a Django fixture.'
     args = '<file> <host> <port>'
+    option_list = BaseCommand.option_list + (
+        make_option('--doctypes',
+                    action='store',
+                    dest='doctypes',
+                    default=None,
+                    help='A mapping of doctypes to override the doctypes stored in the backup file. The pattern is from1:to1,from2:to2,...'),
+    )
 
     def handle(self, inpath, host, port, *args, **options):
         try:
@@ -27,6 +39,21 @@ class Command(BaseCommand):
             print "No such file: {0}".format(inpath)
             return
 
+        doctype_mappings = {}
+        doctypes_option = options.get('doctypes')
+        if doctypes_option is not None:
+            for mapping in doctypes_option.split(','):
+                mapping = mapping.strip()
+                (src, dst) = mapping.split(':')
+                src = int(src)
+                dst = int(dst)
+                doctype_mappings[src] = dst
+
+        if doctype_mappings:
+            print >>sys.stderr, "Remapping doctypes:"
+            for (src, dst) in doctype_mappings.iteritems():
+                print >>sys.stderr, "    {0} => {1}".format(src, dst)
+
         url = 'http://{host}:{port}'.format(**locals())
         sfm = superfastmatch.Client(url)
 
@@ -40,6 +67,9 @@ class Command(BaseCommand):
                         for attr in ignored_attributes:
                             if doc.has_key(attr):
                                 del doc[attr]
+                        new_doctype = doctype_mappings.get(doc['doctype'])
+                        if new_doctype:
+                            doc['doctype'] = new_doctype
                         add_result = sfm.add(defer=True, **doc)
                         if add_result['success'] == False:
                             print >>sys.stderr, "Failed to restore document ({doctype}, {docid})".format(**doc)
