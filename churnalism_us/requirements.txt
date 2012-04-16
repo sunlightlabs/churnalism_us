@@ -6,6 +6,8 @@ httplib2
 lxml
 readability-lxml
 requests
+gevent
+progressbar
 ipython
 django-devserver
 

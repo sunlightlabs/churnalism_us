@@ -60,7 +60,7 @@ class Command(BaseCommand):
                                     del doc[attr]
                             doc['text'] = docresult['text']
                             
-                            pickle.dump(doc, docsfile, 1)
+                            pickle.dump(doc, docsfile, pickle.HIGHEST_PROTOCOL)
                             metadata['count'] += 1
                         else:
                             print >>sys.stderr, "Unable to fetch text for document ({doctype}, {docid})".format(**docmeta)

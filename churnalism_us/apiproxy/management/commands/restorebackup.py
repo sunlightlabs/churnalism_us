@@ -74,16 +74,20 @@ class Command(BaseCommand):
                     metadata = pickle.load(metafile)
                     progress = progressbar.ProgressBar(maxval=metadata['count'],
                                                        widgets=[
-                                                           progressbar.widgets.AnimatedMarker(markers='◐◓◑◒'),
+                                                           progressbar.widgets.AnimatedMarker(),
+                                                           '  ',
                                                            progressbar.widgets.Counter(),
+                                                           '/{0}  '.format(metadata['count'] + 1),
                                                            progressbar.widgets.Percentage(),
+                                                           '  ',
                                                            progressbar.widgets.ETA(),
 
                                                        ])
+                    progress.start()
 
                     docloader = pickle.Unpickler(docsfile)
                     try:
-                        for doccounter in xrange(0, metadata['count']):
+                        for doccounter in xrange(1, metadata['count'] + 1):
                             doc = docloader.load()
                             if 'text' in doc and 'doctype' in doc and 'docid' in doc:
                                 for attr in ignored_attributes:
