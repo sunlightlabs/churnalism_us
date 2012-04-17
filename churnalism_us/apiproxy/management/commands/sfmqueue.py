@@ -22,7 +22,8 @@ class Command(NoArgsCommand):
             queued = [r for r in response['rows'] if r['status'] == 'Queued']
             active = [r for r in response['rows'] if r['status'] == 'Active']
 
-            print 'Length: {0}'.format(len(queued) + len(active))
+            print 'Length: {0}{1}'.format(len(queued) + len(active),
+                                          '' if response.get('cursors', {}).get('next') == '' else '+')
             for (action, cnt) in freq([r['action'] for r in queued]).iteritems():
                 print '  {action!s:<20}  {cnt!s:>10}'.format(action=action, cnt=cnt)
 
