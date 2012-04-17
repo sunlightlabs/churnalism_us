@@ -17,6 +17,27 @@ except ImportError:
 from django.core.management.base import BaseCommand
 import superfastmatch
 
+
+def build_document(sfm, docmeta):
+    """Takes a document meta dictionary and an superfastmatch client and
+    fetches the text before removing server-specific attributes.
+    """
+    ignored_attributes = ['characters', 'id']
+
+    docresult = sfm.document(docmeta['doctype'], docmeta['docid'])
+    if docresult['success'] == True:
+        doc = {}
+        doc.update(docmeta)
+        for attr in ignored_attributes:
+            if attr in doc:
+                del doc[attr]
+                doc['text'] = docresult['text']
+        return doc
+
+    else:
+        raise Exception("Unable to fetch text for document ({doctype}, {docid})".format(**docmeta))
+
+
 class Command(BaseCommand):
     help = 'Dumps a set of documents from SuperFastMatch into a pickle file.'
     args = '<file> [doctypes]'
@@ -42,7 +63,6 @@ class Command(BaseCommand):
                 'count': 0,
                 'doctypes': doctypes
             }
-            ignored_attributes = ['characters', 'id']
            
             with NamedTemporaryFile(mode='wb') as metafile:
                 with NamedTemporaryFile(mode='wb') as docsfile:
@@ -50,26 +70,20 @@ class Command(BaseCommand):
                         if not docmeta:
                             print >>sys.stderr, "Dropped empty document."
                             continue
-
-                        docresult = sfm.document(docmeta['doctype'], docmeta['docid'])
-                        if docresult['success'] == True:
-                            doc = {}
-                            doc.update(docmeta)
-                            for attr in ignored_attributes:
-                                if attr in doc:
-                                    del doc[attr]
-                            doc['text'] = docresult['text']
-                            
+                        try:
+                            doc = build_document(sfm, docmeta)
                             pickle.dump(doc, docsfile, pickle.HIGHEST_PROTOCOL)
                             metadata['count'] += 1
-                        else:
-                            print >>sys.stderr, "Unable to fetch text for document ({doctype}, {docid})".format(**docmeta)
+                        except Exception as e:
+                            print >>sys.stderr, str(e)
 
+                    print "Dumped {count} documents spanning doctypes {doctypes}".format(**metadata)
                     pickle.dump(metadata, metafile)
                     metafile.flush()
                     docsfile.flush()
+                    print "Compressing backup..."
                     with closing(ZipFile(outpath, 'w', ZIP_DEFLATED)) as outfile:
                         outfile.write(metafile.name, 'meta')
                         outfile.write(docsfile.name, 'docs')
-
-            print "Dumped {count} documents spanning doctypes {doctypes}".format(**metadata)
+        print "Done."
+            

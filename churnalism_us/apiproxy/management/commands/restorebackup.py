@@ -3,7 +3,11 @@
 import sys
 import os
 from optparse import make_option
-from zipfile import ZipFile
+# Using the zipfile module from python 2.7 for backward compat with python 2.6
+# See bug: http://bugs.python.org/issue7610
+# Python 2.7.3 test_zipfile.py only fails two tests, both related to extracting
+# directories, which we are not concerned with.
+from zipfile27 import ZipFile
 from contextlib import closing
 from pprint import pprint
 try:
