@@ -21,7 +21,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import superfastmatch
 from apiproxy.models import SearchDocument, MatchedDocument, Match
-from apiproxy.embellishments import calculate_coverage
+from apiproxy.embellishments import calculate_coverage, embellish
+from celery_tasks.tasks import update_matches
 
 def association(request, doctype=None):
     """
@@ -157,9 +158,19 @@ def search(request, doctype=None):
     
     #if we get an error here, we should just return matches from the database
 
+
+
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
+        
+        embellish(text, 
+              response, 
+              reduce_frags=True,
+              add_coverage=True, 
+              add_snippets=True,
+              prefetch_documents=False)
+
         response['uuid'] = doc.uuid
         if (url or uuid) and 'text' not in response:
             response['text'] = doc.text
@@ -181,6 +192,7 @@ def search(request, doctype=None):
             matches = Match.objects.filter(search_document=doc, matched_document=md)
             if len(matches) > 0:
                 matches[0].number_matches += 1
+                matches[0].response = json.dumps(response)
                 matches[0].save()
                 match_id = matches[0].id
             else:
@@ -189,12 +201,16 @@ def search(request, doctype=None):
                               matched_document=md,
                               percent_sourced=0, #don't need this since churn function picks higher of sourced or churned
                               percent_churned=str(stats[1]),
-                              number_matches=1)
+                              number_matches=1,
+                              response=json.dumps(response) )
                 match.save()
                 match_id = match.id
             
             r['match_id'] = match_id
 
+        #use celery tasks to fetch result text
+        update_matches.delay(response['documents']['rows'])
+        
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 

@@ -12,4 +12,4 @@ django-devserver
 # These are for publicity machine are aren't strictly required
 python-dateutil
 feedparser
-
+celery

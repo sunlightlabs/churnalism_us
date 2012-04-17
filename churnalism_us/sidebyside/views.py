@@ -2,6 +2,7 @@
 
 from __future__ import division
 
+import json
 import re
 import httplib
 import lxml.html
@@ -91,12 +92,12 @@ def search_page(request):
 
 def search_result_page(request, results, source_text, 
                        source_url=None, source_title=None):
-    embellish(source_text, 
-              results, 
-              reduce_frags=True,
-              add_coverage=True, 
-              add_snippets=True,
-              prefetch_documents=settings.SIDEBYSIDE.get('max_doc_prefetch'))
+ #   embellish(source_text, 
+ #             results, 
+ #             reduce_frags=True,
+ #             add_coverage=True, 
+ #             add_snippets=True,
+ #             prefetch_documents=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return render(request, 'sidebyside/search_result.html',
                   {'results': results,
                    'source_text': source_text,
@@ -271,6 +272,24 @@ def chromeext_recall(request, uuid):
                    'match_title': match_title,
                    'match_url': match_url,
                    'match_source': match_source })
+    return resp
+
+def sidebyside_generic(request, match_doc_type, match_doc_id, search_uuid):
+
+    search_doc = SearchDocument.objects.get(uuid=search_uuid)
+    match_doc = MatchedDocument.objects.filter(doc_type=match_doc_type, doc_id=match_doc_id)[0]
+    match = Match.objects.get(search_document=search_doc, matched_document=match_doc)
+
+    resp = render(request, 'sidebyside/chrome.html',
+                            {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
+                            'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
+                            'source_text': search_doc.text,
+                            'source_title': search_doc.title,
+                            'match_text': match_doc.text,
+                            'match_title': match_doc.source_headline,
+                            'match_source': match_doc.source_name,
+                            'match': {'coverage': [None, match.percent_churned] },
+                            'results': json.loads(match.response)  })
     return resp
 
 def shared(request, uuid):

@@ -139,8 +139,8 @@ so all links output must be absolute.
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
         <script type="text/javascript">
-            var search_results = {{ results|jsonify|safe }};
 
+            var search_results = {{ results|jsonify|safe }};
 			var markupArticleText = function (txt) {
 				var trimmed = txt.trim();
 				var normalizedWhitespace = trimmed.replace(/^\s+$/gm, '');
@@ -159,7 +159,6 @@ so all links output must be absolute.
 				$(doc_text_el).html($(doc_text_el).text());
 				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
-
 					$.each(row['snippets'], function(snippet_idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
 						$.each(sub_snippets, function(subsnippet_idx, sub_snippet){

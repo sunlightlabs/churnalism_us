@@ -219,6 +219,10 @@ $(document).ready(function(){
         }
     };
 
+    $("ol#matches li a.sidebyside-link").click(function(click){
+        click.stopPropagation();
+    });
+
     $("ol#matches li").click(function(click){
 
         $(this).siblings().removeClass("active");

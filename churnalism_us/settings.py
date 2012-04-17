@@ -1,11 +1,16 @@
 # Django settings for churnalism_us project.
 
 import os
+import djcelery
 from datetime import timedelta
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 DOMAIN = 'http://us.churnalism.com'
 DEBUG = True
+
+djcelery.setup_loader()
+
+BROKER_URL = "amqp://guest:guest@localhost:5672/"
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -154,6 +159,9 @@ INSTALLED_APPS = (
     'generictags',
     'sidebyside',
     'apiproxy',
+    'djcelery',
+    'kombu.transport.django',
+    'celery_tasks',
 )
 
 # A sample logging configuration. The only tangible logging
