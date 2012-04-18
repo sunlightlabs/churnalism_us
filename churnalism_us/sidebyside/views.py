@@ -7,6 +7,7 @@ import re
 import httplib
 import lxml.html
 import readability
+import settings
 from operator import itemgetter
 
 import stream
@@ -22,6 +23,7 @@ from apiproxy.models import SearchDocument, Match, MatchedDocument
 import superfastmatch
 
 from django.conf import settings
+
 
 
 def ensure_url(url):
@@ -87,7 +89,13 @@ def attach_document_text(results, maxdocs=None):
 
 
 def search_page(request):
-    return render(request, 'sidebyside/search_page.html', {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
+    brokenurl = request.GET.get('brokenurl') 
+    if brokenurl == 'true':
+        broken = True
+    else:
+        broken = False
+
+    return render(request, 'sidebyside/search_page.html', {'brokenurl': broken, 'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
 
 
 def search_result_page(request, results, source_text, 
@@ -165,7 +173,10 @@ def search_against_url(request, url):
         doc = readability.Document(html)
         cleaned_html = doc.summary()
         content_dom = lxml.html.fromstring(cleaned_html)
-        title = doc.short_title()
+        try:
+            title = doc.short_title()
+        except: 
+            title = 'No Title'
         return (title, render_text(content_dom).strip().encode('utf-8', 'replace').decode('utf-8'))
 
     sfm = superfastmatch.DjangoClient('sidebyside')
@@ -177,9 +188,15 @@ def search_against_url(request, url):
         for r in sfm_results['documents']['rows']:
             if r['url'] == url:
                 sfm_results['documents']['rows'].remove(r)
+    
+        if sfm_results.has_key('text'): text = sfm_results['text']
+        else: text = ''
 
-        return search_result_page(request, sfm_results, sfm_results['text'],
-                                  source_title=sfm_results['title'], source_url=url)
+        if sfm_results.has_key('title'): title = sfm_results['title']
+        else: title='No Title'
+
+        return search_result_page(request, sfm_results, text,
+                                  source_title=title, source_url=url)
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
             return document404(request, url=url)
@@ -318,3 +335,8 @@ def confirmed(request, match_id):
     except:
         return HttpResponseServerError()
 
+def urlproblem(request):
+    url = request.GET.get('brokenurl', '')
+    f = open(settings.PROJECT_ROOT + '/logs/broken_urls.log', 'a') 
+    f.write(url)
+    return HttpResponse("OK", content_type="text/html")

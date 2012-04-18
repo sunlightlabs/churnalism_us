@@ -224,4 +224,6 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 	font-size: 16px;
 	line-height: 24px;
 }
+.url-problem { font-size: .8em; padding-left:130px; }
 
+.broken-url-text { border: 2px solid red; padding: 10px; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px } 

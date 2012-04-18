@@ -7,6 +7,9 @@
 {% block body %}
 <div id="fullColumn">
     <div id="halfColumn">
+        {% if brokenurl %}
+        <p class="broken-url-text">We've reported you had a problem with that last url and somebody will look into it. In the meantime, try copying and pasting the text of that article below.</p>
+        {% endif %}
         <p id="introText">Ever wonder if the news story your reading is a product of real journalism or just a spin off of another story posted elsewhere? <span class="introHighlight">Discover the journalism you can trust and what you should question</span>.</p>
     </div>
     <div id="halfColumnRt">

@@ -219,6 +219,13 @@ $(document).ready(function(){
         }
     };
 
+    $('span.url-problem a').click(function(click){
+        var that = this;
+        $.get('/sidebyside/urlproblem/', { 'brokenurl': that.href , }, 
+            function(data, textStatus){ window.location.href = '/?brokenurl=true'} );
+        return false; 
+    });
+
     $("ol#matches li a.sidebyside-link").click(function(click){
         click.stopPropagation();
     });
