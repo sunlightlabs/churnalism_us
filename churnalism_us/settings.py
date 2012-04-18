@@ -133,6 +133,8 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
+DEVSERVER_DEFAULT_PORT = '7000'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -189,10 +191,12 @@ APIPROXY = {
 
 SUPERFASTMATCH = {
     'default': {
+        # This should point at a Superfastmatch server
         'url': 'http://127.0.0.1:8080',
         'parse_response': True
     },
     'sidebyside': {
+        # This should point at a running instance of apiproxy app
         'url': 'http://127.0.0.1:7000/api',
         'parse_response': True
     }
