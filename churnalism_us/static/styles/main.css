@@ -178,7 +178,7 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 #scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
 #scissorTop { background: url(../images/img_sissorLt.png) bottom left no-repeat; position: relative; top: -20px;}
 
-.articleTitle { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
+.articleTitle:link, .articleTitle:active, .articleTitle:visited { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
 .articleTitle:hover { color: #24838e; }
 
 dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercase;}
