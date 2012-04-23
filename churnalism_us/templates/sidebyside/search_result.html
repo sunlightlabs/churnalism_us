@@ -11,7 +11,7 @@
         <ol id="matches">
             {% for row in results.documents.rows %}
                 <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
-                    <span class="textReplace" id="scissorTop">Scissor image</span>
+                    <span class="textReplace scissorTop hidden">Scissor image</span>
                     <div class="percentChurn">
                         <a class="percentText" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
                         <a title="View Side by Side" class="sidebyside-link textReplace" href="/sidebyside/generic/{{row.doctype}}/{{row.docid}}/{{results.uuid}}/">View Side by Side</a>
@@ -27,7 +27,7 @@
                             </div>
                         </dd>
                     </dl>
-                    <span class="textReplace" id="scissorBottom">Scissor image</span>
+                    <span class="textReplace scissorBottom hidden">Scissor image</span>
                 </li>
             {% endfor %}
         </ol>
