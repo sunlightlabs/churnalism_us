@@ -126,7 +126,7 @@ h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left 
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
 .smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px; margin-top:20px;}
-h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px;}
+h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px; line-height: 27px;}
 h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 140%; font-weight: normal; margin-bottom: 15px; color: #393434;}
 h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: normal; font-size: 125%; margin-bottom: 5px;}
 #ltColumn h2 { padding-left: 25px;}
@@ -165,11 +165,14 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; border-top: 1px dashed #a09e9e; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-bottom: 1px dashed #a09e9e;}
-.percentChurn a { font-size: 200%; color: #fff; }
-.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 3px 0 0 10px; }
+.percentChurn a { font-size: 200%; }
+.active .percentChurn a { color: #fff; }
+.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 5px 0 0 10px; }
 .characters { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
-.sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat; float: right; margin-right: 20px; height: 24px;}
-.sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
+.active .sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat;  margin-right: 20px; }
+.sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; }
+.sidebyside-link:hover { background: url(../images/sidebyside2.png) top right no-repeat; }
+.active .sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
 .percentText { float: left;  }
 
 .scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
@@ -177,7 +180,7 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 .hidden { display: none; }
 
-.articleTitle { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
+.articleTitle:link, .articleTitle:active, .articleTitle:visited { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
 .articleTitle:hover { color: #24838e; }
 
 dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercase;}
