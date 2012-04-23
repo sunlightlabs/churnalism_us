@@ -165,9 +165,12 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; border-top: 1px dashed #a09e9e; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-bottom: 1px dashed #a09e9e;}
-.percentChurn { font-size: 200%;  }
-.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat; color: #fff; height: 28px; width: 212px; display: block; margin-left: -10px; padding: 3px 0 0 10px; }
+.percentChurn a { font-size: 200%; color: #fff; }
+.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 3px 0 0 10px; }
 .characters { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
+.sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat; float: right; margin-right: 20px; height: 24px;}
+.sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
+.percentText { float: left;  }
 
 #scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
 #scissorTop { background: url(../images/img_sissorLt.png) bottom left no-repeat; position: relative; top: -20px;}
@@ -185,7 +188,6 @@ dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercas
 #confirm { width: 380px; float: right; padding-top: 10px; margin-right: -20px; margin-bottom: 30px;}
 #confirm a { background: url(../images/btn_confirm.png) top left no-repeat; width: 80px; height: 35px; float: right; }
 #confirm a:hover { background: url(../images/btn_confirm.png) bottom left no-repeat; }
-
 
 #fullColumn label { display: block; }
 
@@ -226,4 +228,4 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 }
 .url-problem { font-size: .8em; padding-left:130px; }
 
-.broken-url-text { border: 2px solid red; padding: 10px; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px } 
+.broken-url-text { border: 2px solid #f6f93a; padding: 13px 10px 10px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #f6f6cc; margin-bottom: 40px; text-align: center;} 

@@ -26,7 +26,7 @@
             <div class="clear"></div> 
             <h1><a class="textReplace" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a></h1>
 
-	   {% block overlap %}{% endblock %}
+	   
 
             <div id="share">
                 <ul>
@@ -41,6 +41,7 @@
             </div>    
         </header>  
         <div class="clear" id="container">
+            {% block overlap %}{% endblock %}
                 {% block body %}
                 {% endblock body %}
         </div>
