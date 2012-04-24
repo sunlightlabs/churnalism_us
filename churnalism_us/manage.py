@@ -11,4 +11,6 @@ except ImportError:
 import settings
 
 if __name__ == "__main__":
+    from gevent import monkey
+    monkey.patch_all(thread=False)
     execute_manager(settings)

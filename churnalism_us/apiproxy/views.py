@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 import superfastmatch
+from superfastmatch.djangoclient import from_django_conf
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
 from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
@@ -33,7 +34,7 @@ def association(request, doctype=None):
     Proxies requests for lists of associations to Superfastmatch.
     """
 
-    sfm = superfastmatch.DjangoClient()
+    sfm = from_django_conf()
     page = request.GET.get('cursor')
     response = sfm.associations(doctype, page)
     if isinstance(response, str):
@@ -47,7 +48,7 @@ def document_list(request, doctype=None):
     Proxies requests for lists of documents to Superfastmatch.
     """
 
-    sfm = superfastmatch.DjangoClient()
+    sfm = from_django_conf()
     page = request.GET.get('cursor')
     order_by = request.GET.get('order_by')
     limit = request.GET.get('limit')
@@ -63,7 +64,7 @@ def document(request, doctype, docid):
     Proxies requests for specific documents to Superfastmatch.
     """
 
-    sfm = superfastmatch.DjangoClient()
+    sfm = from_django_conf()
     response = sfm.document(doctype, docid)
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
@@ -221,10 +222,4 @@ def record_matches(doc, response, update_matches=False):
         match.save()
 
         r['match_id'] = match.id
-
-
-
-
-
-
 
