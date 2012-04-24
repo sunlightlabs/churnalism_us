@@ -115,7 +115,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
-    'generictags.absolutestaticurl.absolutestaticurl'
+    'generictags.absolutestaticurl.absolutestaticurl',
+    'generictags.baseurl.baseurl',
 )
 
 MIDDLEWARE_CLASSES = (
