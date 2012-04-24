@@ -10,9 +10,9 @@ def latest(number_latest):
     t = template.loader.get_template('apiproxy/latest_churns.html')
     recent_matches = Match.objects.all().order_by('-updated')[:20]
     for rm in recent_matches:
-        if rm.search_document not in dedupe and len(churns) < number_latest:
+        if rm.search_document_id not in dedupe and len(churns) < number_latest:
             churns.append({'percent': rm.percent_churned, 'title': rm.search_document.title, 'text': rm.search_document.text, 'uuid': rm.search_document.uuid})
-            dedupe.append(rm.search_document)
+            dedupe.append(rm.search_document_id)
 
     return t.render(template.Context({'latest': churns }))
  
@@ -23,9 +23,9 @@ def most_read(number_viewed):
     churns = []
     dedupe = []
     for m in matches:
-        if m.search_document not in dedupe and len(churns) < number_viewed :
+        if m.search_document_id not in dedupe and len(churns) < number_viewed :
             churns.append({'percent': m.percent_churned, 'title':m.search_document.title, 'text': m.search_document.text, 'uuid': m.search_document.uuid})
-            dedupe.append(m.search_document)
+            dedupe.append(m.search_document_id)
 
     return t.render(template.Context({'viewed': churns}))
  
