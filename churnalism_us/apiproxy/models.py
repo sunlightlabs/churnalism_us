@@ -121,6 +121,9 @@ class MatchedDocument(models.Model):
                                         null=True,
                                         blank=False)
 
+    text = models.TextField(null=False,
+                            blank=False)
+
     created = models.DateTimeField(auto_now_add=True,
                                    db_index=True)
 
@@ -157,4 +160,4 @@ class Match(models.Model):
 
     confirmed = models.IntegerField(blank=True, null=True)
 
-
+    response = models.TextField(null=True, blank=True)

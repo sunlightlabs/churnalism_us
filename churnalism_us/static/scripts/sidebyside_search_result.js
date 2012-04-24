@@ -219,11 +219,28 @@ $(document).ready(function(){
         }
     };
 
+    $('span.url-problem a').click(function(click){
+        var that = this;
+        $.get('/sidebyside/urlproblem/', { 'brokenurl': that.href , }, 
+            function(data, textStatus){ window.location.href = '/?brokenurl=true'} );
+        return false; 
+    });
+
+    $("ol#matches li a.sidebyside-link").click(function(click){
+        click.stopPropagation();
+    });
+
     $("ol#matches li").click(function(click){
 
         $(this).siblings().removeClass("active");
         $(this).toggleClass('active');
 
+        $(this).siblings().find('span.scissorTop').addClass("hidden")
+        $(this).siblings().find('span.scissorBottom').addClass("hidden")
+
+        $(this).find('span.scissorTop').removeClass("hidden")
+        $(this).find('span.scissorBottom').removeClass("hidden")
+    
         var match_id = $(click.currentTarget).attr('match');
         var idstr = $(click.currentTarget).attr('id');
         var docattrs = extract_document_attrs(idstr);

@@ -125,8 +125,8 @@ h1 { width: 197px; height: 70px; float: left; margin: 15px 0 20px 20px;}
 h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
-.smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px;}
-h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px;}
+.smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px; margin-top:20px;}
+h3 { font-family: Georgia, 'Times New Roman', Times, serif; color: #0e0202; font-weight: normal; font-size: 170%; margin-bottom: 20px; line-height: 27px;}
 h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 140%; font-weight: normal; margin-bottom: 15px; color: #393434;}
 h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: normal; font-size: 125%; margin-bottom: 5px;}
 #ltColumn h2 { padding-left: 25px;}
@@ -165,14 +165,22 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; border-top: 1px dashed #a09e9e; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-bottom: 1px dashed #a09e9e;}
-.percentChurn { font-size: 200%;  }
-.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat; color: #fff; height: 28px; width: 212px; display: block; margin-left: -10px; padding: 3px 0 0 10px; }
+.percentChurn a { font-size: 200%; }
+.active .percentChurn a { color: #fff; }
+.active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 5px 0 0 10px; }
 .characters { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
+.active .sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat;  margin-right: 20px; }
+.sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; }
+.sidebyside-link:hover { background: url(../images/sidebyside2.png) top right no-repeat; }
+.active .sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
+.percentText { float: left;  }
 
-#scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
-#scissorTop { background: url(../images/img_sissorLt.png) bottom left no-repeat; position: relative; top: -20px;}
+.scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
+.scissorTop { background: url(../images/img_sissorLt.png) bottom left no-repeat; position: relative; top: -20px;}
 
-.articleTitle { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
+.hidden { display: none; }
+
+.articleTitle:link, .articleTitle:active, .articleTitle:visited { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 105%;  margin-bottom: 5px; display: block; color: #605a5a;}
 .articleTitle:hover { color: #24838e; }
 
 dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercase;}
@@ -185,7 +193,6 @@ dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercas
 #confirm { width: 380px; float: right; padding-top: 10px; margin-right: -20px; margin-bottom: 30px;}
 #confirm a { background: url(../images/btn_confirm.png) top left no-repeat; width: 80px; height: 35px; float: right; }
 #confirm a:hover { background: url(../images/btn_confirm.png) bottom left no-repeat; }
-
 
 #fullColumn label { display: block; }
 
@@ -224,4 +231,6 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 	font-size: 16px;
 	line-height: 24px;
 }
+.smallHeader .url-problem { font-size: .8em; font-size: 70%; text-transform: capitalize; color: #ACAAA3; margin-top: 5px;}
 
+.broken-url-text { border: 2px solid #f6f93a; padding: 13px 10px 10px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #f6f6cc; margin-bottom: 40px; text-align: center;} 

@@ -29,17 +29,21 @@ so all links output must be absolute.
 				margin: 0 0 1em 0;
 				width: 85%;
 			}
+			#sidebysideHeader { 
+			    margin-top: 15px;
+			    margin-bottom: 40px;
+			}
 			#match-bar {
 				font-family: Helvetica,Arial,sans-serif;
 				font-size: 2.8em;
 				font-weight: bold;
 				float: right;
 			}
+			#sidebysideHeader a { float: left; font-size: 110%; margin-top: 13px; }
 			span#overlap-label {
 				position: relative;
 				float: right;
-				margin-top: 1.3em;
-				
+				line-height: 30px;
 			}
 			.link-separator {
 				letter-spacing: 117%;
@@ -87,8 +91,12 @@ so all links output must be absolute.
     {% endblock %}
 
     {% block overlap %}
-	<div id="match-bar">
-	<span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
+    <div id="sidebysideHeader">
+        <a href="#">« Back to all Matches</a>
+    	<div id="match-bar">
+    	    <span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
+    	</div>
+    	<div class="clear"></div>
 	</div>
     {% endblock %}
 
@@ -111,7 +119,7 @@ so all links output must be absolute.
 					<h2 class="withTip" id="pr-title">
 						{{ match_title }}
 					</h2>
-                                      <em>Source: {{match_source}}</em>
+                    <em>Source: {{match_source}}</em>
 				</div>
 				<div class="clear">
 				</div>
@@ -139,8 +147,8 @@ so all links output must be absolute.
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
         <script type="text/javascript">
-            var search_results = {{ results|jsonify|safe }};
 
+            var search_results = {{ results|jsonify|safe }};
 			var markupArticleText = function (txt) {
 				var trimmed = txt.trim();
 				var normalizedWhitespace = trimmed.replace(/^\s+$/gm, '');
@@ -159,7 +167,6 @@ so all links output must be absolute.
 				$(doc_text_el).html($(doc_text_el).text());
 				$(match_text_el).html($(match_text_el).text());
                 $.each(search_results['documents']['rows'], function(idx, row){
-
 					$.each(row['snippets'], function(snippet_idx, snippet){
 						var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
 						$.each(sub_snippets, function(subsnippet_idx, sub_snippet){
