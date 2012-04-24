@@ -1,3 +1,4 @@
+import socket
 from django.core.management.base import NoArgsCommand
 from django.conf import settings
 import superfastmatch
@@ -17,7 +18,7 @@ class Command(NoArgsCommand):
                     print '  documents: {0}'.format(documents['total'])
                 else:
                     print '  Unable to query for documents.'
-            except superfastmatch.SuperFastMatchError, e:
+            except (superfastmatch.SuperFastMatchError, socket.error) as e:
                 print '  Unable to query for documents: {0}'.format(str(e))
 
             
