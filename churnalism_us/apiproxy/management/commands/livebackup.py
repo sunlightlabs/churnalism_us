@@ -82,7 +82,7 @@ class Command(BaseCommand):
                     metafile.flush()
                     docsfile.flush()
                     print "Compressing backup..."
-                    with closing(ZipFile(outpath, 'w', ZIP_DEFLATED)) as outfile:
+                    with closing(ZipFile(outpath, 'w', compression=ZIP_DEFLATED, allowZip64=True)) as outfile:
                         outfile.write(metafile.name, 'meta')
                         outfile.write(docsfile.name, 'docs')
         print "Done."
