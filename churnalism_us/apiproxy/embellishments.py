@@ -6,11 +6,11 @@ from operator import itemgetter
 
 import superfastmatch
 
+
 def document_text(sfm, row):
     doc_result = sfm.document(row['doctype'], row['docid'])
     if doc_result['success'] == True:
         return doc_result['text']
-
 
 def calculate_coverage(text, row):
     chars_matched = sum((fragment[2] for fragment in row['fragments']))
@@ -23,7 +23,53 @@ def snippets_for_fragments(text, fragments):
     return list(set([text[frag[0]:frag[0]+frag[2]] for frag in fragments]))
 
 
-def reduce_fragments(fragments):
+def eliminate_overlap(a, b):
+    """
+    Assuming a and b overlap, attributes the overlapping text to the 
+    fragment with the shorter prefix/suffix.
+    """
+
+    begin = itemgetter(0)
+    origbegin = itemgetter(1)
+    length = itemgetter(2)
+    end = lambda f: begin(f) + length(f)
+
+    prelen = begin(b) - begin(a)
+    postlen = end(b) - end(a)
+    innerlen = end(a) - begin(b)
+
+    if prelen > postlen:
+        new_a = [begin(a),
+                 origbegin(a),
+                 prelen,
+                 None]
+        new_b = [begin(b),
+                 origbegin(b),
+                 innerlen + postlen,
+                 None]
+
+    else:
+        new_a = [begin(a),
+                 origbegin(a),
+                 prelen + innerlen,
+                 None]
+        new_b = [end(a),
+                 origbegin(b) + innerlen,
+                 postlen,
+                 None]
+
+    return (new_a, new_b)
+
+
+def reduce_fragments(fragments, minimum_threshold=15):
+    """
+    Eliminates fragment overlap.
+
+    This function causes some right-side fragments to disappear. Therefore 
+    fragments from this function cannot do right-side highlighting or snippeting 
+    based on the reduced fragments.
+    """
+
     begin = itemgetter(0)
     origbegin = itemgetter(1)
     length = itemgetter(2)
@@ -39,9 +85,7 @@ def reduce_fragments(fragments):
         return begin(a) <= begin(b) and end(b) <= end(a)
 
     def overlaps(a, b):
-        if begin(a) <= begin(b) <= end(a):
-            return True
-        elif begin(b) <= begin(a) <= end(b):
+        if begin(a) <= begin(b) < end(a):
             return True
         else:
             return False
@@ -58,15 +102,27 @@ def reduce_fragments(fragments):
         else:
             while len(frags) > 0:
                 b = frags.pop(0)
+
                 if subsumes(a, b):
                     pass # Ignore b
                 elif subsumes(b, a):
                     a = deepcopy(b)
                 elif overlaps(a, b):
-                    a = [min(begin(a), begin(b)),
-                         min(origbegin(a), origbegin(b)),
-                         max(end(a), end(b)),
-                         None] # Neither hash applies
+                    (a, b) = eliminate_overlap(a, b)
+                    if length(a) <= minimum_threshold:
+                        frags = [b] + frags
+                        frags.sort(cmp=compare_bounds)
+                        a = frags.pop(0)
+                    elif length(b) <= minimum_threshold:
+                        pass
+                    else:
+                        frags = [b] + frags
+                        frags.sort(cmp=compare_bounds)
+                        # Re-sort in case there is a fragment sequence like this:
+                        # |      |
+                        #     |       |
+                        #      |        |
+
                 else:
                     frags = [b] + frags
                     break
