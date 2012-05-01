@@ -166,7 +166,7 @@ def search_against_url(request, url):
     """
 
     def fetch_and_clean(url):
-        html = slurp_url(url)
+        html = slurp_url(url, use_cache=True)
         if not html:
             raise Exception('Failed to fetch {0}'.format(url))
 
