@@ -1,4 +1,4 @@
-var OPEN_TAG = '<span class="churnalism-highlight fragment-FRAG_NUMBER">';
+var OPEN_TAG = '<span class="churnalism-highlight" churnalism:fragment="FRAG_NUMBER">';
 var CLOSE_TAG = '</span>';
 
 RegExp.escape = function(text) {
@@ -91,3 +91,6 @@ var highlight_match = function (p, match, frag_number) {
         }
     }
 };
+
+
+

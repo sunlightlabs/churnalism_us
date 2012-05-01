@@ -60,18 +60,24 @@ so all links output must be absolute.
                 width: 100%;
 			}
 			#doc-title-box, #pr-title-box {
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+				box-sizing: border-box;         /* Opera/IE 8+ */
 				float: left;
-				width: 48%;
+				width: 46%;
 				margin: 0;
-				padding: 1%;
+				padding: 2%;
 			}
 			#pr-title, #doc-title { font-size: 1.8em; }
             #doc-box, #pr-box {
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+				-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+				box-sizing: border-box;         /* Opera/IE 8+ */
                 float: left;
-                width: 48%;
+                width: 46%;
                 height: 100%;
                 margin: 0;
-                padding: 1%;
+                padding: 2%;
             }
             #doc-text, #pr-text {
 			}
@@ -81,11 +87,28 @@ so all links output must be absolute.
 				margin: 0;
 				font-style: italic;
 			}
+			span.churnalism-highlight-pair {
+				background-color: #E7CC29;
+			}
+			span.churnalism-highlight-selected {
+				background-color: #805CCF;
+				background-color: #E7CC29;
+			}
 			.clear {
 				clear: both;
 			}
 	    #container { border-top: 1px solid #E5E1DD; } 
 	    #share { display: none; }
+		svg#fragment-connector {
+			z-index: 0;
+			padding: 0;
+			margin: 0;
+			border-width: 0;
+		}
+		#bezier {
+			stroke-dasharray: 6 3;
+			stroke: #E7CC29;
+		}
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
     {% endblock %}
@@ -146,8 +169,136 @@ so all links output must be absolute.
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
+		<script type="text/x-jquery-template" id="connector-tmpl">
+			<svg id="fragment-connector" pointer-events="none">
+				<line id="source-bar" stroke="#805CCF" stroke-width="3"/>
+				<line id="source-cross" stroke-width="3" stroke="#805CCF"/>
+				<line id="target-bar" stroke="#805CCF" stroke-width="3"/>
+				<line id="target-cross" stroke-width="3" stroke="#805CCF"/>
+				<line id="vertical-connector" stroke-width="3" stroke="#805CCF"/>
+				<path id="bezier" stroke="#805CCF" stroke-width="3" fill="none"/>
+				<g stroke="none" stroke-width="3" fill="none">
+					<circle id="A" r="3" />
+					<circle id="B" r="3" />
+					<circle id="C" r="3" />
+					<circle id="D" r="3" />
+					<circle id="E" r="3" />
+				</g>
+			</svg>
+		</script>
         <script type="text/javascript">
+			var top_of = function (elem) {
+				return elem.offset().top;
+			};
+			var bottom_of = function (elem) {
+				return elem.offset().top + elem.outerHeight();
+			};
+			var middle_of = function (elem) {
+				return top_of(elem) + ((bottom_of(elem) - top_of(elem)) / 2);
+			};
+			var right_of = function (elem) {
+				return elem.offset().left + elem.outerWidth();
+			};
+			var left_of = function (elem) {
+				return elem.offset().left;
+			};
+			var fragment_pair = function (frag_number) {
+				return $("span.churnalism-highlight").filter(function(){
+					var f = $(this).attr('churnalism:fragment');
+					if ((f != null) && (f == frag_number)) {
+						return f;
+					}
+				});
+			};
+			var snippet_for_fragment = function (text, fragment) {
+				return text.slice(fragment[0], fragment[2]);
+			};
+			var draw_connector = function (source_elem, target_elem) {
+				var source_line_height = parseInt($(source_elem).css('line-height'));
+				var target_line_height = parseInt($(target_elem).css('line-height'));
 
+				var higher_elem = (top_of(source_elem) > top_of(target_elem) ? source_elem : target_elem;
+				var lower_elem = (higher_elem == source_elem) ? target_elem : source_elem;
+				var source_on_top = (source_elem == higher_elem);
+
+				var conn_top = top_of(higher_elem);
+				var conn_height = (top_of(lower_elem) - top_of(higher_elem)) + lower_elem.outerHeight();
+				var conn_left = right_of(source_elem);
+				var conn_width = left_of(target_elem) - conn_left;
+
+				var svg = $($("#connector-tmpl").html());
+				svg.css('position', 'absolute');
+				svg.css('z-index', '999999');
+				svg.css('top', conn_top + 'px');
+				svg.css('height', conn_height + 'px');
+				svg.css('width', conn_width + 8 + 'px');
+				svg.css('left', right_of(source_elem) + 'px');
+				svg.css('background-color', 'transparent');
+				$("body").append(svg);
+
+				$(window).resize(function(resize){
+					var source_elem = $('#doc-text .' + frag_class);
+					var target_elem = $('#pr-text .' + frag_class);
+					var source_on_top = (top_of(source_elem) >= top_of(target_elem));
+					var higher_elem = source_on_top ? source_elem : target_elem;
+					var lower_elem = source_on_top ? target_elem : source_elem;
+					svg.css('top', Math.min(top_of(source_elem), top_of(target_elem)));
+					svg.css('left', right_of(source_elem));
+					svg.css('z-index', '999999');
+				});
+				
+				var localize_x = function (x) {
+					return x - conn_left + 1;
+				};
+				var localize_y = function (y) {
+					return y - conn_top;
+				};
+
+				// Define the points through which the bezier line will pass
+				// Point A is always defined in terms of the source element while 
+				// point E is always in terms of the target element. C is the mid-point.
+				var STARTy = localize_y(source_on_top ? top_of(source_elem) : bottom_of(source_elem));
+				var ENDy = localize_y(source_on_top ? bottom_of(target_elem) : top_of(target_elem));
+				var Ax = localize_x(right_of(source_elem));
+				var Ay = localize_y(source_on_top ? bottom_of(source_elem) : top_of(source_elem));
+				var Ex = localize_x(left_of(target_elem));
+				var Ey = localize_y(source_on_top ? top_of(target_elem) : bottom_of(target_elem));
+				var Cx = Ax + ((Ex - Ax) / 2);
+				var Cy = Ay + ((Ey - Ay) / 2);
+
+				// B and D are control points. They are the mid-points of the boxes created by 
+				// (A,C) and (C,E) so as to create shallow curves.
+				var Bx = Ax;
+				var By = Ay + ((Cy - Ay) / 2);
+				var Dx = Ex;
+				var Dy = Ey - ((Ey - Cy) / 2);
+
+				$("#A", svg).attr('cx', Ax);
+				$("#A", svg).attr('cy', Ay);
+				$("#B", svg).attr('cx', Bx);
+				$("#B", svg).attr('cy', By);
+				$("#C", svg).attr('cx', Cx);
+				$("#C", svg).attr('cy', Cy);
+				$("#D", svg).attr('cx', Dx);
+				$("#D", svg).attr('cy', Dy);
+				$("#E", svg).attr('cx', Ex);
+				$("#E", svg).attr('cy', Ey);
+
+				var path_tmpl = 'MAx,STARTy LAx,Ay QBx,By Cx,Cy QDx,Dy Ex,Ey LEx,ENDy';
+				var path = path_tmpl.replace(/Ax/g, Ax)
+									.replace('Ay', Ay)
+									.replace('Bx', Bx)
+									.replace('By', By)
+									.replace('Cx', Cx)
+									.replace('Cy', Cy)
+									.replace('Dx', Dx)
+									.replace('Dy', Dy)
+									.replace(/Ex/g, Ex)
+									.replace('Ey', Ey)
+									.replace('STARTy', STARTy)
+									.replace('ENDy', ENDy);
+				$("#bezier", svg).attr('d', path);
+			};
             var search_results = {{ results|jsonify|safe }};
 			var markupArticleText = function (txt) {
 				var trimmed = txt.trim();
@@ -179,14 +330,27 @@ so all links output must be absolute.
 				});
 				$(doc_text_el).html(markupArticleText($(doc_text_el).html()));
 				$(match_text_el).html(markupArticleText($(match_text_el).html()));
-				
+
 				$('.churnalism-highlight').hover(function(){
-					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
-					$('.' + frag_class).css('background-color', '#E7CC29');
+					var frag_number = $(this).attr('churnalism:fragment');
+					var fragments = fragment_pair(frag_number);
+					fragments.addClass('churnalism-highlight-pair');
 				});
 				$('.churnalism-highlight').mouseout(function(){
-					var frag_class = $(this).attr('class').replace('churnalism-highlight', '').trim();
-					$('.' + frag_class).css('background-color', '#F6F93A');
+					var frag_number = $(this).attr('churnalism:fragment');
+					var fragments = fragment_pair(frag_number);
+					fragments.removeClass('churnalism-highlight-pair');
+				});
+				$('.churnalism-highlight').click(function(click){
+					var frag_number = $(this).attr('churnalism:fragment');
+					var fragments = fragment_pair(frag_number);
+					var was_selected = $(this).hasClass('churnalism-highlight-selected');
+					$('.churnalism-highlight').removeClass('churnalism-highlight-selected');
+					$("#fragment-connector").remove();
+					if (! was_selected) {
+						fragments.addClass('churnalism-highlight-selected');
+						draw_connector(jQuery(fragments[0]), jQuery(fragments[1]));
+					}
 				});
 			});
 
