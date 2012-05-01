@@ -86,13 +86,14 @@ so all links output must be absolute.
 				padding: 0;
 				margin: 0;
 				font-style: italic;
+				cursor: default;
 			}
 			span.churnalism-highlight-pair {
 				background-color: #E7CC29;
 			}
 			span.churnalism-highlight-selected {
-				background-color: #805CCF;
-				background-color: #E7CC29;
+				background-color: #FF73CE;
+				color: #FFFAFA;
 			}
 			.clear {
 				clear: both;
@@ -100,14 +101,14 @@ so all links output must be absolute.
 	    #container { border-top: 1px solid #E5E1DD; } 
 	    #share { display: none; }
 		svg#fragment-connector {
-			z-index: 0;
+			z-index: 999999;
 			padding: 0;
 			margin: 0;
 			border-width: 0;
 		}
 		#bezier {
 			stroke-dasharray: 6 3;
-			stroke: #E7CC29;
+			stroke: #FF73CE;
 		}
         </style>
         <title>{% firstof source_title match_title "Search Results" %}</title>
@@ -171,12 +172,7 @@ so all links output must be absolute.
 		<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/highlight.js"></script>
 		<script type="text/x-jquery-template" id="connector-tmpl">
 			<svg id="fragment-connector" pointer-events="none">
-				<line id="source-bar" stroke="#805CCF" stroke-width="3"/>
-				<line id="source-cross" stroke-width="3" stroke="#805CCF"/>
-				<line id="target-bar" stroke="#805CCF" stroke-width="3"/>
-				<line id="target-cross" stroke-width="3" stroke="#805CCF"/>
-				<line id="vertical-connector" stroke-width="3" stroke="#805CCF"/>
-				<path id="bezier" stroke="#805CCF" stroke-width="3" fill="none"/>
+				<path id="bezier" stroke-width="3" fill="none"/>
 				<g stroke="none" stroke-width="3" fill="none">
 					<circle id="A" r="3" />
 					<circle id="B" r="3" />
@@ -218,7 +214,7 @@ so all links output must be absolute.
 
 				var conn_top = top_of(higher_elem);
 				var conn_height = (top_of(lower_elem) - top_of(higher_elem)) + lower_elem.outerHeight();
-				var conn_left = right_of(source_elem);
+				var conn_left = right_of(source_elem) - 3;
 				var conn_width = left_of(target_elem) - conn_left;
 
 				var svg = $($("#connector-tmpl").html());
@@ -227,13 +223,13 @@ so all links output must be absolute.
 				svg.css('top', conn_top + 'px');
 				svg.css('height', conn_height + 'px');
 				svg.css('width', conn_width + 8 + 'px');
-				svg.css('left', right_of(source_elem) + 'px');
+				svg.css('left', conn_left + 'px');
 				svg.css('background-color', 'transparent');
 				$("body").append(svg);
 
 				$(window).resize(function(resize){
-					var source_elem = $('#doc-text span.churnalism-highlight-selected');
-					var target_elem = $('#pr-text span.churnalism-highlight-selected');
+					var source_elem = $('#doc-text span.churnalism-highlight-selected span.churnalism-highlight-lastchar');
+					var target_elem = $('#pr-text span.churnalism-highlight-selected span.churnalism-highlight-firstchar');
 					var source_on_top = (top_of(source_elem) <= top_of(target_elem));
 					var higher_elem = source_on_top ? source_elem : target_elem;
 					var lower_elem = source_on_top ? target_elem : source_elem;
@@ -254,7 +250,7 @@ so all links output must be absolute.
 				// point E is always in terms of the target element. C is the mid-point.
 				var STARTy = localize_y(source_on_top ? top_of(source_elem) : bottom_of(source_elem));
 				var ENDy = localize_y(source_on_top ? bottom_of(target_elem) : top_of(target_elem));
-				var Ax = localize_x(right_of(source_elem));
+				var Ax = localize_x(right_of(source_elem)) - 3;
 				var Ay = localize_y(source_on_top ? bottom_of(source_elem) : top_of(source_elem));
 				var Ex = localize_x(left_of(target_elem));
 				var Ey = localize_y(source_on_top ? top_of(target_elem) : bottom_of(target_elem));
@@ -279,7 +275,7 @@ so all links output must be absolute.
 				$("#E", svg).attr('cx', Ex);
 				$("#E", svg).attr('cy', Ey);
 
-				var path_tmpl = 'MAx,STARTy LAx,Ay QBx,By Cx,Cy QDx,Dy Ex,Ey LEx,ENDy';
+				var path_tmpl = 'MAx,Ay QBx,By Cx,Cy QDx,Dy Ex,Ey';
 				var path = path_tmpl.replace(/Ax/g, Ax)
 									.replace('Ay', Ay)
 									.replace('Bx', Bx)
@@ -344,7 +340,7 @@ so all links output must be absolute.
 					$("#fragment-connector").remove();
 					if (! was_selected) {
 						fragments.addClass('churnalism-highlight-selected');
-						draw_connector(jQuery(fragments[0]), jQuery(fragments[1]));
+						draw_connector(jQuery('.churnalism-highlight-lastchar', fragments[0]), jQuery('.churnalism-highlight-firstchar', fragments[1]));
 					}
 				});
 			});
