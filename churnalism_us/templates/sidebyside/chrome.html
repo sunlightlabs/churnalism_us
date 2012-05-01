@@ -360,6 +360,9 @@ so all links output must be absolute.
 						$("#fragment-connector").remove();
 						fragments.addClass('churnalism-highlight-selected');
 						draw_connector(jQuery('.churnalism-highlight-lastchar', fragments[0]), jQuery('.churnalism-highlight-firstchar', fragments[1]));
+                        if (elementInViewport(this) == false) {
+                            jQuery(this).scrollintoview({ duration: 'slow' });
+                        }
 					} else if (click.ctrlKey == true) {
 						$('.churnalism-highlight').removeClass('churnalism-highlight-selected');
 						$("#fragment-connector").remove();
@@ -367,9 +370,7 @@ so all links output must be absolute.
 						var other = other_fragment(this);
 						if (elementInViewport(other) == false) {
 							var other_on_top = top_of(jQuery(other)) < top_of(jQuery(this));
-							jQuery(other).scrollintoview({
-								duration: 'slow'
-							});
+							jQuery(other).scrollintoview({ duration: 'slow' });
 						}
 					}
 					click.preventDefault(true);
