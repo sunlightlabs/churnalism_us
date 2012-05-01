@@ -205,21 +205,16 @@ so all links output must be absolute.
 			var fragment_pair = function (frag_number) {
 				return $("span.churnalism-highlight").filter(function(){
 					var f = $(this).attr('churnalism:fragment');
-					if ((f != null) && (f == frag_number)) {
-						return f;
-					}
+					return ((f != null) && (f == frag_number));
 				});
 			};
 			var snippet_for_fragment = function (text, fragment) {
 				return text.slice(fragment[0], fragment[2]);
 			};
 			var draw_connector = function (source_elem, target_elem) {
-				var source_line_height = parseInt($(source_elem).css('line-height'));
-				var target_line_height = parseInt($(target_elem).css('line-height'));
-
-				var higher_elem = (top_of(source_elem) > top_of(target_elem) ? source_elem : target_elem;
-				var lower_elem = (higher_elem == source_elem) ? target_elem : source_elem;
+				var higher_elem = (top_of(source_elem) <= top_of(target_elem)) ? source_elem : target_elem;
 				var source_on_top = (source_elem == higher_elem);
+				var lower_elem = source_on_top ? target_elem : source_elem;
 
 				var conn_top = top_of(higher_elem);
 				var conn_height = (top_of(lower_elem) - top_of(higher_elem)) + lower_elem.outerHeight();
@@ -237,9 +232,9 @@ so all links output must be absolute.
 				$("body").append(svg);
 
 				$(window).resize(function(resize){
-					var source_elem = $('#doc-text .' + frag_class);
-					var target_elem = $('#pr-text .' + frag_class);
-					var source_on_top = (top_of(source_elem) >= top_of(target_elem));
+					var source_elem = $('#doc-text span.churnalism-highlight-selected');
+					var target_elem = $('#pr-text span.churnalism-highlight-selected');
+					var source_on_top = (top_of(source_elem) <= top_of(target_elem));
 					var higher_elem = source_on_top ? source_elem : target_elem;
 					var lower_elem = source_on_top ? target_elem : source_elem;
 					svg.css('top', Math.min(top_of(source_elem), top_of(target_elem)));
