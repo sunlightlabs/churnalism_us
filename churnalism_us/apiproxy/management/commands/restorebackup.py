@@ -2,6 +2,7 @@
 
 import sys
 import os
+from time import sleep
 from optparse import make_option
 # Using the zipfile module from python 2.7 for backward compat with python 2.6
 # See bug: http://bugs.python.org/issue7610
@@ -20,6 +21,21 @@ import progressbar
 import progressbar.widgets
 
 import superfastmatch
+
+
+class UnpicklerIterator(object):
+    def __init__(self, unpickler):
+        self.unpickler = unpickler
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        try:
+            return self.unpickler.load()
+        except EOFError:
+            raise StopIteration
+
 
 class Command(BaseCommand):
     help = 'Reads a backup file created by the livebackup command and POSTs the documents to the superfastmatch server.'
@@ -73,26 +89,27 @@ class Command(BaseCommand):
         ignored_attributes = ['characters', 'id', 'defer']
         with closing(ZipFile(inpath, 'r')) as infile:
             with closing(infile.open('meta', 'r')) as metafile:
-                with closing(infile.open('docs', 'r')) as docsfile:
+                metadata = pickle.load(metafile)
+                progress = progressbar.ProgressBar(maxval=metadata['doc_count'],
+                                                   widgets=[
+                                                       progressbar.widgets.AnimatedMarker(),
+                                                       '  ',
+                                                       progressbar.widgets.Counter(),
+                                                       '/{0}  '.format(metadata['doc_count']),
+                                                       progressbar.widgets.Percentage(),
+                                                       '  ',
+                                                       progressbar.widgets.ETA(),
 
-                    metadata = pickle.load(metafile)
-                    progress = progressbar.ProgressBar(maxval=metadata['count'],
-                                                       widgets=[
-                                                           progressbar.widgets.AnimatedMarker(),
-                                                           '  ',
-                                                           progressbar.widgets.Counter(),
-                                                           '/{0}  '.format(metadata['count'] + 1),
-                                                           progressbar.widgets.Percentage(),
-                                                           '  ',
-                                                           progressbar.widgets.ETA(),
+                                                   ])
+                progress.start()
+                doccounter = 0
 
-                                                       ])
-                    progress.start()
+                for file_number in range(0, metadata['file_count']):
+                    docsfile_name = 'docs{num}'.format(num=file_number)
+                    with closing(infile.open(docsfile_name, 'r')) as docsfile:
 
-                    docloader = pickle.Unpickler(docsfile)
-                    try:
-                        for doccounter in xrange(1, metadata['count'] + 1):
-                            doc = docloader.load()
+                        docloader = pickle.Unpickler(docsfile)
+                        for doc in UnpicklerIterator(docloader):
                             if 'text' in doc and 'doctype' in doc and 'docid' in doc:
                                 for attr in ignored_attributes:
                                     if doc.has_key(attr):
@@ -113,10 +130,10 @@ class Command(BaseCommand):
                             else:
                                 print >>sys.stderr, "Cannot restore empty document (missing all of text, doctype, and docid attributes)."
 
+                            doccounter += 1
                             progress.update(doccounter)
+                progress.finish()
 
-                    except EOFError:
-                        print >>sys.stderr, "Unexpected end of file after document #{0}".format(doccounter)
 
 
 
