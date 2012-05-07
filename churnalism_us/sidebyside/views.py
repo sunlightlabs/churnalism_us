@@ -166,7 +166,7 @@ def search_against_url(request, url):
     """
 
     def fetch_and_clean(url):
-        html = slurp_url(url)
+        html = slurp_url(url, use_cache=True)
         if not html:
             raise Exception('Failed to fetch {0}'.format(url))
 
@@ -200,6 +200,8 @@ def search_against_url(request, url):
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
             return document404(request, url=url)
+        elif settings.DEBUG == True:
+            return HttpResponse(e.response[1], status=e.response[0])
         else:
             raise
 

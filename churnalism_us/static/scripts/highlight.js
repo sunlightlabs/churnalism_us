@@ -1,5 +1,9 @@
-var OPEN_TAG = '<span class="churnalism-highlight fragment-FRAG_NUMBER">';
+var OPEN_TAG = '<span class="churnalism-highlight" churnalism:fragment="FRAG_NUMBER">';
 var CLOSE_TAG = '</span>';
+var FIRSTCHAR_OPEN_TAG = '<span class="churnalism-highlight-firstchar">';
+var FIRSTCHAR_CLOSE_TAG = '</span>';
+var LASTCHAR_OPEN_TAG = '<span class="churnalism-highlight-lastchar">';
+var LASTCHAR_CLOSE_TAG = '</span>';
 
 RegExp.escape = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -83,11 +87,27 @@ var highlight_match = function (p, match, frag_number) {
         var offset = html.indexOf(html_match[0]);
         if (offset >= 0) {
             var prelude = html.slice(0, offset);
-            var matched = html.slice(offset, offset + html_match[0].length);
+            var firstchar = html.slice(offset, offset + 1);
+            var matched = html.slice(offset + 1, offset + html_match[0].length - 1);
+            var lastchar = html.slice(offset + html_match[0].length - 1, offset + html_match[0].length);
             var postlude = html.slice(offset + html_match[0].length);
-            jQuery(p).html(prelude + OPEN_TAG.replace('FRAG_NUMBER', frag_number) + matched + CLOSE_TAG + postlude);
+            jQuery(p).html(
+                prelude
+                + OPEN_TAG.replace('FRAG_NUMBER', frag_number)
+                + FIRSTCHAR_OPEN_TAG
+                + firstchar
+                + FIRSTCHAR_CLOSE_TAG
+                + matched
+                + LASTCHAR_OPEN_TAG
+                + lastchar
+                + LASTCHAR_CLOSE_TAG
+                + CLOSE_TAG
+                + postlude);
         } else {
             console.log('No match for already-found needle: ', html_match[0]);
         }
     }
 };
+
+
+

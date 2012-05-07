@@ -115,7 +115,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages',
-    'generictags.absolutestaticurl.absolutestaticurl'
+    'generictags.absolutestaticurl.absolutestaticurl',
+    'generictags.baseurl.baseurl',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -138,6 +139,8 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
+DEVSERVER_DEFAULT_PORT = '7000'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -156,6 +159,7 @@ INSTALLED_APPS = (
     # required by the sidebyside app, since it dogfoods the apiproxy app.
     'devserver',
 
+    'gunicorn',
     'generictags',
     'sidebyside',
     'apiproxy',
@@ -197,10 +201,12 @@ APIPROXY = {
 
 SUPERFASTMATCH = {
     'default': {
+        # This should point at a Superfastmatch server
         'url': 'http://127.0.0.1:8080',
         'parse_response': True
     },
     'sidebyside': {
+        # This should point at a running instance of apiproxy app
         'url': 'http://127.0.0.1:7000/api',
         'parse_response': True
     }

@@ -74,13 +74,16 @@ def recall_document(title, url, uuid, text):
         except SearchDocument.DoesNotExist:
             pass
 
-    elif text:
+    if uuid and not doc:
+        try:
+            doc = SearchDocument.objects.get(uuid=uuid)
+        except SearchDocument.DoesNotExist:
+            pass
+
+    if text and not doc:
         doc = SearchDocument.objects.filter(text=text)
         if len(doc) > 0:
             doc = doc[0]
-
-    if uuid and not doc:
-        doc = get_object_or_404(SearchDocument, uuid=uuid)
 
     if not doc:
         raise SearchDocument.DoesNotExist()
@@ -134,23 +137,14 @@ def search(request, doctype=None):
         if not text:
             return HttpResponseNotFound(str(url or uuid))
         else:
-            try:
-                #primitive match on exact text
-                doc = SearchDocument.objects.filter(text__icontains=text)
-                if len(doc) > 0:
-                    doc = doc[0]
-                else:
-                    doc = SearchDocument()
-            except:
-                doc = SearchDocument()
-
+            doc = SearchDocument()
             doc.text = text
-            doc.title = title
+            if title:
+                doc.title = title
             if url:
                 doc.url = url
             doc.save()
-    
-        
+
 
     # The actual proxying:
     sfm = superfastmatch.DjangoClient()

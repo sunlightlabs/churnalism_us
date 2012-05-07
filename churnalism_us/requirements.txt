@@ -6,10 +6,13 @@ httplib2
 lxml
 readability-lxml
 requests
+gevent
+progressbar
 ipython
 django-devserver
+celery
+django-celery
 
 # These are for publicity machine are aren't strictly required
 python-dateutil
 feedparser
-celery
