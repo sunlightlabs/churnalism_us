@@ -29,3 +29,6 @@ def slurp_url(url, use_cache=False):
     return content
 
 
+if __name__ == "__main__":
+    sys.stdout.write(slurp_url(sys.argv[1], False).encode('utf-8'))
+
