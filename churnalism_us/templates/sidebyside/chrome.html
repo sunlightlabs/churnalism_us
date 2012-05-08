@@ -121,7 +121,7 @@ so all links output must be absolute.
 
     {% block overlap %}
     <div id="sidebysideHeader">
-        <a href="#">« Back to all Matches</a>
+        <a href="{% url sidebyside-permalink uuid match.doctype match.docid %}">« Back to all Matches</a>
         <div id="match-bar">
             <span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
         </div>
