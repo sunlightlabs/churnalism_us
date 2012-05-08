@@ -303,6 +303,9 @@ $(document).ready(function(){
             $(this).find('span.scissorTop').removeClass("hidden")
             $(this).find('span.scissorBottom').removeClass("hidden")
 
+            var permalink = $('.permalink', this).attr('href');
+            $("#share-page-url").attr('value', permalink);
+
             var match_id = $(click.currentTarget).attr('match');
             var idstr = $(click.currentTarget).attr('id');
             var docattrs = extract_document_attrs(idstr);

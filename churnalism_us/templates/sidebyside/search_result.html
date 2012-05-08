@@ -4,7 +4,7 @@
 {% endblock %}
 {% block bodyclass %}home{% endblock %}
 {% block title %}Churnalism - Search Results{% endblock title%}
-{% block share_url %}<li><label>Share this page:</label><input type="text" value="{{ BASE_URL }}{% url sidebyside-uuid-search uuid=results.uuid %}"></input></li>{% endblock %}
+{% block share_url %}<li><label>Share this page:</label><input id="share-page-url" type="text" value="{{ BASE_URL }}{% url sidebyside-uuid-search uuid=results.uuid %}"></input></li>{% endblock %}
 {% block body %}
 <div id="ltColumn">
     <h2 class="smallHeader">Possible Churns</h2>
@@ -28,7 +28,7 @@
             </div>
             </dd>
         </dl>
-        <div class="thumbnail"><img></img></div>
+        <a class="permalink" style="display: none;" href="{{ BASE_URL }}{% url sidebyside-permalink results.uuid row.doctype row.docid %}"></a>
         <span class="textReplace scissorBottom hidden">Scissor image</span>
         </li>
         {% endfor %}
