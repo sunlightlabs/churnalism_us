@@ -101,7 +101,7 @@ $(document).ready(function(){
         return a + b;
     };
 
-    var permalink_pattern = /([a-z0-9]{32})\/(\d+)\/(\d+)\//;
+    var permalink_pattern = /([a-z0-9]{32})\/(\d+)\/(\d+)\/[#]?/;
 
     var markup_text = function (txt) {
         var trimmed = txt.trim();
@@ -129,12 +129,26 @@ $(document).ready(function(){
             crossDomain: false,
             cache: true,
         }).success(function(resp){
-            console.log(resp)
             next(doctype, docid, match_id, resp); 
         });
     };
 
-    var show_document_response = function (doctype, docid, match_id, document_response) { 
+    var set_scroll_column_position = function (event_or_callback) {
+        var match_title = jQuery('#match-title');
+        var rtColumn = jQuery('#rtColumn');
+        var scroll_offset = jQuery(window).scrollTop();
+        var title_top = match_title.offset().top;
+        var scol_top = Math.max(0,
+                                title_top - scroll_offset);
+        jQuery('#scrollColumn').css({'position': 'fixed',
+                                     'top': scol_top,
+                                     'left': rtColumn.offset().left + rtColumn.outerWidth() });
+        if (event_or_callback instanceof Function) {
+            event_or_callback.call(jQuery('#scrollColumn')[0]);
+        }
+    };
+
+    var show_document_response = function (doctype, docid, match_id, document_response) {
         var title = document_response['title'];
         if (title != null) {
             $("#match-title").text(title);
@@ -181,10 +195,56 @@ $(document).ready(function(){
             });
         });
         textdiv.html(markup_text(textdiv.html()));
-        textdiv.find('i:first').scrollintoview();
+
+        show_thumbnail(textdiv);
+    };
+
+    var show_thumbnail = function (textdiv) {
+        var aspect_ratio = textdiv.height() / textdiv.width();
+        var options = {
+            logging: true,
+            renderer: 'canvas',
+            elements: textdiv[0]
+        };
+        options.complete = function (images) {
+            var parsed = html2canvas.Parse(textdiv[0], images, options);
+            var canvas = html2canvas.Renderer(parsed, options);
+            var scaled_dimensions = {
+                width: 190,
+                height: 190 * aspect_ratio
+            };
+            var scaled_dimensions = {
+                width: 140,
+                height: Math.min(140 * aspect_ratio,
+                                 jQuery(window).height() - jQuery('#match-title').offset().top)
+            };
+            var offset = textdiv.offset();
+
+            var new_canvas = jQuery('<canvas>').attr('width', scaled_dimensions.width).attr('height', scaled_dimensions.height)[0];
+            var new_ctx = new_canvas.getContext('2d');
+            new_ctx.drawImage(canvas,
+                offset.left, offset.top, textdiv.width(), textdiv.height(),
+                0, 0, scaled_dimensions.width, scaled_dimensions.height
+            );
+            Filters.filterCanvas(new_canvas, Filters.lineify, [0.7]);
+            var li = match_listitem_el(doctype, docid);
+            jQuery('<img>').attr('src', new_canvas.toDataURL()).appendTo('#scrollColumn').click(function(click){
+                var y = click.pageY - jQuery(this).offset().top;
+                var pct = y / jQuery(this).height();
+                var scroll_target = textdiv.outerHeight() * pct;
+                jQuery('html, body').animate({scrollTop: scroll_target}, {duration: 900});
+            });
+            set_scroll_column_position(function(){
+                jQuery('#scrollColumn').show();
+            });
+            jQuery(window).scroll(set_scroll_column_position);
+            jQuery(window).resize(set_scroll_column_position);
+        };
+        html2canvas.Preload(textdiv[0], options);
     };
 
     var select_document = function (doctype, docid, match_id) {
+        jQuery('#scrollColumn').empty().hide();
         fetch_document(doctype, docid, match_id, show_document_response);
         selected = {
             'doctype': doctype,
@@ -232,20 +292,23 @@ $(document).ready(function(){
 
     $("ol#matches li").click(function(click){
 
-        $(this).siblings().removeClass("active");
-        $(this).toggleClass('active');
+        if ($(this).hasClass("active") == false) {
+            $(".thumbnail img").hide();
+            $(this).siblings().removeClass("active");
+            $(this).toggleClass('active');
 
-        $(this).siblings().find('span.scissorTop').addClass("hidden")
-        $(this).siblings().find('span.scissorBottom').addClass("hidden")
+            $(this).siblings().find('span.scissorTop').addClass("hidden")
+            $(this).siblings().find('span.scissorBottom').addClass("hidden")
 
-        $(this).find('span.scissorTop').removeClass("hidden")
-        $(this).find('span.scissorBottom').removeClass("hidden")
-    
-        var match_id = $(click.currentTarget).attr('match');
-        var idstr = $(click.currentTarget).attr('id');
-        var docattrs = extract_document_attrs(idstr);
-        if (docattrs) {
-            select_document(docattrs['doctype'], docattrs['docid'], match_id);
+            $(this).find('span.scissorTop').removeClass("hidden")
+            $(this).find('span.scissorBottom').removeClass("hidden")
+
+            var match_id = $(click.currentTarget).attr('match');
+            var idstr = $(click.currentTarget).attr('id');
+            var docattrs = extract_document_attrs(idstr);
+            if (docattrs) {
+                select_document(docattrs['doctype'], docattrs['docid'], match_id);
+            }
         }
 
         return false;
@@ -256,6 +319,8 @@ $(document).ready(function(){
         var doctype = permalink_matches[2];
         var docid = permalink_matches[3];
         select_document(doctype, docid, null);
+    } else {
+        $("#matches li:first").trigger('click');
     }
 
     sourcediv = $("div#source-text");
@@ -263,9 +328,6 @@ $(document).ready(function(){
     $('body').scroll(function(event){
         event.preventDefault();
     });
-
-
-     $("#matches li:first").trigger('click');
 
      $("#btnConfirm").click(function(){
         if ($('ol#matches li.active').hasClass('confirmed') == false) {

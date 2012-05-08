@@ -116,6 +116,7 @@ body { background: url(../images/bg.jpg) top left repeat;}
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
 .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
+#scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; }
 
 .textReplace { text-indent: -9999em; display: block;}
 .tip { font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique; color: #6c6967; display: block; margin-bottom: 15px;}
@@ -165,6 +166,7 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; border-top: 1px dashed #a09e9e; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-bottom: 1px dashed #a09e9e;}
+#matches li div.thumbnail img { display: inline-block; margin: 7px 4px 7px 4px; }
 .percentChurn a { font-size: 200%; }
 .active .percentChurn a { color: #fff; }
 .active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 5px 0 0 10px; }

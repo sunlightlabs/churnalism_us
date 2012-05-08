@@ -8,50 +8,52 @@
 {% block body %}
 <div id="ltColumn">
     <h2 class="smallHeader">Possible Churns</h2>
-        <ol id="matches">
-            {% for row in results.documents.rows %}
-                <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
-                    <span class="textReplace scissorTop hidden">Scissor image</span>
-                    <div class="percentChurn">
-                        <a class="percentText" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
-                        <a title="View Side by Side" class="sidebyside-link textReplace" href="/sidebyside/generic/{{row.doctype}}/{{row.docid}}/{{results.uuid}}/">View Side by Side</a>
-                        <div class="clear"></div>
-                    </div>
-                    <span class="characters">{{ row.coverage.0 }} Characters overlap</span>
-                    <dl>
-                        <dt>From:</dt>
-                        <dd>
-                            <a class="articleTitle" id="match-url" href="{{row.url}}">{{row.title}}</a>
-                            <div class="entryMetaData">
-                                <address class="author">{{row.source}}</address>
-                                <time datetime="{{row.date}}" class="published" pubdate="{{row.date}}">{{row.date|slice:":10"}}</time>
-                            </div>
-                        </dd>
-                    </dl>
-                    <span class="textReplace scissorBottom hidden">Scissor image</span>
-                </li>
-            {% endfor %}
-        </ol>
-    </div>
-    <div id="rtColumn">
-        <div id="confirm" style="display:none;">
-            <span>Help us make our matches as accurate as possible. Do these articles match? If so confirm it for us now.</span>   
-            <a class="textReplace" id="btnConfirm" href="#">Confirm Match</a> 
-        </div>    
-        <div class="clear"></div>
-
-        <h2 class="smallHeader">Text Submitted {% if source_url %} <span class="url-problem tip">Something wrong with the text? <a href="{{source_url}}">Flag it now.</a></span>{% endif %}</h2>
-        <p id="truncate">{{source_text}}</p>
-        <h2 style="margin-top:50px;" class="smallHeader">Text Matched</h2>
-        <h3 class="withTip" id="match-title">No Matches</h3>
-        <div class="entryMetaData">
-            <address class="author"></address>
-            <time datetime="2012-03-22T10:00:01" class="published" pubdate=""></time>
+    <ol id="matches">
+        {% for row in results.documents.rows %}
+        <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
+        <span class="textReplace scissorTop hidden">Scissor image</span>
+        <div class="percentChurn">
+            <a class="percentText" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
+            <a title="View Side by Side" class="sidebyside-link textReplace" href="/sidebyside/generic/{{row.doctype}}/{{row.docid}}/{{results.uuid}}/">View Side by Side</a>
+            <div class="clear"></div>
         </div>
-        <div id="match-text">
-
-        </div>
+        <span class="characters">{{ row.coverage.0 }} Characters overlap</span>
+        <dl>
+            <dt>From:</dt>
+            <dd>
+            <a class="articleTitle" id="match-url" href="{{row.url}}">{{row.title}}</a>
+            <div class="entryMetaData">
+                <address class="author">{{row.source}}</address>
+                <time datetime="{{row.date}}" class="published" pubdate="{{row.date}}">{{row.date|slice:":10"}}</time>
+            </div>
+            </dd>
+        </dl>
+        <div class="thumbnail"><img></img></div>
+        <span class="textReplace scissorBottom hidden">Scissor image</span>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+<div id="rtColumn">
+    <div id="confirm" style="display:none;">
+        <span>Help us make our matches as accurate as possible. Do these articles match? If so confirm it for us now.</span>
+        <a class="textReplace" id="btnConfirm" href="#">Confirm Match</a>
     </div>
+    <div class="clear"></div>
+
+    <h2 class="smallHeader">Text Submitted {% if source_url %} <span class="url-problem tip">Something wrong with the text? <a href="{{source_url}}">Flag it now.</a></span>{% endif %}</h2>
+    <p id="truncate">{{source_text}}</p>
+    <h2 style="margin-top:50px;" class="smallHeader">Text Matched</h2>
+    <h3 class="withTip" id="match-title">No Matches</h3>
+    <div class="entryMetaData">
+        <address class="author"></address>
+        <time datetime="2012-03-22T10:00:01" class="published" pubdate=""></time>
+    </div>
+    <div id="match-text">
+
+    </div>
+</div>
+<div id="scrollColumn">
 </div>
 <div class="clear"></div>
 
@@ -61,6 +63,8 @@
     {{ block.super }}
 
 	<script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.scrollintoview.min.js"></script>
+	<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/html2canvas.min.js"></script>
+	<script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/filters.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}scripts/highlight.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
