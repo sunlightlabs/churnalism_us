@@ -308,6 +308,8 @@ def sidebyside_generic(request, match_doc_type, match_doc_id, search_uuid):
                             'match_title': match_doc.source_headline,
                             'match_source': match_doc.source_name,
                             'match': {'coverage': [None, match.percent_churned] },
+                            'match_obj': match_doc,
+                            'uuid': search_uuid,
                             'results': json.loads(match.response)  })
     return resp
 
