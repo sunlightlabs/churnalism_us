@@ -121,7 +121,7 @@ so all links output must be absolute.
 
     {% block overlap %}
     <div id="sidebysideHeader">
-        <a href="{% url sidebyside-permalink uuid match_obj.doc_type match_obj.doc_id %}">« Back to all Matches</a>
+        <a href="{% url sidebyside-permalink uuid match.doctype match.docid %}">« Back to all Matches</a>
         <div id="match-bar">
             <span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
         </div>
@@ -131,12 +131,6 @@ so all links output must be absolute.
 
     {% block body %}
         <div style="position: relative;">
-<!--            <div id="explain-bar">
-                <div id="explain">It's possible that the document on the left was partially copied from the document on the right because they overlap {{ match.coverage.1|floatformat:0 }}%.</div>
-                {% if match_count > 1 %}
-                {{ match_count|add:-1 }} other documents also match. <a href="{{ ABSOLUTE_BASE_URL|trailingslash:0 }}{% url sidebyside-permalink uuid match_obj.doctype match_obj.docid %}" target="_blank">See those results</a>
-                {% endif %}
-            </div> -->
 
             <div id="sidebyside-title-box">
                 <div id="doc-title-box">
