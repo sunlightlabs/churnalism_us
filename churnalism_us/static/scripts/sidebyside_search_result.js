@@ -253,6 +253,22 @@ $(document).ready(function(){
         };
     };
 
+    var select_document_tab = function (doctype, docid) {
+        var li = match_listitem_el(doctype, docid);
+
+        $(li).siblings().removeClass("active");
+        $(li).toggleClass('active');
+
+        $(li).siblings().find('span.scissorTop').addClass("hidden");
+        $(li).siblings().find('span.scissorBottom').addClass("hidden");
+
+        $(li).find('span.scissorTop').removeClass("hidden");
+        $(li).find('span.scissorBottom').removeClass("hidden");
+
+        var permalink = $('.permalink', li).attr('href');
+        $("#share-page-url").attr('value', permalink);
+    };
+
     var build_text_idstr = function (doctype, docid) {
         return 'match-text-DOCTYPE-DOCID'.replace('DOCTYPE', doctype).replace('DOCID', docid);
     };
@@ -293,23 +309,11 @@ $(document).ready(function(){
     $("ol#matches li").click(function(click){
 
         if ($(this).hasClass("active") == false) {
-            $(".thumbnail img").hide();
-            $(this).siblings().removeClass("active");
-            $(this).toggleClass('active');
-
-            $(this).siblings().find('span.scissorTop').addClass("hidden")
-            $(this).siblings().find('span.scissorBottom').addClass("hidden")
-
-            $(this).find('span.scissorTop').removeClass("hidden")
-            $(this).find('span.scissorBottom').removeClass("hidden")
-
-            var permalink = $('.permalink', this).attr('href');
-            $("#share-page-url").attr('value', permalink);
-
             var match_id = $(click.currentTarget).attr('match');
             var idstr = $(click.currentTarget).attr('id');
             var docattrs = extract_document_attrs(idstr);
             if (docattrs) {
+                select_document_tab(docattrs['doctype'], docattrs['docid']);
                 select_document(docattrs['doctype'], docattrs['docid'], match_id);
             }
         }
@@ -321,6 +325,7 @@ $(document).ready(function(){
     if ((permalink_matches != null) && (permalink_matches.length == 4)) {
         var doctype = permalink_matches[2];
         var docid = permalink_matches[3];
+        select_document_tab(doctype, docid);
         select_document(doctype, docid, null);
     } else {
         $("#matches li:first").trigger('click');
