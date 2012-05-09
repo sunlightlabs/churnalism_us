@@ -97,6 +97,13 @@ def recall_document(title, url, uuid, text):
     return doc
 
 
+def stored_match(request, uuid):
+    try:
+        search_doc = SearchDocument.objects.get(uuid=uuid)
+    except SearchDocument.DoesNotExist:
+        return HttpResponseNotFound('{0} not found'.format(uuid))
+
+
 @csrf_exempt
 def search(request, doctype=None):
     """
