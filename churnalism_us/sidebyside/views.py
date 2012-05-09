@@ -299,6 +299,11 @@ def sidebyside_generic(request, match_doc_type, match_doc_id, search_uuid):
     match_doc = MatchedDocument.objects.filter(doc_type=match_doc_type, doc_id=match_doc_id)[0]
     match = Match.objects.get(search_document=search_doc, matched_document=match_doc)
 
+    # Prune other documents from the original response 
+    cached_response = json.loads(match.response)
+    cached_response['documents']['rows'] = [r for r in cached_response['documents']['rows'] 
+                                            if r['doctype'] == int(match_doc_type) and r['docid'] == int(match_doc_id)]
+
     resp = render(request, 'sidebyside/chrome.html',
                             {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
                              'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
@@ -313,7 +318,7 @@ def sidebyside_generic(request, match_doc_type, match_doc_id, search_uuid):
                                       },
                              'match_obj': match_doc,
                              'uuid': search_uuid,
-                             'results': json.loads(match.response)  })
+                             'results': cached_response })
     return resp
 
 def shared(request, uuid):
