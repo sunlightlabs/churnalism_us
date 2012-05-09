@@ -14,7 +14,8 @@
         <span class="textReplace scissorTop hidden">Scissor image</span>
         <div class="percentChurn">
             <a class="percentText" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
-            <a title="View Side by Side" class="sidebyside-link textReplace" href="/sidebyside/generic/{{row.doctype}}/{{row.docid}}/{{results.uuid}}/">View Side by Side</a>
+            <a title="View Side by Side" class="sidebyside-link textReplace"
+               href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
         </div>
         <span class="characters">{{ row.coverage.0 }} Characters overlap</span>

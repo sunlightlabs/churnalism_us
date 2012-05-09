@@ -253,15 +253,18 @@ def select_best_match(text, sfm_results):
             >> stream.map(fragment_match_percentage)
             >> stream.reduce(longer, (None, 0)))
 
-def chromeext_recall(request, uuid):
+def chromeext_recall(request, uuid, doctype, docid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text=None, uuid=uuid)
 
     match_count = len(sfm_results['documents']['rows'])
 
-    (match, match_pct) = select_best_match(sfm_results['text'], sfm_results)
-    if match is None:
-        return HttpResponseNotFound('No documents overlap with search document {uuid}'.format(uuid=uuid))
+    try:
+        match = [r for r in sfm_results['documents']['rows']
+                 if r['doctype'] == int(doctype)
+                 and r['docid'] == int(docid)][0]
+    except IndexError:
+        return HttpResponseNotFound('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, **match))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
     if match_doc['success'] == True:
@@ -293,7 +296,7 @@ def chromeext_recall(request, uuid):
                    'match_source': match_source })
     return resp
 
-def sidebyside_generic(request, match_doc_type, match_doc_id, search_uuid):
+def sidebyside_generic(request, search_uuid, match_doc_type, match_doc_id):
 
     search_doc = SearchDocument.objects.get(uuid=search_uuid)
     match_doc = MatchedDocument.objects.filter(doc_type=match_doc_type, doc_id=match_doc_id)[0]
