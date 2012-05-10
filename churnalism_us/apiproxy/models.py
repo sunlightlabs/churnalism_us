@@ -100,6 +100,10 @@ class SearchDocument(models.Model):
 
         super(SearchDocument, self).save()
 
+    def __unicode__(self):
+        return u'{self.uuid}, {self.title} @ {self.updated}'.format(self=self)
+
+
 class MatchedDocument(models.Model):
     """ This caches metadata about matched documents in SFM """ 
     
@@ -128,7 +132,9 @@ class MatchedDocument(models.Model):
 
     updated = models.DateTimeField(auto_now=True,
                                    db_index=True)
-    
+
+    def __unicode__(self):
+        return u'{self.doc_type: >3}, {self.doc_id: >9}, {self.source_headline} @ {self.updated}'.format(self=self)
 
 
 class Match(models.Model):
@@ -160,3 +166,7 @@ class Match(models.Model):
     confirmed = models.IntegerField(blank=True, null=True)
 
     response = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return u'{self.search_document!s} => {self.matched_document!s}'.format(self=self)
+
