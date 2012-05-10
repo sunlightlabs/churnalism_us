@@ -22,7 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 import superfastmatch
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
-from celery_tasks.tasks import update_matches
+from celery_tasks.tasks import update_matched_document
 
 def association(request, doctype=None):
     """
@@ -188,6 +188,13 @@ def search(request, doctype=None):
                                     source_name=r['docid'], #will change this later, for now just use the doc id
                                     source_headline=r['title'])
                 md.save() 
+                # There are many MatchDocuments created for most searches but most users,
+                # especially those using the extension will usually only look at one.
+                # We want the MatchedDocument to store the document text in order to mimic
+                # search results when SFM is down, but fetching that document text from
+                # SFM is expensive so we push it out to a task queue.
+                update_matched_document.delay(response['documents']['rows']['doctype'],
+                                              response['documents']['rows']['docid'])
 
             match_id = None
             matches = Match.objects.filter(search_document=doc, matched_document=md)
@@ -209,9 +216,6 @@ def search(request, doctype=None):
             
             r['match_id'] = match_id
 
-        #use celery tasks to fetch result text
-        update_matches.delay(response['documents']['rows'])
-        
         return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
