@@ -45,7 +45,9 @@ def document_list(request, doctype=None):
 
     sfm = superfastmatch.DjangoClient()
     page = request.GET.get('cursor')
-    response = sfm.documents(doctype, page)
+    order_by = request.GET.get('order_by')
+    limit = request.GET.get('limit')
+    response = sfm.documents(doctype, page=page, order_by=order_by, limit=limit)
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
@@ -193,8 +195,8 @@ def search(request, doctype=None):
                 # We want the MatchedDocument to store the document text in order to mimic
                 # search results when SFM is down, but fetching that document text from
                 # SFM is expensive so we push it out to a task queue.
-                update_matched_document.delay(response['documents']['rows']['doctype'],
-                                              response['documents']['rows']['docid'])
+                update_matched_document.delay(r['doctype'],
+                                              r['docid'])
 
             match_id = None
             matches = Match.objects.filter(search_document=doc, matched_document=md)
