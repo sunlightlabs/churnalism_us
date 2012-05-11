@@ -140,6 +140,7 @@ def search(request, url=None, uuid=None):
 def search_against_text(request, text):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text)
+    sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
     return search_result_page(request, sfm_results, text)
 
 
@@ -147,6 +148,7 @@ def search_against_uuid(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
+        sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
         return search_result_page(request, sfm_results, 
                                   source_text=sfm_results.get('text'), 
                                   source_title=sfm_results.get('title'))
@@ -183,6 +185,8 @@ def search_against_url(request, url):
     (title, text) = fetch_and_clean(url)
     try:
         sfm_results = sfm.search(text=text, title=title, url=url)
+
+        sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
 
         #if they submit a url, don't return the exact same url in the results
         for r in sfm_results['documents']['rows']:
