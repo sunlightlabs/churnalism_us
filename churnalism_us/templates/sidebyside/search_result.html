@@ -70,11 +70,10 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			window.search_results = {{ results|jsonify|safe }};
-            
-            $('#truncate').condense({ condensedLength: 300});
+
+            $("#truncate").markupAsArticle().pruneToHeight(230);
 		});
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_common.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.condense.js" %}></script>
 {% endblock js %}

@@ -126,6 +126,50 @@
                 var txt = jQuery(this).html();
                 var markup = markup_text(txt);
                 jQuery(this).html(markup);
+                return this;
+            }
+        });
+
+        window.jQuery.fn.extend({
+            pruneToHeight: function (height, more_text, less_text) {
+                var more_text = more_text || '[show]';
+                var less_text = less_text || '[hide]';
+
+                var shortened = this[0].cloneNode(true); // Save a reference to the original DOM
+                var $shortened = jQuery(shortened);
+                var original = this[0].cloneNode(true);
+                var $original = jQuery(original);
+                $original.hide();
+
+                var $container = jQuery('<div class="condense_control_container"></div>');
+                jQuery(this[0]).replaceWith($container);
+                $container.append($shortened);
+                $container.append($original);
+
+                var chopping_block = $shortened.find('*').toArray();
+                while ((chopping_block.length > 1) && ($shortened.height() > height)) {
+                    jQuery(chopping_block.pop()).remove();
+                }
+
+                var $more = jQuery('<span class="condense_control condense_control_more"></span>');
+                $more.text(more_text);
+                $more.click(function(){
+                    $shortened.hide();
+                    $original.show();
+                });
+
+                var $less = jQuery('<span class="condense_control condense_control_less"></span>');
+                $less.text(less_text);
+                $less.click(function(){
+                    $original.hide();
+                    $shortened.show();
+                    $shortened.find('.condense_control')[0].scrollIntoView(false);
+                });
+
+                $shortened.append($more);
+                $original.append($less);
+
+                return this;
             }
         });
     }
