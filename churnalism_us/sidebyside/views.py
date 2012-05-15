@@ -88,6 +88,18 @@ def attach_document_text(results, maxdocs=None):
             row['text'] = doc_result['text']
 
 
+def sort_by_coverage(results):
+    results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
+
+
+def drop_silly_results(results):
+    minimum = settings.SIDEBYSIDE.get('minimum_threshold', 1)
+    silly = [row for row in results['documents']['rows']
+             if round(row['coverage'][1]) < minimum]
+    for row in silly:
+        results['documents']['rows'].remove(row)
+
+
 def search_page(request):
     brokenurl = request.GET.get('brokenurl') 
     if brokenurl == 'true':
@@ -140,7 +152,8 @@ def search(request, url=None, uuid=None):
 def search_against_text(request, text):
     sfm = superfastmatch.DjangoClient('sidebyside')
     sfm_results = sfm.search(text)
-    sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
+    drop_silly_results(sfm_results)
+    sort_by_coverage(sfm_results)
     return search_result_page(request, sfm_results, text)
 
 
@@ -148,7 +161,8 @@ def search_against_uuid(request, uuid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
-        sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
+        drop_silly_results(sfm_results)
+        sort_by_coverage(sfm_results)
         return search_result_page(request, sfm_results, 
                                   source_text=sfm_results.get('text'), 
                                   source_title=sfm_results.get('title'))
@@ -185,8 +199,9 @@ def search_against_url(request, url):
     (title, text) = fetch_and_clean(url)
     try:
         sfm_results = sfm.search(text=text, title=title, url=url)
+        drop_silly_results(sfm_results)
+        sort_by_coverage(sfm_results)
 
-        sfm_results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
 
         #if they submit a url, don't return the exact same url in the results
         for r in sfm_results['documents']['rows']:
@@ -214,6 +229,8 @@ def permalink(request, uuid, doctype, docid):
     sfm = superfastmatch.DjangoClient('sidebyside')
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
+        drop_silly_results(sfm_results)
+        sort_by_coverage(sfm_results)
 
         for row in sfm_results['documents']['rows']:
             if row['doctype'] == doctype and row['docid'] == docid:
