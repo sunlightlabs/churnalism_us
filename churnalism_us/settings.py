@@ -193,7 +193,7 @@ LOGGING = {
 
 SIDEBYSIDE = {
     'max_doc_prefetch': 0,
-    'minimum_threshold': 3  # Plain-english percentages, e.g. 3 = 3%
+    'minimum_threshold': 0  # Plain-english percentages, e.g. 3 = 3%
 }
 
 APIPROXY = {
