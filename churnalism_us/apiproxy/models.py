@@ -136,6 +136,9 @@ class MatchedDocument(models.Model):
     def __unicode__(self):
         return u'{self.doc_type: >3}, {self.doc_id: >9}, {self.source_headline} @ {self.updated}'.format(self=self)
 
+    class Meta:
+        unique_together = ("doc_type", "doc_id")
+
 
 class Match(models.Model):
 
@@ -169,4 +172,7 @@ class Match(models.Model):
 
     def __unicode__(self):
         return u'{self.search_document!s} => {self.matched_document!s}'.format(self=self)
+
+    class Meta:
+        unique_together = ('search_document', 'matched_document')
 
