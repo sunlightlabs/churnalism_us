@@ -9,6 +9,7 @@ import lxml.html
 import readability
 import settings
 from operator import itemgetter
+from urlparse import urlparse
 
 import stream
 from lepl.apps.rfc3696 import HttpUrl
@@ -100,14 +101,13 @@ def drop_silly_results(results):
         results['documents']['rows'].remove(row)
 
 
-def search_page(request):
-    brokenurl = request.GET.get('brokenurl') 
-    if brokenurl == 'true':
-        broken = True
-    else:
-        broken = False
+def search_page(request, error=None):
+    context = {
+        'brokenurl': request.GET.get('brokenurl') == 'true',
+        'error': error
+    }
 
-    return render(request, 'sidebyside/search_page.html', {'brokenurl': broken, 'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
+    return render(request, 'sidebyside/search_page.html', context)
 
 
 def search_result_page(request, results, source_text, 
@@ -123,8 +123,7 @@ def search_result_page(request, results, source_text,
                    'source_text': source_text,
                    'source_title': source_title,
                    'source_url': source_url,
-                   'domain': settings.DOMAIN,
-                   'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL)})
+                   'domain': settings.DOMAIN})
 
 
 def search(request, url=None, uuid=None):
@@ -180,6 +179,10 @@ def search_against_url(request, url):
     readability article grabber, then submits the article text
     to superfastmatch for comparison.
     """
+
+    (scheme, _1, _2, _3, _4, _5) = urlparse(url)
+    if scheme not in ('http', 'https'):
+        return search_page(request, error='The URL must begin with either http or https.')
 
     def fetch_and_clean(url):
         html = slurp_url(url, use_cache=True)
@@ -302,9 +305,7 @@ def chromeext_recall(request, uuid, doctype, docid):
         title = '(No Title Found)'
 
     resp = render(request, 'sidebyside/chrome.html',
-                  {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
-                   'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
-                   'results': sfm_results,
+                  {'results': sfm_results,
                    'source_text': sfm_results['text'],
                    'source_title': title,
                    'source_url': sfm_results.get('url'),
@@ -329,9 +330,7 @@ def sidebyside_generic(request, search_uuid, match_doc_type, match_doc_id):
                                             if r['doctype'] == int(match_doc_type) and r['docid'] == int(match_doc_id)]
 
     resp = render(request, 'sidebyside/chrome.html',
-                            {'ABSOLUTE_STATIC_URL': request.build_absolute_uri(settings.STATIC_URL),
-                             'ABSOLUTE_BASE_URL': request.build_absolute_uri('/'),
-                             'source_text': search_doc.text,
+                            {'source_text': search_doc.text,
                              'source_title': search_doc.title,
                              'match_text': match_doc.text,
                              'match_title': match_doc.source_headline,

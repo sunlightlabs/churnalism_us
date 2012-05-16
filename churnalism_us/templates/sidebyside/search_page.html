@@ -9,6 +9,9 @@
     {% if brokenurl %}
         <p class="broken-url-text">Thanks for the report. We'll get to fixing it right away. In the meantime, try copying and pasting the text of that article below.</p>
     {% endif %}
+    {% if error %}
+        <p class="broken-url-text">{{ error }}</p>
+    {% endif %}
     <div id="halfColumn">
         <p id="introText">Ever wonder if the news story your reading is a product of real journalism or just a spin off of another story posted elsewhere? <span class="introHighlight">Discover the journalism you can trust and what you should question</span>.</p>
     </div>
