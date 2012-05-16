@@ -22,7 +22,6 @@ from django.views.decorators.csrf import csrf_exempt
 import superfastmatch
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
-from celery_tasks.tasks import update_matched_document
 
 def association(request, doctype=None):
     """
@@ -184,19 +183,19 @@ def search(request, doctype=None):
             try:
                 md = MatchedDocument.objects.get(doc_id=r['docid'], doc_type=r['doctype'])
             except:
+                sfm_doc = sfm.document(r['doctype'], r['docid'])
+                if sfm_doc['success'] == False:
+                    # If we can't fetch the text, the site probably won't be able
+                    # to either, so just ignore this result row.
+                    continue
+
                 md = MatchedDocument(doc_type=r['doctype'], 
-                                    doc_id=r['docid'], 
-                                    source_url=r['url'],
-                                    source_name=r['docid'], #will change this later, for now just use the doc id
-                                    source_headline=r['title'])
+                                     doc_id=r['docid'], 
+                                     text=sfm_doc['text'],
+                                     source_url=r['url'],
+                                     source_name=r['docid'], #will change this later, for now just use the doc id
+                                     source_headline=r['title'])
                 md.save() 
-                # There are many MatchDocuments created for most searches but most users,
-                # especially those using the extension will usually only look at one.
-                # We want the MatchedDocument to store the document text in order to mimic
-                # search results when SFM is down, but fetching that document text from
-                # SFM is expensive so we push it out to a task queue.
-                update_matched_document.delay(r['doctype'],
-                                              r['docid'])
 
             match_id = None
             matches = Match.objects.filter(search_document=doc, matched_document=md)
