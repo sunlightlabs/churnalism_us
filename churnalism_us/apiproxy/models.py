@@ -68,8 +68,7 @@ class SearchDocument(models.Model):
     text = models.TextField(null=False,
                             blank=False)
 
-    title = models.CharField(max_length=200,
-                             null=True,
+    title = models.TextField(null=True,
                              blank=False)
 
     created = models.DateTimeField(auto_now_add=True,
@@ -121,8 +120,8 @@ class MatchedDocument(models.Model):
                                    null=True, 
                                    blank=False)
 
-    source_headline = models.CharField(max_length=200,
-                                        null=True,
+   
+    source_headline = models.TextField( null=True,
                                         blank=False)
 
     text = models.TextField(null=False,
