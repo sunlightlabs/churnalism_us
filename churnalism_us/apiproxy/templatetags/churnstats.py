@@ -1,5 +1,6 @@
 from apiproxy.models import SearchDocument, Match
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -8,10 +9,15 @@ def latest(number_latest):
     churns = []
     dedupe = []
     t = template.loader.get_template('apiproxy/latest_churns.html')
-    recent_matches = Match.objects.all().order_by('-updated')[:20]
+    recent_matches = (Match.objects
+                      .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_threshold', 0))
+                      .order_by('-percent_churned')[:20])
     for rm in recent_matches:
         if rm.search_document_id not in dedupe and len(churns) < number_latest:
-            churns.append({'percent': rm.percent_churned, 'title': rm.search_document.title, 'text': rm.search_document.text, 'uuid': rm.search_document.uuid})
+            churns.append({'percent': rm.percent_churned, 
+                           'title': rm.search_document.title, 
+                           'text': rm.search_document.text, 
+                           'uuid': rm.search_document.uuid})
             dedupe.append(rm.search_document_id)
 
     return t.render(template.Context({'latest': churns }))
@@ -19,12 +25,17 @@ def latest(number_latest):
 @register.simple_tag
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
-    matches = Match.objects.all().order_by('-number_matches')[:20]
+    matches = (Match.objects
+               .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_threshold', 0))
+               .order_by('-number_matches')[:20])
     churns = []
     dedupe = []
     for m in matches:
         if m.search_document_id not in dedupe and len(churns) < number_viewed :
-            churns.append({'percent': m.percent_churned, 'title':m.search_document.title, 'text': m.search_document.text, 'uuid': m.search_document.uuid})
+            churns.append({'percent': m.percent_churned, 
+                           'title':m.search_document.title, 
+                           'text': m.search_document.text, 
+                           'uuid': m.search_document.uuid})
             dedupe.append(m.search_document_id)
 
     return t.render(template.Context({'viewed': churns}))
