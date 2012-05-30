@@ -94,11 +94,14 @@ def sort_by_coverage(results):
 
 
 def drop_silly_results(results):
-    minimum = settings.SIDEBYSIDE.get('minimum_threshold', 1)
-    silly = [row for row in results['documents']['rows']
-             if round(row['coverage'][1]) < minimum]
-    for row in silly:
-        results['documents']['rows'].remove(row)
+    minimum_pct = settings.SIDEBYSIDE.get('minimum_coverage_pct', 1)
+    minimum_chars = settings.SIDEBYSIDE.get('minimum_coverage_chars', 180)
+    results['documents']['rows'][:] = [
+        row
+        for row in results['documents']['rows']
+        if round(row['coverage'][1]) >= minimum_pct
+        and row['coverage'][0] >= minimum_chars
+    ]
 
 
 def search_page(request, error=None):

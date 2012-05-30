@@ -10,7 +10,7 @@ def latest(number_latest):
     dedupe = []
     t = template.loader.get_template('apiproxy/latest_churns.html')
     recent_matches = (Match.objects
-                      .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_threshold', 0))
+                      .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_coverage_pct', 0))
                       .order_by('-percent_churned')[:20])
     for rm in recent_matches:
         if rm.search_document_id not in dedupe and len(churns) < number_latest:
@@ -26,7 +26,7 @@ def latest(number_latest):
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
     matches = (Match.objects
-               .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_threshold', 0))
+               .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_coverage_pct', 0))
                .order_by('-number_matches')[:20])
     churns = []
     dedupe = []

@@ -127,6 +127,7 @@
         $(doc_text_el).html($(doc_text_el).text());
         $(match_text_el).html($(match_text_el).text());
         $.each(search_results['documents']['rows'], function(idx, row){
+            row['snippets'].sort(function(a, b){ return a.length < b.length; });
             $.each(row['snippets'], function(snippet_idx, snippet){
                 var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
                 $.each(sub_snippets, function(subsnippet_idx, sub_snippet){

@@ -14,9 +14,38 @@ def document_text(sfm, row):
 
 def calculate_coverage(text, row):
     chars_matched = sum((fragment[2] for fragment in row['fragments']))
-    pct_of_match = chars_matched / row['characters']
-    pct_of_source = chars_matched / len(text)
-    return [chars_matched, round(max(pct_of_match, pct_of_source) * 100, 2)]
+    pct_of_combined = chars_matched / (row['characters'] + len(text) - chars_matched)
+    return [chars_matched, round(pct_of_combined * 100, 2)]
+
+
+def fragment_density(row):
+    def _left(frag):
+        return (frag[0], frag[2])
+    def _right(frag):
+        return (frag[1], frag[2])
+
+    doc_extents = []
+    for (side, _side) in [('searched', _left), ('matched', _right)]:
+        if len(row['fragments']) == 1:
+            doc_extents.append((0, row['characters'], row['fragments'][0][2]))
+        else:
+            # (min, max, sum)
+            extents = (0xffffffff, 0, 0)
+            for frag in row['fragments']:
+                (start, length) = _side(frag)
+                extents = (min(extents[0], start),
+                           max(extents[1], start + length),
+                           extents[2] + length)
+            doc_extents.append(extents)
+        # density[side] = extents[2] / (extents[1] - extents[0])
+
+    (numer, denom) = reduce(lambda (numer, denom), (fro, to, l): (numer+l, denom+(to-fro)),
+                            doc_extents, (0, 0))
+
+    if denom == 0 or numer == 0:
+        return 0
+    else:
+        return numer / denom
 
 
 def snippets_for_fragments(text, fragments):
@@ -131,7 +160,7 @@ def reduce_fragments(fragments, minimum_threshold=15):
     return new_frags
 
 
-def embellish(text, sfm_results, reduce_frags=False, add_coverage=False, add_snippets=False, prefetch_documents=False):
+def embellish(text, sfm_results, reduce_frags=False, add_coverage=False, add_density=False, add_snippets=False, prefetch_documents=False):
     sfm = superfastmatch.DjangoClient()
     maxdocs = prefetch_documents if isinstance(prefetch_documents, int) else None
     prefetched = 0
@@ -146,6 +175,9 @@ def embellish(text, sfm_results, reduce_frags=False, add_coverage=False, add_sni
 
         if add_coverage:
             row['coverage'] = calculate_coverage(text, row)
+
+        if add_density:
+            row['density'] = fragment_density(row)
 
         if add_snippets:
             row['snippets'] = snippets_for_fragments(text, row['fragments'])

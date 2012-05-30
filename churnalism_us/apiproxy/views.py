@@ -13,6 +13,7 @@ API. It provides a few opportunities:
 
 import json
 
+from decimal import Decimal
 
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest, HttpResponseServerError)
@@ -22,6 +23,10 @@ from django.views.decorators.csrf import csrf_exempt
 import superfastmatch
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
+from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
+
+from django.conf import settings
+
 
 def association(request, doctype=None):
     """
@@ -155,75 +160,67 @@ def search(request, doctype=None):
 
 
     # The actual proxying:
+    response = execute_search(doc, doctype)
+    record_matches(doc, response)
+
+    # These changes are specific to this request and should not be stored in the database.
+    response['uuid'] = doc.uuid
+    if (url or uuid) and 'text' not in response:
+        response['text'] = doc.text
+    if title and 'title' not in response:
+        response['title'] = doc.title
+
+    return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
+
+
+def execute_search(doc, doctype=None):
     sfm = superfastmatch.DjangoClient()
-    response = sfm.search(text, doctype)
-    
-    #if we get an error here, we should just return matches from the database
-
-
+    response = sfm.search(doc.text, doctype)
 
     if isinstance(response, str):
+        # Pass the SFM error back to the client
         return HttpResponse(response, content_type='text/html')
-    else:
-        
-        embellish(text, 
-              response, 
-              reduce_frags=True,
-              add_coverage=True, 
-              add_snippets=True,
-              prefetch_documents=False)
-
-        response['uuid'] = doc.uuid
-        if (url or uuid) and 'text' not in response:
-            response['text'] = doc.text
-        if title and 'title' not in response:
-            response['title'] = doc.title
-
-        for r in response['documents']['rows']:
-            try:
-                md = MatchedDocument.objects.get(doc_id=r['docid'], doc_type=r['doctype'])
-            except:
-                sfm_doc = sfm.document(r['doctype'], r['docid'])
-                if sfm_doc['success'] == False:
-                    # If we can't fetch the text, the site probably won't be able
-                    # to either, so just ignore this result row.
-                    continue
-
-                md = MatchedDocument(doc_type=r['doctype'], 
-                                     doc_id=r['docid'], 
-                                     text=sfm_doc['text'],
-                                     source_url=r['url'],
-                                     source_name=r['docid'], #will change this later, for now just use the doc id
-                                     source_headline=r['title'])
-                md.save() 
-
-            match_id = None
-            matches = Match.objects.filter(search_document=doc, matched_document=md)
-            if len(matches) > 0:
-                matches[0].number_matches += 1
-                matches[0].response = json.dumps(response)
-                matches[0].save()
-                match_id = matches[0].id
-            else:
-                stats = calculate_coverage(text, r)
-                match = Match(search_document=doc, 
-                              matched_document=md,
-                              percent_sourced=0, #don't need this since churn function picks higher of sourced or churned
-                              percent_churned=str(stats[1]),
-                              number_matches=1,
-                              response=json.dumps(response) )
-                match.save()
-                match_id = match.id
-            
-            r['match_id'] = match_id
-
-        return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
+    drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
+    ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
+                        doc.text, response)
+    embellish(doc.text,
+              response,
+              **settings.APIPROXY.get('embellishments', {}))
+    return response
 
 
+def record_matches(doc, response, update_matches=False):
+    sfm = superfastmatch.DjangoClient()
+    for r in response['documents']['rows']:
+        (md, created) = MatchedDocument.objects.get_or_create(doc_id=r['docid'],
+                                                              doc_type=r['doctype'])
+        if created or update_matches:
+            sfm_doc = sfm.document(r['doctype'], r['docid'])
+            if sfm_doc['success'] == False:
+                # If we can't fetch the text, the site probably won't be able
+                # to either, so just ignore this result row.
+                continue
+            md.text = sfm_doc['text']
+            md.source_url = r['url']
+            md.source_name = r['docid'] # This is wrong, should be the publisher
+            md.source_headline = r['title']
+            md.save()
 
+        (match, created) = Match.objects.get_or_create(search_document=doc,
+                                                       matched_document=md)
+        if created or update_matches:
+            stats = calculate_coverage(doc.text, r)
+            match.percent_churned = str(stats[1])
+            match.overlapping_characters = stats[0]
+            density = r.get('density')
+            match.fragment_density = Decimal(str(density)) if density else None
+            match.response = json.dumps(response)
+        match.number_matches += 1
+        match.save()
 
+        r['match_id'] = match.id
 
 
 

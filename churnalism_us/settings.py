@@ -193,11 +193,21 @@ LOGGING = {
 
 SIDEBYSIDE = {
     'max_doc_prefetch': 0,
-    'minimum_threshold': 0  # Plain-english percentages, e.g. 3 = 3%
+    'minimum_coverage_pct': 0,  # Plain-english percentages, e.g. 3 = 3%
+    'minimum_coverage_chars': 0
 }
 
 APIPROXY = {
-    'document_timeout': timedelta(hours=4)
+    'document_timeout': timedelta(hours=4),
+    'proper_noun_threshold': 0.8,
+    'commonality_threshold': 0.3,
+    'embellishments': {
+        'reduce_frags': False,
+        'add_coverage': True,
+        'add_density': True,
+        'add_snippets': True,
+        'prefetch_documents': False
+    }
 }
 
 SUPERFASTMATCH = {
