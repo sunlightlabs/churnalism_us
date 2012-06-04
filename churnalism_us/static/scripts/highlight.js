@@ -96,7 +96,7 @@ var highlight_match = function (p, match, frag_number) {
     var html = replace_html_entities(jQuery(p).html());
     var haystack = html.replace(/[\x00-\x2F\s]/g, ' ').toLowerCase();
     var needle = replace_html_entities(match).replace(/[\x00-\x2F\s]/g, '\x00').toLowerCase();
-    var needle_pattern = RegExp.escape(needle).replace(/[\x00]+/g, '[\\x00-\\x2F\s]*?');
+    var needle_pattern = RegExp.escape(needle).replace(/[\x00]+/g, '[\\x00-\\x2F\\s]*?');
     var needle_regex = new RegExp(needle_pattern, 'i');
     var html_match = needle_regex.exec(html);
     if (html_match == null) {
