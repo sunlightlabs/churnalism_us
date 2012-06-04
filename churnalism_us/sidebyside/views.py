@@ -192,6 +192,18 @@ def search_against_url(request, url):
         if not html:
             raise Exception('Failed to fetch {0}'.format(url))
 
+        htmldoc = lxml.html.fromstring(html)
+        to_remove = [e
+                     for e in htmldoc.iterdescendants()
+                     if e.tag == lxml.etree.Comment
+                     or e.tag == 'script'
+                     or e.tag == 'noscript'
+                     or e.tag == 'object'
+                     or e.tag == 'embed']
+        for e in to_remove:
+            e.getparent().remove(e)
+        html = lxml.html.tostring(htmldoc)
+
         doc = readability.Document(html)
         cleaned_html = doc.summary()
         content_dom = lxml.html.fromstring(cleaned_html)
