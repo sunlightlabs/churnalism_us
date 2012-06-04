@@ -175,7 +175,7 @@ def search(request, doctype=None):
 
 
 def execute_search(doc, doctype=None):
-    sfm = superfastmatch.DjangoClient()
+    sfm = from_django_conf()
     response = sfm.search(doc.text, doctype)
 
     if isinstance(response, str):
@@ -193,7 +193,7 @@ def execute_search(doc, doctype=None):
 
 
 def record_matches(doc, response, update_matches=False):
-    sfm = superfastmatch.DjangoClient()
+    sfm = from_django_conf()
     for r in response['documents']['rows']:
         (md, created) = MatchedDocument.objects.get_or_create(doc_id=r['docid'],
                                                               doc_type=r['doctype'])

@@ -22,6 +22,8 @@ from utils.slurp_url import slurp_url
 from apiproxy.models import SearchDocument, Match, MatchedDocument
 
 import superfastmatch
+from superfastmatch.djangoclient import from_django_conf
+from publicity_machine.util import readability_extract
 
 from django.conf import settings
 
@@ -76,7 +78,7 @@ def render_text(el):
 
 
 def attach_document_text(results, maxdocs=None):
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     if maxdocs:
         results['documents']['rows'].sort(key=itemgetter('characters'))
 
@@ -152,7 +154,7 @@ def search(request, url=None, uuid=None):
 
 
 def search_against_text(request, text):
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     sfm_results = sfm.search(text)
     drop_silly_results(sfm_results)
     sort_by_coverage(sfm_results)
@@ -160,7 +162,7 @@ def search_against_text(request, text):
 
 
 def search_against_uuid(request, uuid):
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
         drop_silly_results(sfm_results)
@@ -204,16 +206,10 @@ def search_against_url(request, url):
             e.getparent().remove(e)
         html = lxml.html.tostring(htmldoc)
 
-        doc = readability.Document(html)
-        cleaned_html = doc.summary()
-        content_dom = lxml.html.fromstring(cleaned_html)
-        try:
-            title = doc.short_title()
-        except: 
-            title = 'No Title'
-        return (title, render_text(content_dom).strip().encode('utf-8', 'replace').decode('utf-8'))
+        (title, text) = readability_extract(html)
+        return (title, text)
 
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     (title, text) = fetch_and_clean(url)
     try:
         sfm_results = sfm.search(text=text, title=title, url=url)
@@ -244,7 +240,7 @@ def search_against_url(request, url):
 
 
 def permalink(request, uuid, doctype, docid):
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
         drop_silly_results(sfm_results)
@@ -293,7 +289,7 @@ def select_best_match(text, sfm_results):
             >> stream.reduce(longer, (None, 0)))
 
 def chromeext_recall(request, uuid, doctype, docid):
-    sfm = superfastmatch.DjangoClient('sidebyside')
+    sfm = from_django_conf('sidebyside')
     sfm_results = sfm.search(text=None, uuid=uuid)
 
     match_count = len(sfm_results['documents']['rows'])
