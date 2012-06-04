@@ -20,7 +20,7 @@ def drop_common_fragments(threshold, results):
     # We don't want to exclude a fragment that appears in just one or
     # two fragments simply because the results are too few to calculate
     # a percentage with sufficient fidelity.
-    if 2 / len(rows) > threshold:
+    if len(rows) == 0 or 2 / len(rows) > threshold:
         return
 
     freqs = freq(frag[3] for row in rows for frag in row['fragments'])
