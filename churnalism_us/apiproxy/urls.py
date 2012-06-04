@@ -12,6 +12,7 @@ urlpatterns = patterns(
     url(r'^document/$', 'document_list'),
     url(r'^association/$', 'association'),
     url(r'^search/$', 'search'),
+    url(r'^search/(?P<doctype>\d+)/$', 'search'),
 
     # TODO: The Superfastmatch API does not provide a JSON 
     #       representation for these yet so there isn't much
