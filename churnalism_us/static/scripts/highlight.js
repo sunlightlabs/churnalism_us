@@ -63,7 +63,7 @@ function htmlspecialchars_decode (string, quote_style) {
     }
     if (quote_style & OPTS.ENT_HTML_QUOTE_SINGLE) {
         string = string.replace(/&#0*39;/g, "'"); // PHP doesn't currently escape if more than one 0, but it should
-        // string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
+        string = string.replace(/&apos;|&#x0*27;/g, "'"); // This would also be useful here, but not a part of PHP
     }
     if (!noquotes) {
         string = string.replace(/&quot;/g, '"');
@@ -74,11 +74,29 @@ function htmlspecialchars_decode (string, quote_style) {
     return string;
 }
 
+var replace_html_entities = function (s) {
+    var entities_by_length = [
+        [4, /&(lt|gt);/g],
+        [5, /&(amp|yen|uml|not|shy|reg|deg|eth|#\d{2});/g],
+        [6, /&(quot|apos|nbsp|cent|sect|copy|ordf|macr|sup2|sup3|para|sup1|ordm|Auml|Euml|Iuml|Ouml|Uuml|auml|euml|iuml|ouml|uuml|yuml|#\d{3});/g],
+        [7, /&(iexcl|pound|laquo|acute|micro|cedil|raquo|times|Acirc|Aring|AElig|Ecirc|Icirc|Ocirc|Ucirc|THORN|szlig|acirc|aring|aelig|ecirc|icirc|ocirc|ucirc|thorn|#\d{4});/g],
+        [8, /&(curren|brvbar|plusmn|middot|frac14|frac12|frac34|iquest|divide|Agrave|Aacute|Atilde|Ccedil|Egrave|Eacute|Igrave|Iacute|Ntilde|Ograve|Oacute|Otilde|Oslash|Ugrave|Uacute|Yacute|agrave|aacute|atilde|ccedil|egrave|eacute|igrave|iacute|ntilde|ograve|oacute|otilde|oslash|ugrave|uacute|yacute|#\d{5});/g]
+    ];
+
+    for (var ix = 0; ix < entities_by_length.length; ix++) {
+        var len = entities_by_length[ix][0];
+        var pattern = entities_by_length[ix][1];
+        s = s.replace(pattern, (new Array(len)).join(' '));
+    }
+
+    return s;
+}
+
 var highlight_match = function (p, match, frag_number) {
-    var html = htmlspecialchars_decode(jQuery(p).html());
-    var haystack = html.replace(/[\x00-\x2F]/g, ' ').toLowerCase();
-    var needle = match.replace(/[\x00-\x2F]/g, '\x00').toLowerCase();
-    var needle_pattern = RegExp.escape(needle).replace(/[\x00]+/g, '[\\x00-\\x2F]*?');
+    var html = replace_html_entities(jQuery(p).html());
+    var haystack = html.replace(/[\x00-\x2F\s]/g, ' ').toLowerCase();
+    var needle = replace_html_entities(match).replace(/[\x00-\x2F\s]/g, '\x00').toLowerCase();
+    var needle_pattern = RegExp.escape(needle).replace(/[\x00]+/g, '[\\x00-\\x2F\s]*?');
     var needle_regex = new RegExp(needle_pattern, 'i');
     var html_match = needle_regex.exec(html);
     if (html_match == null) {
