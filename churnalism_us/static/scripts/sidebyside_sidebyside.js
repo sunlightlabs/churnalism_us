@@ -126,6 +126,8 @@
         var match_text_el = document.getElementById('pr-text');
         $(doc_text_el).html($(doc_text_el).text());
         $(match_text_el).html($(match_text_el).text());
+        $(doc_text_el).markupAsArticle();
+        $(match_text_el).markupAsArticle();
         $.each(search_results['documents']['rows'], function(idx, row){
             row['snippets'].sort(function(a, b){ return a.length < b.length; });
             $.each(row['snippets'], function(snippet_idx, snippet){
@@ -138,8 +140,6 @@
                 });
             });
         });
-        $(doc_text_el).markupAsArticle();
-        $(match_text_el).markupAsArticle();
 
         $('.churnalism-highlight').hover(function(){
             var frag_number = $(this).attr('churnalism:fragment');
