@@ -22,7 +22,7 @@ from apiproxy.models import SearchDocument, Match, MatchedDocument
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
-from publicity_machine.util import readability_extract
+from utils.textextract import readability_extract
 
 from django.conf import settings
 
