@@ -20,7 +20,7 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^confirmed/(?P<match_id>[0-9]+)/$', 'confirmed' , name='sidebyside-confirmed'),
     url(r'^urlproblem/', 'urlproblem', name='sidebyside-urlproblem'),
     url(r'^chrome/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'chromeext_recall', name='sidebyside-chrome-uuid-recall'),
-    url(r'^generic/(?P<search_uuid>[a-z0-9]{32})/(?P<match_doc_type>\d+)/(?P<match_doc_id>\d+)/$', 'sidebyside_generic', name='sidebyside-generic')
+    url(r'^generic/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'generic_recall', name='sidebyside-generic')
 
 )
 

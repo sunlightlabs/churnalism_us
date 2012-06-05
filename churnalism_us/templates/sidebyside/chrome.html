@@ -2,6 +2,7 @@
 
 {% load jsonify %}
 {% load trailingslash %}
+{% load domain %}
 {% block title %}Churnalism - Side by Side View {% endblock %}
 
 {% comment %}
@@ -141,12 +142,19 @@ so all links output must be absolute.
                             {{ source_title }}
                         {% endifequal %}
                     </h2>
+                    {% if source_url %}
+                        <em>Source: <a href="{{ source_url }}">{{ source_url|domain }}</a></em>
+                    {% endif %}
                 </div>
                 <div id="pr-title-box">
                     <h2 class="withTip" id="pr-title">
                         {{ match_title }}
                     </h2>
-                    <em>Source: {{match_source}}</em>
+                    {% if match_url %}
+                        <em>Source: <a href="{{ match_url }}">{{match_source}}</a></em>
+                    {% else %}
+                        <em>Source: {{match_source}}</em>
+                    {% endif %}
                 </div>
                 <div class="clear">
                 </div>

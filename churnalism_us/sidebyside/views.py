@@ -16,7 +16,6 @@ from lepl.apps.rfc3696 import HttpUrl
 from django.shortcuts import render
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
-from apiproxy.embellishments import embellish
 from utils.slurp_url import slurp_url
 
 from apiproxy.models import SearchDocument, Match, MatchedDocument
@@ -92,7 +91,7 @@ def attach_document_text(results, maxdocs=None):
 
 
 def sort_by_coverage(results):
-    results['documents']['rows'].sort(key=lambda r: r['coverage'][1], reverse=True)
+    results['documents']['rows'].sort(key=lambda r: r['coverage'][0], reverse=True)
 
 
 def drop_silly_results(results):
@@ -117,12 +116,6 @@ def search_page(request, error=None):
 
 def search_result_page(request, results, source_text, 
                        source_url=None, source_title=None):
- #   embellish(source_text, 
- #             results, 
- #             reduce_frags=True,
- #             add_coverage=True, 
- #             add_snippets=True,
- #             prefetch_documents=settings.SIDEBYSIDE.get('max_doc_prefetch'))
     return render(request, 'sidebyside/search_result.html',
                   {'results': results,
                    'source_text': source_text,
@@ -173,6 +166,8 @@ def search_against_uuid(request, uuid):
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
             return document404(request, uuid=uuid)
+        elif settings.DEBUG == True:
+            return HttpResponse(e.response[1], status=e.response[0])
         else:
             raise
 
@@ -288,7 +283,7 @@ def select_best_match(text, sfm_results):
             >> stream.map(fragment_match_percentage)
             >> stream.reduce(longer, (None, 0)))
 
-def chromeext_recall(request, uuid, doctype, docid):
+def recall(request, uuid, doctype, docid):
     sfm = from_django_conf('sidebyside')
     sfm_results = sfm.search(text=None, uuid=uuid)
 
@@ -299,7 +294,7 @@ def chromeext_recall(request, uuid, doctype, docid):
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
     except IndexError:
-        return HttpResponseNotFound('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, **match))
+        return HttpResponseNotFound('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
     if match_doc['success'] == True:
@@ -308,51 +303,33 @@ def chromeext_recall(request, uuid, doctype, docid):
         match_url = match.get('url', '')
 	match_source = match.get('source', '')
     sfm_results['documents']['rows'] = [match]
-    embellish(sfm_results['text'], sfm_results, add_snippets=True, add_coverage=True)
 
     if sfm_results.has_key('title'):
         title = sfm_results['title']
     else:
         title = '(No Title Found)'
 
-    resp = render(request, 'sidebyside/chrome.html',
-                  {'results': sfm_results,
-                   'source_text': sfm_results['text'],
-                   'source_title': title,
-                   'source_url': sfm_results.get('url'),
-                   'uuid': uuid,
-                   'match_count': match_count, # Raw match count, unrelated to 'match' variables below
-                   'match': match,
-                   'match_text': match_text,
-                   'match_title': match_title,
-                   'match_url': match_url,
-                   'match_source': match_source })
+    return {
+        'results': sfm_results,
+        'source_text': sfm_results['text'],
+        'source_title': title,
+        'source_url': sfm_results.get('url'),
+        'uuid': uuid,
+        'match_count': match_count, # Raw match count, unrelated to 'match' variables below
+        'match': match,
+        'match_text': match_text,
+        'match_title': match_title,
+        'match_url': match_url,
+        'match_source': match_source }
+
+def chromeext_recall(request, uuid, doctype, docid):
+    scope = recall(request, uuid, doctype, docid)
+    resp = render(request, 'sidebyside/chrome.html', scope)
     return resp
 
-def sidebyside_generic(request, search_uuid, match_doc_type, match_doc_id):
-
-    search_doc = SearchDocument.objects.get(uuid=search_uuid)
-    match_doc = MatchedDocument.objects.filter(doc_type=match_doc_type, doc_id=match_doc_id)[0]
-    match = Match.objects.get(search_document=search_doc, matched_document=match_doc)
-
-    # Prune other documents from the original response 
-    cached_response = json.loads(match.response)
-    cached_response['documents']['rows'] = [r for r in cached_response['documents']['rows'] 
-                                            if r['doctype'] == int(match_doc_type) and r['docid'] == int(match_doc_id)]
-
-    resp = render(request, 'sidebyside/chrome.html',
-                            {'source_text': search_doc.text,
-                             'source_title': search_doc.title,
-                             'match_text': match_doc.text,
-                             'match_title': match_doc.source_headline,
-                             'match_source': match_doc.source_name,
-                             'match': {'coverage': [None, match.percent_churned],
-                                       'doctype': match_doc.doc_type,
-                                       'docid': match_doc.doc_id
-                                      },
-                             'match_obj': match_doc,
-                             'uuid': search_uuid,
-                             'results': cached_response })
+def generic_recall(request, uuid, doctype, docid):
+    scope = recall(request, uuid, doctype, docid)
+    resp = render(request, 'sidebyside/chrome.html', scope)
     return resp
 
 def shared(request, uuid):

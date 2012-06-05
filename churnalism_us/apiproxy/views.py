@@ -170,6 +170,8 @@ def search(request, doctype=None):
         response['text'] = doc.text
     if title and 'title' not in response:
         response['title'] = doc.title
+    if uuid and doc.url:
+        response['url'] = doc.url
 
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
@@ -186,6 +188,9 @@ def execute_search(doc, doctype=None):
     drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
     ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
                         doc.text, response)
+    if doc.url:
+        response['documents']['rows'][:] = [r for r in response['documents']['rows']
+                                            if r.get('url') != doc.url]
     embellish(doc.text,
               response,
               **settings.APIPROXY.get('embellishments', {}))
@@ -195,6 +200,9 @@ def execute_search(doc, doctype=None):
 def record_matches(doc, response, update_matches=False):
     sfm = from_django_conf()
     for r in response['documents']['rows']:
+        if r['url'] == doc.url:
+            continue
+
         (md, created) = MatchedDocument.objects.get_or_create(doc_id=r['docid'],
                                                               doc_type=r['doctype'])
         if created or update_matches:
@@ -205,7 +213,7 @@ def record_matches(doc, response, update_matches=False):
                 continue
             md.text = sfm_doc['text']
             md.source_url = r['url']
-            md.source_name = r['docid'] # This is wrong, should be the publisher
+            md.source_name = r.get('source')
             md.source_headline = r['title']
             md.save()
 

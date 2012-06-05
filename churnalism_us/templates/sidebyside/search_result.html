@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load jsonify %}
+{% load domain %}
 {% block head %}
 {% endblock %}
 {% block bodyclass %}home{% endblock %}
@@ -13,12 +14,12 @@
         <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
         <span class="textReplace scissorTop hidden">Scissor image</span>
         <div class="percentChurn">
-            <a class="percentText" href="#">{{ row.coverage.1|floatformat:0 }}% Pasted</a>
+            <a class="characters" href="#">{{ row.coverage.0 }} Characters</a>
             <a title="View Side by Side" class="sidebyside-link textReplace"
                href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
         </div>
-        <span class="characters">{{ row.coverage.0 }} Characters overlap</span>
+        <span class="percentText">{{ row.coverage.1|floatformat:0 }}% Overlap</a>
         <dl>
             <dt>From:</dt>
             <dd>

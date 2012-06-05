@@ -170,12 +170,12 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 .percentChurn a { font-size: 200%; }
 .active .percentChurn a { color: #fff; }
 .active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 5px 0 0 10px; }
-.characters { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
+.percentText { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
 .active .sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat;  margin-right: 20px; }
 .sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; }
 .sidebyside-link:hover { background: url(../images/sidebyside2.png) top right no-repeat; }
 .active .sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
-.percentText { float: left;  }
+.characters { float: left;  }
 
 .scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
 .scissorTop { background: url(../images/img_sissorLt.png) bottom left no-repeat; position: relative; top: -20px;}
