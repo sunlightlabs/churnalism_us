@@ -200,7 +200,12 @@ def execute_search(doc, doctype=None):
 def record_matches(doc, response, update_matches=False):
     sfm = from_django_conf()
     for r in response['documents']['rows']:
-        if 'url' in r and r['url'] == doc.url:
+        if 'url' not in r:
+            # We don't want to record a match for a document we don't have a URL for
+            # because we cannot provide a link back to the original.
+            continue
+
+        if r['url'] == doc.url:
             continue
 
         (md, created) = MatchedDocument.objects.get_or_create(doc_id=r['docid'],
