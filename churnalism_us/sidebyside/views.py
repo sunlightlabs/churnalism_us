@@ -13,7 +13,7 @@ from urlparse import urlparse
 
 import stream
 from lepl.apps.rfc3696 import HttpUrl
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from utils.slurp_url import slurp_url
@@ -91,7 +91,22 @@ def attach_document_text(results, maxdocs=None):
 
 
 def sort_by_coverage(results):
-    results['documents']['rows'].sort(key=lambda r: r['coverage'][0], reverse=True)
+    def _compare(a, b):
+        coverage_diff = a['coverage'][0] - b['coverage'][0]
+        if coverage_diff == 0:
+            density_diff = a['density'] - b['density']
+            if density_diff == 0:
+                return 0
+            elif density_diff < 0:
+                return -1
+            else:
+                return 1
+        elif coverage_diff < 0:
+            return -1
+        else:
+            return 1
+
+    results['documents']['rows'].sort(cmp=_compare, reverse=True)
 
 
 def drop_silly_results(results):
@@ -244,12 +259,18 @@ def permalink(request, uuid, doctype, docid):
 
         sort_by_coverage(sfm_results)
 
-        for row in sfm_results['documents']['rows']:
-            if row['doctype'] == doctype and row['docid'] == docid:
-                if not row.get('text'):
-                    doc = sfm.document(doctype, docid)
-                    if doc:
-                        row['text'] = doc['text']
+        try:
+            matching_row = [r 
+                            for r in sfm_results['documents']['rows']
+                            if r['doctype'] == int(doctype)
+                            and r['docid'] == int(docid)][0]
+        except IndexError:
+            return redirect('sidebyside-uuid-search', uuid=uuid)
+
+        if not matching_row.get('text'):
+            doc = sfm.document(doctype, docid)
+            if doc:
+                matching_row['text'] = doc['text']
 
         return search_result_page(request, sfm_results,
                                   source_text=sfm_results['text'],
