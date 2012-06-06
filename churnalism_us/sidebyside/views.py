@@ -239,6 +239,9 @@ def permalink(request, uuid, doctype, docid):
     try:
         sfm_results = sfm.search(text=None, uuid=uuid)
         drop_silly_results(sfm_results)
+        if len(sfm_results['documents']['rows']) == 0:
+            return document404(request, uuid=uuid)
+
         sort_by_coverage(sfm_results)
 
         for row in sfm_results['documents']['rows']:
