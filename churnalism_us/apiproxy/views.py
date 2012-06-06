@@ -200,7 +200,7 @@ def execute_search(doc, doctype=None):
 def record_matches(doc, response, update_matches=False):
     sfm = from_django_conf()
     for r in response['documents']['rows']:
-        if r['url'] == doc.url:
+        if 'url' in r and r['url'] == doc.url:
             continue
 
         (md, created) = MatchedDocument.objects.get_or_create(doc_id=r['docid'],
