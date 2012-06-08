@@ -23,6 +23,10 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
 
+        var uuid = '{{results.uuid}}';
+        if (uuid != ''){
+            _gaq.push(['_setCustomVar', 1, 'document_uuid', uuid, 3]);
+        }
         </script>
     </head>
 
