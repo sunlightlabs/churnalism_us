@@ -10,6 +10,7 @@ $(document).ready(function(){
         $.each(search_results['documents']['rows'], function(idx, row){
             if ((row['doctype'] == doctype) && (row['docid'] == docid)) {
                 code(row);
+                return;
             }
         });
     };

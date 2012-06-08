@@ -18,34 +18,12 @@ so all links output must be absolute.
             ul { margin: 0; padding-top: 0; padding-bottom: 0; }
             body {
                 background-color: #fbf8f3; 
-                font-family: Georgia,Times New Roman,Times,serif;
-            }
-            #explain-bar {
-                background: none #f9f6ed;
-                border-bottom: 1px solid #363671;
-                font-family: Helvetica,Arial,sans-serif;
-                padding: 1em;
-            }
-            #explain {
-                margin: 0 0 1em 0;
-                width: 85%;
             }
             #sidebysideHeader { 
                 margin-top: 15px;
                 margin-bottom: 40px;
             }
-            #match-bar {
-                font-family: Helvetica,Arial,sans-serif;
-                font-size: 2.8em;
-                font-weight: bold;
-                float: right;
-            }
             #sidebysideHeader a { float: left; font-size: 110%; margin-top: 13px; }
-            span#overlap-label {
-                position: relative;
-                float: right;
-                line-height: 30px;
-            }
             .link-separator {
                 letter-spacing: 117%;
                 font-weight: bold;
@@ -123,9 +101,6 @@ so all links output must be absolute.
     {% block overlap %}
     <div id="sidebysideHeader">
         <a href="{% url sidebyside-permalink uuid match.doctype match.docid %}">« Back to all Matches</a>
-        <div id="match-bar">
-            <span id="overlap-label">Overlap: {{ match.coverage.1|floatformat:0 }}%</span>
-        </div>
         <div class="clear"></div>
     </div>
     {% endblock %}
