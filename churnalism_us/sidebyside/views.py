@@ -13,6 +13,7 @@ from urlparse import urlparse
 
 import stream
 from lepl.apps.rfc3696 import HttpUrl
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
@@ -108,7 +109,6 @@ def sort_by_coverage(results):
 
     results['documents']['rows'].sort(cmp=_compare, reverse=True)
 
-
 def drop_silly_results(results):
     minimum_pct = settings.SIDEBYSIDE.get('minimum_coverage_pct', 1)
     minimum_chars = settings.SIDEBYSIDE.get('minimum_coverage_chars', 180)
@@ -118,7 +118,6 @@ def drop_silly_results(results):
         if round(row['coverage'][1]) >= minimum_pct
         and row['coverage'][0] >= minimum_chars
     ]
-
 
 def search_page(request, error=None):
     context = {
@@ -345,6 +344,22 @@ def recall(request, uuid, doctype, docid):
         'match_title': match_title,
         'match_url': match_url,
         'match_source': match_source }
+
+def chromeext_parameters(request):
+    minimum_pct = settings.SIDEBYSIDE.get('minimum_coverage_pct', 1)
+    minimum_chars = settings.SIDEBYSIDE.get('minimum_coverage_chars', 180)
+    results = {
+        'minimum_coverage_pct': minimum_pct,
+        'minimum_coverage_chars': minimum_chars,
+        'warning_ribbon_src': reverse('sidebyside-chrome-ribbon')
+    }
+    return HttpResponse(json.dumps(results), content_type='application/json')
+
+def chromeext_ribbon(request):
+    scope = {
+        'fake_domain': request.GET.get('domain')
+    }
+    return render(request, 'sidebyside/chrome_ribbon.html', scope)
 
 def chromeext_recall(request, uuid, doctype, docid):
     scope = recall(request, uuid, doctype, docid)
