@@ -26,6 +26,7 @@
         var uuid = '{{results.uuid}}';
         if (uuid != ''){
             _gaq.push(['_setCustomVar', 1, 'document_uuid', uuid, 3]);
+            _gaq.push(['_trackEvent', 'search', 'search']);
         }
         </script>
     </head>
