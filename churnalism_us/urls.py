@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^$', 'sidebyside.views.search_page', name='index'),
     url(r'^about/$', direct_to_template, {'template': 'about.html', 'extra_context': {'ABSOLUTE_STATIC_URL': settings.DOMAIN + settings.STATIC_URL}}, name='about'),
     url(r'^contact/$', direct_to_template, {'template': 'contact.html', 'extra_context':{ 'ABSOLUTE_STATIC_URL': settings.DOMAIN + settings.STATIC_URL}}, name='contact'),
+    url(r'^downloads/$', direct_to_template, {'template': 'downloads.html', 'extra_context':{ 'ABSOLUTE_STATIC_URL': settings.DOMAIN + settings.STATIC_URL}}, name='downloads'),
     url(r'^sidebyside/', include('sidebyside.urls')),
     url(r'^api/', include('apiproxy.urls')),
 )
