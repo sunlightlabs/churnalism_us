@@ -161,6 +161,7 @@ $(document).ready(function(){
 
         var permalink = $('.permalink', li).attr('href');
         $("#share-page-url").attr('value', permalink);
+        track_click(permalink);
     };
 
     var build_text_idstr = function (doctype, docid) {
