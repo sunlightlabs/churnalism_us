@@ -13,14 +13,17 @@
                 background-color: transparent;
             }
             body { overflow: hidden; padding: 0; margin: 0; border-width: 0; width: 100%; height: 32px; border-bottom: 2px solid black; }
-            div#container { height: 100%; }
+            div#container { height: 100%; padding: 5px 10px; }
             #alert { font-size: 14px; font-weight: bold; }
-            #explain { font-size: 14px; font-weight: normal; margin: 0; padding: 0; }
+            #explain { font-size: 12px; font-weight: normal; margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique;}
             img.found { position: relative; top: 3px; }
 
             div#message { display: inline-block; vertical-align: middle; padding: 0; }
-            div#actions { display: inline-block; vertical-align: middle; margin: 0; text-align: right; }
+            div#actions { display: inline-block; vertical-align: middle; margin: 0; text-align: right; float: right;}
             button#show-comparison, button#dismiss { display: inline-block; text-indent: 0; background: none none; }
+            .callOut { text-transform: uppercase; color: #393434;}
+            button { background-color: #F6F93A; border: 1px solid #dee127; -moz-border-radius: 2px; -webkit-border-radius: 2px; color: #766f06;}
+            button:hover { background-color: #f5f69f;}
         </style>
     </head>
 
@@ -29,8 +32,8 @@
         <div id="container" style="position: relative;">
             <div id="message">
                 <span id="alert">
-                    <img class="found" src="{{ ABSOLUTE_STATIC_URL }}images/found.png">
-                    Churnalism Alert:
+                    <img class="found" src="{{ ABSOLUTE_STATIC_URL }}images/bg_alert.png">
+                    <span class="callOut">Churnalism Alert:</span>
                 </span>
                 <span id="explain">Portions of this website may have been copied from a press release, wikipedia, or other original source.</span>
             </div>
