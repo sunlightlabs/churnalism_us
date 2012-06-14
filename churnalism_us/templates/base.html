@@ -23,9 +23,14 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
 
-        var uuid = '{{results.uuid}}';
-        if (uuid != ''){
-            _gaq.push(['_setCustomVar', 1, 'document_uuid', uuid, 3]);
+        var track_click = function(permalink) {
+            var parts = permalink.split('/');
+            var keys = parts[parts.length-4] + '_' + parts[parts.length-3] + '_' + parts[parts.length-2]
+        
+            if (keys != ''){
+                _gaq.push(['_setCustomVar', 1, 'document_uuid', keys, 3]);
+                _gaq.push(['_trackEvent', 'search', 'search']);
+            }
         }
         </script>
     </head>
@@ -36,6 +41,7 @@
                 <ul>
                     <li id="about"><a class="textReplace" href="{% url about %}">About</a></li>
                     <li id="contact"><a class="textReplace" href="{% url contact %}">Contact</a></li>
+                    <li id="downloads"><a class="textReplace" href="{% url downloads %}">Downloads</a></li>
 <!--                    <li id="api"><a class="textReplace" href="#">Api</a></li>-->
                     <li id="sunlight" class="textReplace" >Product of: <a class="textReplace" id="logo_mst" href="http://mediastandardstrust.org/">Media Standards Trust</a> <a id="logo_sunlight" class="textReplace" href="http://sunlightfoundation.com">Sunlight Foundation</a></li>
                 </ul>    
@@ -106,6 +112,36 @@
     
     <script type="text/javascript" src="{{ABSOLUTE_STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript">
+        var get_url = function(){
+            var permalink = $("#share-page-url");
+            if (permalink.length > 0){
+                return permalink.val();
+            }
+            else {
+                return window.location.href;
+            }
+        };
+        var get_title = function(){
+            var matches = $("ol#matches li.active")
+            if (matches.length > 0){
+                return "Churnalism - " + $(matches[0]).find("a.articleTitle").text();
+            } else {
+                return $("title").text();
+            }
+        };
+        $("#twitter").click(function(){
+            var url = encodeURIComponent(get_url());
+            var title = encodeURIComponent(get_title());
+            window.open("https://twitter.com/share?url=" + url + "&text=I've found churnalism! " + title, 'width=300, height=400')
+        });
+        $("#facebook").click(function(){
+            var url = encodeURIComponent(get_url());
+            var title = encodeURIComponent(get_title());
+            window.open("http://www.facebook.com/sharer.php?u=" + url + "&t=" + title, "Share Churnalism on Facebook", 'height=350, width=670');
+            return false;
+        });
+    </script>
     {% block js %}
     {% endblock js %}
 </html>

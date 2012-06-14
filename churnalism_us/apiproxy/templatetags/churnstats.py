@@ -1,8 +1,9 @@
-from apiproxy.models import SearchDocument, Match
+from apiproxy.models import SearchDocument, Match, MatchedDocument
 from django import template
 from django.conf import settings
 from django.db.models import Q
-
+from analytics.get_most_read import get_most_viewed
+import analytics.sample_utils
 register = template.Library()
 
 @register.simple_tag
@@ -31,24 +32,29 @@ def latest(number_latest):
 @register.simple_tag
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
-    matches = (Match.objects
-               .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_coverage_pct', 0))
-               .filter(overlapping_characters__gte=settings.SIDEBYSIDE.get('minimum_coverage_chars', 0))
-               .filter(~Q(search_document__url=''))
-               .filter(~Q(search_document__title=''))
-               .order_by('-number_matches')[:20])
     churns = []
-    dedupe = []
-    for m in matches:
-        if m.search_document_id not in dedupe and len(churns) < number_viewed:
-            churns.append({'percent': m.percent_churned, 
-                           'title':m.search_document.title, 
-                           'text': m.search_document.text, 
-                           'uuid': m.search_document.uuid,
-                           'doctype': m.matched_document.doc_type,
-                           'docid': m.matched_document.doc_id})
-            dedupe.append(m.search_document_id)
+    data = get_most_viewed()
+    for d in data:
+        params = d.split('_')
+        if len(params) > 2: #should have a uuid, doctype and doc id
+            uuid = params[0]
+            doctype = params[1]
+            docid = params[2]
+            
+            try:
+                searchdoc = SearchDocument.objects.get(uuid=uuid)
+                matchdoc = MatchedDocument.objects.get(doc_id=docid, doc_type=doctype)
+                match = Match.objects.get(search_document=searchdoc, matched_document=matchdoc)
 
+                churns.append({'percent': match.percent_churned, 
+                            'title':searchdoc.title, 
+                            'text': searchdoc.text, 
+                            'uuid': searchdoc.uuid,
+                            'doctype': matchdoc.doc_type,
+                            'docid': matchdoc.doc_id})
+            except SearchDocument.DoesNotExist:
+                continue
+    
     return t.render(template.Context({'viewed': churns}))
  
 @register.simple_tag

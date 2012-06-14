@@ -115,7 +115,7 @@ body { background: url(../images/bg.jpg) top left repeat;}
 
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
-.contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
+.downloads #halfColumnRt, .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
 #scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; display: none; }
 
 .textReplace { text-indent: -9999em; display: block;}
@@ -139,6 +139,8 @@ nav li a { width: 88px; height: 45px; }
 #about a:hover { background: url(../images/nav_about.jpg) bottom left no-repeat; } 
 #contact a { background: url(../images/nav_contact.jpg) top left no-repeat; }
 #contact a:hover { background: url(../images/nav_contact.jpg) bottom left no-repeat; }
+#downloads a { background: url(../images/nav_downloads.jpg) top left no-repeat; }
+#downloads a:hover { background: url(../images/nav_downloads.jpg) bottom left no-repeat; }
 #api a { background: url(../images/nav_api.jpg) top left no-repeat; }
 #api a:hover { background: url(../images/nav_api.jpg) bottom left no-repeat; }
 #sunlight { width: 293px;}
