@@ -52,6 +52,8 @@ def most_read(number_viewed):
                             'uuid': searchdoc.uuid,
                             'doctype': matchdoc.doc_type,
                             'docid': matchdoc.doc_id})
+            except MatchedDocument.DoesNotExist:
+                continue
             except SearchDocument.DoesNotExist:
                 continue
     
