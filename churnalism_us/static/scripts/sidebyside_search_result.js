@@ -207,6 +207,7 @@ $(document).ready(function(){
             var idstr = $(click.currentTarget).attr('id');
             var docattrs = extract_document_attrs(idstr);
             if (docattrs) {
+                $(".condense_control_less:visible").trigger("click");
                 select_document_tab(docattrs['doctype'], docattrs['docid']);
                 select_document(docattrs['doctype'], docattrs['docid'], match_id);
             }
