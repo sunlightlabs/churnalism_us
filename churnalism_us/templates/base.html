@@ -27,7 +27,6 @@
             var parts = permalink.split('/');
             var keys = parts[parts.length-4] + '_' + parts[parts.length-3] + '_' + parts[parts.length-2]
         
-        //    var uuid = '{{results.uuid}}';
             if (keys != ''){
                 _gaq.push(['_setCustomVar', 1, 'document_uuid', keys, 3]);
                 _gaq.push(['_trackEvent', 'search', 'search']);
@@ -113,6 +112,36 @@
     
     <script type="text/javascript" src="{{ABSOLUTE_STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript">
+        var get_url = function(){
+            var permalink = $("#share-page-url");
+            if (permalink.length > 0){
+                return permalink.val();
+            }
+            else {
+                return window.location.href;
+            }
+        };
+        var get_title = function(){
+            var matches = $("ol#matches li.active")
+            if (matches.length > 0){
+                return "Churnalism - " + $(matches[0]).find("a.articleTitle").text();
+            } else {
+                return $("title").text();
+            }
+        };
+        $("#twitter").click(function(){
+            var url = encodeURIComponent(get_url());
+            var title = get_title();
+            window.open("https://twitter.com/share?url=" + url + "&text=I've found churnalism! " + title, 'width=300, height=400')
+        });
+        $("#facebook").click(function(){
+            var url = encodeURIComponent(get_url());
+            var title = get_title();
+            window.open("http://www.facebook.com/sharer.php?u=" + url + "&t=" + title, "Share Churnalism on Facebook", 'height=350, width=670');
+            return false;
+        });
+    </script>
     {% block js %}
     {% endblock js %}
 </html>
