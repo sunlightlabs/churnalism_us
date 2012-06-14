@@ -139,7 +139,8 @@ nav li a { width: 88px; height: 45px; }
 #about a:hover { background: url(../images/nav_about.jpg) bottom left no-repeat; } 
 #contact a { background: url(../images/nav_contact.jpg) top left no-repeat; }
 #contact a:hover { background: url(../images/nav_contact.jpg) bottom left no-repeat; }
-#downloads a { background: url(../images/nav_downloads.jpg) top left no-repeat; }
+#downloads { width: 105px;}
+#downloads a { background: url(../images/nav_downloads.jpg) top left no-repeat; width: 105px;}
 #downloads a:hover { background: url(../images/nav_downloads.jpg) bottom left no-repeat; }
 #api a { background: url(../images/nav_api.jpg) top left no-repeat; }
 #api a:hover { background: url(../images/nav_api.jpg) bottom left no-repeat; }
