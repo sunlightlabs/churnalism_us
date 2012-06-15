@@ -90,7 +90,9 @@ $(document).ready(function(){
             });
         });
 
-        show_thumbnail(textdiv);
+        setTimeout(function(){
+            show_thumbnail(textdiv);
+        }, 200);
     };
 
     var show_thumbnail = function (textdiv) {
