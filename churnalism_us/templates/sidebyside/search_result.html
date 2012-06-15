@@ -13,20 +13,20 @@
         {% for row in results.documents.rows %}
         <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
         <span class="textReplace scissorTop hidden">Scissor image</span>
-        <div class="percentChurn">
+        <span class="percentChurn">
             <a class="characters" href="#">{{ row.coverage.0 }} Characters</a>
             <a title="View Side by Side" class="sidebyside-link textReplace"
                href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
-        </div>
+        </span>
         <dl>
             <dt>From:</dt>
             <dd>
             <a class="articleTitle" id="match-url" href="{{row.url}}">{{row.title}}</a>
-            <div class="entryMetaData">
+            <span class="entryMetaData">
                 <address class="author">{{row.source}}</address>
                 <time datetime="{{row.date}}" class="published" pubdate="{{row.date}}">{{row.date|slice:":10"}}</time>
-            </div>
+            </span>
             </dd>
         </dl>
         <a class="permalink" style="display: none;" href="{{ BASE_URL }}{% url sidebyside-permalink results.uuid row.doctype row.docid %}"></a>

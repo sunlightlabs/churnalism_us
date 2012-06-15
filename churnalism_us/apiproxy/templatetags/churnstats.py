@@ -16,7 +16,8 @@ def latest(number_latest):
                       .filter(overlapping_characters__gte=settings.SIDEBYSIDE.get('minimum_coverage_chars', 0))
                       .filter(~Q(search_document__url=''))
                       .filter(~Q(search_document__title=''))
-                      .order_by('-percent_churned')[:20])
+                      .order_by('-updated')[:20])
+
     for rm in recent_matches:
         if rm.search_document_id not in dedupe and len(churns) < number_latest:
             churns.append({'percent': rm.percent_churned, 
@@ -27,7 +28,7 @@ def latest(number_latest):
                            'docid': rm.matched_document.doc_id})
             dedupe.append(rm.search_document_id)
 
-    return t.render(template.Context({'latest': churns }))
+    return t.render(template.Context({'latest': churns[:number_latest] }))
  
 @register.simple_tag
 def most_read(number_viewed):
@@ -44,20 +45,22 @@ def most_read(number_viewed):
             try:
                 searchdoc = SearchDocument.objects.get(uuid=uuid)
                 matchdoc = MatchedDocument.objects.get(doc_id=docid, doc_type=doctype)
-                match = Match.objects.get(search_document=searchdoc, matched_document=matchdoc)
+                match = Match.objects.filter(search_document=searchdoc, matched_document=matchdoc, percent_churned__gte=settings.SIDEBYSIDE.get('minimum_coverage_pct', 0), overlapping_characters__gte=settings.SIDEBYSIDE.get('minimum_coverage_chars', 0)).order_by('-percent_churned')[:20]
+                if len(match) > 0:
+                    match = match[0]
 
-                churns.append({'percent': match.percent_churned, 
-                            'title':searchdoc.title, 
-                            'text': searchdoc.text, 
-                            'uuid': searchdoc.uuid,
-                            'doctype': matchdoc.doc_type,
-                            'docid': matchdoc.doc_id})
+                    churns.append({'percent': match.percent_churned, 
+                                'title':searchdoc.title, 
+                                'text': searchdoc.text, 
+                                'uuid': searchdoc.uuid,
+                                'doctype': matchdoc.doc_type,
+                                'docid': matchdoc.doc_id})
             except MatchedDocument.DoesNotExist:
                 continue
             except SearchDocument.DoesNotExist:
                 continue
     
-    return t.render(template.Context({'viewed': churns}))
+    return t.render(template.Context({'viewed': churns[:number_viewed]}))
  
 @register.simple_tag
 def most_shared(number_shared):

@@ -1,9 +1,8 @@
-<section>
+<section class="last">
     <h4>Most Viewed</h4>
     <ul>
     {% for churn in viewed %}
         <li class="clear">
-        <span class="percentChurned">{{churn.percent|floatformat:0}}%</span>
             <a href="{% url sidebyside-permalink uuid=churn.uuid doctype=churn.doctype docid=churn.docid %}">{% if churn.title %} {{churn.title}} {% else %} {{churn.text|truncatewords:15 }} {%endif %}</a>
         </li>
     {% endfor %}

@@ -167,17 +167,18 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 .withSpace li { margin-bottom: 15px;}
 
-#matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; border-top: 1px dashed #a09e9e; padding: 0px 10px 0px 25px;}
+#matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-bottom: 1px dashed #a09e9e;}
 #matches li div.thumbnail img { display: inline-block; margin: 7px 4px 7px 4px; }
 .percentChurn a { font-size: 200%; }
 .active .percentChurn a { color: #fff; }
 .active .percentChurn { background: url(../images/bg_percentChurn.png) top left no-repeat;  height: 28px; width: 212px; display: block; margin-left: -10px; padding: 5px 0 0 10px; }
+
 .percentText { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
-.active .sidebyside-link { background: url(../images/sidebyside.png) top right no-repeat;  margin-right: 20px; }
-.sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; }
+
+.sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; margin-top:0px; margin-right:20px; }
 .sidebyside-link:hover { background: url(../images/sidebyside2.png) top right no-repeat; }
-.active .sidebyside-link:hover { background: url(../images/sidebyside.png) bottom right no-repeat; } 
+
 .characters { float: left;  }
 
 .scissorBottom { background: url(../images/img_sissorRt.png) bottom right no-repeat; position: relative; bottom: -10px;}
@@ -189,7 +190,7 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 .articleTitle:hover { color: #24838e; }
 
 dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercase;}
-.entryMetaData { color: #acaaa3; font-size: 95%; font-style: normal; line-height: 16px;}
+.entryMetaData { display:inline-block; color: #acaaa3; font-size: 95%; font-style: normal; line-height: 16px;}
 #rtColumn .entryMetaData { margin-bottom: 20px; }
 #ltColumn .entryMetaData { font-size: 90%;}
 .author { float: left; margin-right: 5px; padding-right: 5px; border-right: 1px solid #cbcbc1; font-style: normal;}
@@ -205,8 +206,9 @@ dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercas
 #resourcesWrapper2 { background: #f3f2ed url(../images/bg_resourceChurnTop.jpg) left top repeat-x; padding-top: 40px;}
 
 .percentChurned { background: url(../images/bg_percent.png) top left no-repeat; color: #fff; width: 41px; height: 41px; display: block; text-align: center; float: left; margin-right: 10px; padding-top: 10px; font-size: 130%; }
-#resources section { float: left; width: 280px; margin-right: 50px; margin-bottom: 50px;}
+#resources section { float: left; width: 390px; margin-right: 80px; margin-bottom: 50px; }
 #resources section.last { margin-right: 0;}
+#resources section ul { list-style-type: disc; }
 #resources section li { margin-bottom: 10px; }
 #resources section li a { color: #8a8784; border-bottom: 1px dotted #24838e; font-size: 95%;}
 #resources section li a:hover { color: #24838e;}
