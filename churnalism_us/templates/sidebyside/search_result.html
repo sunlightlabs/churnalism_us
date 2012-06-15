@@ -11,7 +11,7 @@
     <h2 class="smallHeader">Possible Churns</h2>
     <ol id="matches">
         {% for row in results.documents.rows %}
-        <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
+        <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}"  {% if forloop.last%}class="last"{% endif %}  >
         <span class="textReplace scissorTop hidden">Scissor image</span>
         <span class="percentChurn">
             <a class="characters" href="#">{{ row.coverage.0 }} Characters</a>
