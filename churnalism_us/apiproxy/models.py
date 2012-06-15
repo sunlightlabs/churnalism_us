@@ -104,6 +104,37 @@ class SearchDocument(models.Model):
         return u'{self.uuid}, {self.title} @ {self.updated}'.format(self=self)
 
 
+class IncorrectTextReport(models.Model):
+    """
+    Records instances of a user reporting the text for a
+    SearchDocument being incorrect. We record multiple
+    instances to help decide which to investigate first.
+    """
+
+    search_document = models.ForeignKey(SearchDocument,
+                                        related_name='text_problems')
+
+    problem_description = models.TextField()
+
+    # remote_addr, user_agent, languages, and encodings all come from the
+    # headers in HttpReuest.META. We save them as diagnostic information.
+    remote_addr = models.CharField(max_length=15,
+                                   blank=False,
+                                   null=False)
+
+    user_agent = models.TextField()
+
+    languages = models.CharField(max_length=255)
+
+    encodings = models.CharField(max_length=255)
+
+    created = models.DateTimeField(auto_now_add=True,
+                                   db_index=True)
+
+    class Meta:
+        unique_together = ("search_document", "remote_addr")
+
+
 class MatchedDocument(models.Model):
     """ This caches metadata about matched documents in SFM """ 
     
