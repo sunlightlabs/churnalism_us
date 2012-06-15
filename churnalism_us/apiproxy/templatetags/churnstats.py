@@ -49,12 +49,12 @@ def most_read(number_viewed):
                 if len(match) > 0:
                     match = match[0]
 
-                churns.append({'percent': match.percent_churned, 
-                            'title':searchdoc.title, 
-                            'text': searchdoc.text, 
-                            'uuid': searchdoc.uuid,
-                            'doctype': matchdoc.doc_type,
-                            'docid': matchdoc.doc_id})
+                    churns.append({'percent': match.percent_churned, 
+                                'title':searchdoc.title, 
+                                'text': searchdoc.text, 
+                                'uuid': searchdoc.uuid,
+                                'doctype': matchdoc.doc_type,
+                                'docid': matchdoc.doc_id})
             except MatchedDocument.DoesNotExist:
                 continue
             except SearchDocument.DoesNotExist:
