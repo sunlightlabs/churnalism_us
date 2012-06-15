@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load jsonify %}
+{% load domain %}
+{% block head %}
+{% endblock %}
+{% block bodyclass %}home{% endblock %}
+{% block title %}Churnalism - Report a Problem{% endblock title%}
+{% block body %}
+<div id="fullColumn">
+    <div id="halfColumnRt">
+        <div id="sidebysideHeader">
+            <a href="{% url sidebyside-uuid-search uuid %}">« Back to search results.</a>
+            <div class="clear"></div>
+            <hr>
+        </div>
+
+        {% if report and report.problem_description %}
+        <h2 class="withTip" id="doc-title">Report a Problem</h2>
+
+        <p>
+        We've added this document to our review queue. Thank you for bringing it to our
+        attention.
+        </p>
+
+        {% else %}
+
+        <h2 class="withTip">Report a Problem</h2>
+
+        <p>
+        We've added this document to our review queue. If the problem you've spotted isn't
+        obvious, please describe it below.
+        </p>
+        <p>
+        <form action="{% url sidebyside-textproblem uuid %}" method="POST">
+            {% csrf_token %}
+            {{ form.problem_description }}
+            <input type="submit" value="Submit">
+        </form>
+        </p>
+
+        {% endif %}
+    </div>
+    <div id="halfColumnRt">
+        <h2 class="withTip" id="doc-title">
+            {{ search_document.title }}
+        </h2>
+        <p id="doc-text">
+        {{ search_document.text }}
+        </p>
+    </div>
+</div>
+<div class="clear"></div>
+
+{% endblock body %}
+
+{% block js %}
+    {{ block.super }}
+
+	<script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.scrollintoview.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_common.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+            $("#doc-text").markupAsArticle();
+		});
+	</script>
+{% endblock js %}
+

@@ -1,0 +1,81 @@
+iframe, html, body { padding: 0; margin: 0; }
+ul { margin: 0; padding-top: 0; padding-bottom: 0; }
+body {
+    background-color: #fbf8f3; 
+}
+#sidebysideHeader { 
+    margin-top: 15px;
+    margin-bottom: 40px;
+}
+#sidebysideHeader a { float: left; font-size: 110%; margin-top: 13px; }
+.link-separator {
+    letter-spacing: 117%;
+    font-weight: bold;
+}
+h1 {
+    font-size: 120%;
+}
+#sidebyside-title-box {
+    width: 100%;
+    max-height: 25%;
+}
+#sidebyside-box {
+    width: 100%;
+}
+#doc-title-box, #pr-title-box {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    float: left;
+    width: 46%;
+    margin: 0;
+}
+#pr-title, #doc-title { font-size: 1.8em; }
+#doc-box, #pr-box {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    float: left;
+    width: 46%;
+    height: 100%;
+    margin: 0;
+}
+#doc-box, #doc-title-box { padding: 0 4% 0 0; }
+#pr-box, #pr-title-box { padding: 0 0 0 4%; }
+#doc-text, #pr-text {
+}
+.churnalism-highlight {
+    background-color: #F6F93A;
+    padding: 0;
+    margin: 0;
+    font-style: italic;
+    cursor: pointer;
+    z-index: 99997;
+}
+span.churnalism-highlight-pair {
+    background-color: #E7CC29;
+    z-index: 99998;
+}
+span.churnalism-highlight-selected {
+    background-color: #FF73CE;
+    color: #FFFAFA;
+    z-index: 99999;
+    -moz-user-select: none; // mozilla browsers
+    -khtml-user-select: none; // webkit browsers
+}
+.clear {
+    clear: both;
+}
+#container { border-top: 1px solid #E5E1DD; } 
+#share { display: none; }
+svg#fragment-connector {
+    z-index: 999999;
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+}
+#bezier {
+    stroke-dasharray: 6 3;
+    stroke: #FF73CE;
+}
+

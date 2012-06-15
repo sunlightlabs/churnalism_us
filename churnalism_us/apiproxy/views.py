@@ -12,6 +12,7 @@ API. It provides a few opportunities:
 """
 
 import json
+import socket
 
 from decimal import Decimal
 
@@ -29,6 +30,23 @@ from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
 from django.conf import settings
 
 
+
+from functools import wraps
+def sfm_proxy_view(viewfunc):
+    @wraps(viewfunc)
+    def handled(request, *args, **kwargs):
+        try:
+            return viewfunc(request, *args, **kwargs)
+        except socket.error as err:
+            return HttpResponse(content='<html><h1>502 Bad Gateway</h1></html>',
+                                status=502)
+        except superfastmatch.SuperFastMatchError as err:
+            return HttpResponse(content='<html><h1>502 Bad Gateway</h1></html>',
+                                status=502)
+    return handled
+
+
+@sfm_proxy_view
 def association(request, doctype=None):
     """
     Proxies requests for lists of associations to Superfastmatch.
@@ -43,6 +61,7 @@ def association(request, doctype=None):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@sfm_proxy_view
 def document_list(request, doctype=None):
     """
     Proxies requests for lists of documents to Superfastmatch.
@@ -59,6 +78,7 @@ def document_list(request, doctype=None):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@sfm_proxy_view
 def document(request, doctype, docid):
     """
     Proxies requests for specific documents to Superfastmatch.
@@ -104,14 +124,8 @@ def recall_document(title, url, uuid, text):
     return doc
 
 
-def stored_match(request, uuid):
-    try:
-        search_doc = SearchDocument.objects.get(uuid=uuid)
-    except SearchDocument.DoesNotExist:
-        return HttpResponseNotFound('{0} not found'.format(uuid))
-
-
 @csrf_exempt
+@sfm_proxy_view
 def search(request, doctype=None):
     """
     Proxies /search/ to Superfastmatch, returning the response with 
