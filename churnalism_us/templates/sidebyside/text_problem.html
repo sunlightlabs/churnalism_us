@@ -5,23 +5,15 @@
 {% endblock %}
 {% block bodyclass %}home{% endblock %}
 {% block title %}Churnalism - Report a Problem{% endblock title%}
-{% block overlap %}
-    <div id="sidebysideHeader">
-        <a href="{% url sidebyside-uuid-search uuid %}">« Back to search results.</a>
-        <div class="clear"></div>
-    </div>
-{% endblock %}
 {% block body %}
 <div id="fullColumn">
     <div id="halfColumnRt">
-        <h2 class="withTip" id="doc-title">
-            {{ search_document.title }}
-        </h2>
-        <p id="doc-text">
-        {{ search_document.text }}
-        </p>
-    </div>
-    <div id="halfColumnRt">
+        <div id="sidebysideHeader">
+            <a href="{% url sidebyside-uuid-search uuid %}">« Back to search results.</a>
+            <div class="clear"></div>
+            <hr>
+        </div>
+
         {% if report and report.problem_description %}
         <h2 class="withTip" id="doc-title">Report a Problem</h2>
 
@@ -47,6 +39,14 @@
         </p>
 
         {% endif %}
+    </div>
+    <div id="halfColumnRt">
+        <h2 class="withTip" id="doc-title">
+            {{ search_document.title }}
+        </h2>
+        <p id="doc-text">
+        {{ search_document.text }}
+        </p>
     </div>
 </div>
 <div class="clear"></div>
