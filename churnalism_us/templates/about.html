@@ -6,8 +6,30 @@
 {% block body %}
 <div id="fullColumn">
     <div id="halfColumnRt">
-        <h2 class="withTip">About</h2>
-        <p>lorem ipsum blaabbity blah</p>
+        <h2 class="withTip">About Churnalism</h2>
+        <p>Churnalism is based on a <a href="http://churnalism.com/">UK site by the same name</a> and is driven by open-source search engine technology dubbed <a href="https://github.com/mediastandardstrust/superfastmatch">SuperFastMatch</a>. Both the original Churnalism site and SuperFastMatch were developed by the <a href="http://mediastandardstrust.org/">Media Standards Trust</a>. We at the Sunlight Foundation have partnered with the Media Standards Trust to adapt the site for a US audience and to build browser extensions with similar functionality.</p>
+
+        <h4>Methodology</h4>
+        <p>
+            Churnalism searches the text you enter against a large corpus of press releases and determines the best match. Sometimes, exact fragments will match that are clearly not plagiarism. These often include expanded organizational names (such as The United States House of Representatives) or boilerplate copy about a particular company that is usually appended to the end of each press release. In order to filter out uninteresting matches and provide the best user experience, we use a relevancy ranking that is derived from the total character overlap, and the density of that overlap.</p>
+<p>
+ And as always, you can view our source code for this project on our <a href="https://github.com/sunlightlabs/churnalism_us">public Github page</a>.
+</p>
+
+<p>
+Our corpus of press releases is growing all the time and will soon be available as a standalone API. Our major sources include:
+<ul>
+<li>PRNewsWire</li>
+<li>PR NewsWeb</li>
+<li>MarketWire</li>
+<li>EurekaAlert</li>
+<li>Congressional Leadership</li>
+<li>The White House</li>
+<li>Trade Organizations</li>
+<li>Fortune 500 Companies</li>
+<li>Nonprofit Research Institutes and Thinktanks</li>
+</ul>    
+</p>
     </div>
     <div class="clear"></div>
 </div>
