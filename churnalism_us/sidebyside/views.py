@@ -2,7 +2,6 @@
 
 from __future__ import division
 
-import time
 import json
 import re
 import httplib
@@ -347,7 +346,6 @@ def chromeext_ribbon(request):
     return render(request, 'sidebyside/chrome_ribbon.html', scope)
 
 def chromeext_recall(request, uuid, doctype, docid):
-    time.sleep(0.5)
     scope = recall(request, uuid, doctype, docid)
     resp = render(request, 'sidebyside/chrome.html', scope)
     return resp
