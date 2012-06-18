@@ -16,6 +16,7 @@
         <p id="introText">Ever wonder if the news story your reading is a product of real journalism or just a spin off of another story posted elsewhere? <span class="introHighlight">Discover the journalism you can trust and what you should question</span>.</p>
     </div>
     <div id="halfColumnRt">
+        {% if allow_search %}
         <form action="{% url sidebyside-search %}" method="POST">
             <ul class="withSpace">
                 <li>
@@ -36,6 +37,9 @@
                 <li>
             </ul>
         </form>
+        {% else %}
+        <div><p id="introText" class="maintenanceText">Churnalism is currently in maintenance mode, so the search feature is disabled. Rest assured that we are working on the issue.</p></div>
+        {% endif %}
     </div>
     <div class="clear"></div>
 </div>

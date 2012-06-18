@@ -192,6 +192,7 @@ LOGGING = {
 }
 
 SIDEBYSIDE = {
+    'allow_search': True,
     'max_doc_prefetch': 0,
     'minimum_coverage_pct': 0,  # Plain-english percentages, e.g. 3 = 3%
     'minimum_coverage_chars': 0
