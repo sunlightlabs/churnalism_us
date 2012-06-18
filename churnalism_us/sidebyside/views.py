@@ -13,13 +13,14 @@ from urlparse import urlparse
 
 import stream
 from lepl.apps.rfc3696 import HttpUrl
+from django import forms
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from utils.slurp_url import slurp_url
 
-from apiproxy.models import SearchDocument, Match, MatchedDocument
+from apiproxy.models import SearchDocument, Match, MatchedDocument, IncorrectTextReport
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
@@ -124,6 +125,9 @@ def search_page(request, error=None):
         'brokenurl': request.GET.get('brokenurl') == 'true',
         'error': error
     }
+
+    if settings.SIDEBYSIDE.get('allow_search') == True:
+        context['allow_search'] = True
 
     return render(request, 'sidebyside/search_page.html', context)
 
@@ -288,23 +292,6 @@ def document404(request, uuid=None, url=None):
                    'url': url
                   })
 
-def select_best_match(text, sfm_results):
-    rows = sfm_results['documents']['rows']
-
-    def fragment_match_percentage(row):
-        chars_matched = sum((frag[2] for frag in row['fragments']))
-        pct_of_match = float(chars_matched) / float(row['characters'])
-        pct_of_source = float(chars_matched) / float(len(text))
-        return (row, max(pct_of_match, pct_of_source))
-
-    def longer(a, b):
-        (row_a, pct_a) = a
-        (row_b, pct_b) = b
-        return a if pct_a >= pct_b else b
-
-    return (stream.Stream(rows)
-            >> stream.map(fragment_match_percentage)
-            >> stream.reduce(longer, (None, 0)))
 
 def recall(request, uuid, doctype, docid):
     sfm = from_django_conf('sidebyside')
@@ -397,8 +384,43 @@ def confirmed(request, match_id):
     except:
         return HttpResponseServerError()
 
-def urlproblem(request):
-    url = request.GET.get('brokenurl', '')
-    f = open(settings.PROJECT_ROOT + '/logs/broken_urls.log', 'a') 
-    f.write(url)
-    return HttpResponse("OK", content_type="text/html")
+
+class ProblemReportForm(forms.Form):
+    problem_description = forms.CharField(max_length=10000, widget=forms.Textarea)
+
+
+def get_or_create_problem_report(request, search_document, remote_addr):
+    (report, created) = IncorrectTextReport.objects.get_or_create(search_document=search_document, remote_addr=remote_addr)
+    if created:
+        report.user_agent = request.META.get('HTTP_USER_AGENT')
+        report.languages = request.META.get('HTTP_ACCEPT_LANGUAGE')
+        report.encodings = request.META.get('HTTP_ACCEPT_ENCODING')
+        report.save()
+    return report
+
+def describe_text_problem(request, uuid):
+    search_document = get_object_or_404(SearchDocument, uuid=uuid)
+    remote_addr = request.META.get('REMOTE_ADDR')
+    if not remote_addr:
+        return render(request, 'sidebyside/text_problem.html', {'report': None})
+
+    report = get_or_create_problem_report(request, search_document, remote_addr)
+    scope = {
+        'uuid': uuid,
+        'search_document': search_document,
+        'report': report
+    }
+
+    if request.method == 'POST':
+        form = ProblemReportForm(request.POST)
+        if form.is_valid():
+            report.problem_description = form.cleaned_data['problem_description']
+            report.save()
+            scope['form'] = None
+        else:
+            scope['form'] = form
+    else:
+        scope['form'] = ProblemReportForm()
+
+    return render(request, 'sidebyside/text_problem.html', scope)
+

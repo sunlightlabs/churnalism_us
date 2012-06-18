@@ -90,7 +90,9 @@ $(document).ready(function(){
             });
         });
 
-        show_thumbnail(textdiv);
+        setTimeout(function(){
+            show_thumbnail(textdiv);
+        }, 200);
     };
 
     var show_thumbnail = function (textdiv) {
@@ -189,13 +191,6 @@ $(document).ready(function(){
             return null;
         }
     };
-
-    $('span.url-problem a').click(function(click){
-        var that = this;
-        $.get('/sidebyside/urlproblem/', { 'brokenurl': that.href , }, 
-            function(data, textStatus){ window.location.href = '/?brokenurl=true'} );
-        return false; 
-    });
 
     $("ol#matches li a.sidebyside-link").click(function(click){
         click.stopPropagation();

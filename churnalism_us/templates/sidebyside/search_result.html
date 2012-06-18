@@ -11,23 +11,22 @@
     <h2 class="smallHeader">Possible Churns</h2>
     <ol id="matches">
         {% for row in results.documents.rows %}
-        <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}" >
+        <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}"  {% if forloop.last%}class="last"{% endif %}  >
         <span class="textReplace scissorTop hidden">Scissor image</span>
-        <div class="percentChurn">
+        <span class="percentChurn">
             <a class="characters" href="#">{{ row.coverage.0 }} Characters</a>
             <a title="View Side by Side" class="sidebyside-link textReplace"
                href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
-        </div>
-        <span class="percentText">{{ row.coverage.1|floatformat:0 }}% Overlap</a>
+        </span>
         <dl>
             <dt>From:</dt>
             <dd>
             <a class="articleTitle" id="match-url" href="{{row.url}}">{{row.title}}</a>
-            <div class="entryMetaData">
+            <span class="entryMetaData">
                 <address class="author">{{row.source}}</address>
                 <time datetime="{{row.date}}" class="published" pubdate="{{row.date}}">{{row.date|slice:":10"}}</time>
-            </div>
+            </span>
             </dd>
         </dl>
         <a class="permalink" style="display: none;" href="{{ BASE_URL }}{% url sidebyside-permalink results.uuid row.doctype row.docid %}"></a>
@@ -43,7 +42,13 @@
     </div>
     <div class="clear"></div>
 
-    <h2 class="smallHeader">Text Submitted {% if source_url %} <span class="url-problem tip">Something wrong with the text? <a href="{{source_url}}">Flag it now.</a></span>{% endif %}</h2>
+    <h2 class="smallHeader">Text Submitted
+        {% if results.uuid %}
+        <span class="url-problem tip">Something wrong with the text?
+            <a href="{% url sidebyside-textproblem results.uuid %}">Flag it now.</a>
+        </span>
+        {% endif %}
+    </h2>
     <p id="truncate">{{source_text}}</p>
     <h2 style="margin-top:50px;" class="smallHeader">Text Matched</h2>
     <h3 class="withTip" id="match-title">No Matches</h3>

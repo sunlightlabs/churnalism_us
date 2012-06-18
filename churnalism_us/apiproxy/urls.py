@@ -14,6 +14,12 @@ urlpatterns = patterns(
     url(r'^search/$', 'search'),
     url(r'^search/(?P<doctype>[\d:]+)/$', 'search'),
 
+    url(r'^mimicry/document/(\d+)/(\d+)/$', 'mimicked_document'),
+    url(r'^mimicry/document/(\d+)/$', 'mimicked_document_list'),
+    url(r'^mimicry/document/$', 'mimicked_document_list'),
+    url(r'^mimicry/search/$', 'mimicked_search'),
+
+
     # TODO: The Superfastmatch API does not provide a JSON 
     #       representation for these yet so there isn't much
     #       to gain by exposing them.

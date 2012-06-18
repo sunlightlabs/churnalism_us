@@ -11,7 +11,15 @@ API. It provides a few opportunities:
 
 """
 
+
+from __future__ import division
+
+
 import json
+import socket
+import math
+import urllib
+from copy import deepcopy
 
 from decimal import Decimal
 
@@ -29,6 +37,23 @@ from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
 from django.conf import settings
 
 
+
+from functools import wraps
+def sfm_proxy_view(viewfunc):
+    @wraps(viewfunc)
+    def handled(request, *args, **kwargs):
+        try:
+            return viewfunc(request, *args, **kwargs)
+        except socket.error as err:
+            return HttpResponse(content='<html><h1>502 Bad Gateway</h1></html>',
+                                status=502)
+        except superfastmatch.SuperFastMatchError as err:
+            return HttpResponse(content='<html><h1>502 Bad Gateway</h1></html>',
+                                status=502)
+    return handled
+
+
+@sfm_proxy_view
 def association(request, doctype=None):
     """
     Proxies requests for lists of associations to Superfastmatch.
@@ -43,6 +68,7 @@ def association(request, doctype=None):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@sfm_proxy_view
 def document_list(request, doctype=None):
     """
     Proxies requests for lists of documents to Superfastmatch.
@@ -50,8 +76,8 @@ def document_list(request, doctype=None):
 
     sfm = from_django_conf()
     page = request.GET.get('cursor')
-    order_by = request.GET.get('order_by')
-    limit = request.GET.get('limit')
+    order_by = request.GET.get('order_by', 'docid')
+    limit = request.GET.get('limit', '100')
     response = sfm.documents(doctype, page=page, order_by=order_by, limit=limit)
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
@@ -59,6 +85,7 @@ def document_list(request, doctype=None):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@sfm_proxy_view
 def document(request, doctype, docid):
     """
     Proxies requests for specific documents to Superfastmatch.
@@ -104,14 +131,8 @@ def recall_document(title, url, uuid, text):
     return doc
 
 
-def stored_match(request, uuid):
-    try:
-        search_doc = SearchDocument.objects.get(uuid=uuid)
-    except SearchDocument.DoesNotExist:
-        return HttpResponseNotFound('{0} not found'.format(uuid))
-
-
 @csrf_exempt
+@sfm_proxy_view
 def search(request, doctype=None):
     """
     Proxies /search/ to Superfastmatch, returning the response with 
@@ -175,6 +196,58 @@ def search(request, doctype=None):
 
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
+    if isinstance(response, str):
+        return HttpResponse(response, content_type='text/html')
+    else:
+        
+        embellish(text, 
+              response, 
+              reduce_frags=True,
+              add_coverage=True, 
+              add_snippets=True,
+              prefetch_documents=False)
+
+        response['uuid'] = doc.uuid
+        if (url or uuid) and 'text' not in response:
+            response['text'] = doc.text
+        if title and 'title' not in response:
+            response['title'] = doc.title
+
+        for r in response['documents']['rows']:
+            try:
+                md = MatchedDocument.objects.get(doc_id=r['docid'], doc_type=r['doctype'])
+            except:
+                md = MatchedDocument(doc_type=r['doctype'], 
+                                    doc_id=r['docid'], 
+                                    source_url=r['url'],
+                                    source_name=r['docid'], #will change this later, for now just use the doc id
+                                    source_headline=r['title'])
+                md.save() 
+
+            match_id = None
+            matches = Match.objects.filter(search_document=doc, matched_document=md)
+            if len(matches) > 0:
+                matches[0].number_matches += 1
+                matches[0].response = json.dumps(response)
+                matches[0].save()
+                match_id = matches[0].id
+            else:
+                stats = calculate_coverage(text, r)
+                match = Match(search_document=doc, 
+                              matched_document=md,
+                              percent_sourced=0, #don't need this since churn function picks higher of sourced or churned
+                              percent_churned=str(stats[1]),
+                              number_matches=1,
+                              response=json.dumps(response) )
+                match.save()
+                match_id = match.id
+            
+            r['match_id'] = match_id
+
+        #use celery tasks to fetch result text
+        update_matches.delay(response['documents']['rows'])
+
+        return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 def execute_search(doc, doctype=None):
     sfm = from_django_conf()
@@ -235,4 +308,236 @@ def record_matches(doc, response, update_matches=False):
         match.save()
 
         r['match_id'] = match.id
+
+
+# Mimicked variations of the API end points. All results here come
+# from the database. These endpoints can be used for redundancy in
+# the case  that the superfastmatch server is unreachable or unresponsive.
+
+class DocumentProxy(object):
+    field_mapping = {
+        'docid': 'doc_id',
+        'doctype': 'doc_type',
+        'url': 'source_url',
+        'title': 'source_headline',
+        'source': 'source_name'
+    }
+
+    def __init__(self, real):
+        self.real = real
+
+    def __getitem__(self, item):
+        if item == 'characters':
+            return len(self.real.text)
+        elif item == 'date':
+            # TODO: MatchedDocument doesn't store the actual date. Make
+            # it do so and then update this.
+            return self.real.created.strftime('%Y-%m-%d')
+        else:
+            return getattr(self.real, self.translate_field(item))
+
+    def __iter__(self):
+        return iter(DocumentProxy.keys())
+
+    @staticmethod
+    def translate_field(attr):
+        return DocumentProxy.field_mapping.get(attr, attr)
+
+    @staticmethod
+    def keys():
+        return DocumentProxy.field_mapping.keys() + ['date', 'characters', 'text']
+
+    @staticmethod
+    def meta_fields():
+        return DocumentProxy.field_mapping.keys() + ['date', 'characters']
+
+def failure_response(msg):
+    failure = {
+        'success': False,
+        'error': msg if settings.DEBUG else 'Generic, unhelpful error.'
+    }
+    return HttpResponse(json.dumps(failure), content_type='application/json')
+
+
+def mimicked_document(request, doctype, docid):
+    try:
+        return real_mimicked_document(request, doctype, docid)
+    except Exception, e:
+        return failure_response(repr(e))
+
+
+def real_mimicked_document(request, doctype, docid):
+    doctype = int(doctype)
+    docid = int(docid)
+
+    matched_doc = MatchedDocument.objects.get(doc_type=doctype, doc_id=docid)
+    proxied_doc = DocumentProxy(matched_doc)
+    result = {
+        'success': True,
+    }
+    result.update(proxied_doc)
+
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def cursor_from_queryset(queryset, order_by_field, offset):
+    try:
+        doc = queryset[offset:][0]
+        return '{metavalue}:{doctype}:{docid}'.format(
+            metavalue=urllib.quote(getattr(doc, order_by_field)),
+            doctype=doc.doc_type,
+            docid=doc.doc_id)
+    except IndexError:
+        return ''
+
+
+def mimicked_document_list(request, doctype=None):
+    try:
+        return real_mimicked_document_list(request, doctype)
+    except Exception, e:
+        return failure_response(repr(e))
+
+
+def real_mimicked_document_list(request, doctype):
+    """
+    Mimics requests for lists of documents to Superfastmatch.
+    """
+
+    cursor = request.GET.get('cursor')
+    limit = int(request.GET.get('limit', '100'))
+    order_by = request.GET.get('order_by', 'docid')
+
+    order_by_field = DocumentProxy.translate_field(order_by.lstrip('-'))
+    order_by_direction = '-' if order_by.startswith('-') else ''
+    filter_comparison = 'lte' if order_by_direction == '-' else 'gte'
+
+    query = MatchedDocument.objects.all()
+
+    if doctype:
+        query = query.filter(doc_type=doctype)
+    document_count = query.count()
+
+    last_cursor = cursor_from_queryset(query, order_by_field,
+                                       math.floor(document_count / limit) * limit)
+
+    if order_by:
+        query = query.order_by(order_by_direction + order_by_field).order_by(order_by_direction + 'doc_type').order_by(order_by_direction + 'doc_id')
+
+    previous_cursor = ''
+    previous_query = deepcopy(query)
+
+    if cursor:
+        filter_args = {}
+        (curval, doctype, docid) = cursor.split(':')
+        if order_by:
+
+            filter_key = '{field}__{comp}'.format(field=order_by_field, comp=filter_comparison)
+            filter_args[filter_key] = curval
+
+            doctype_filter_key = 'doc_type__{comp}'.format(comp=filter_comparison)
+            filter_args[doctype_filter_key] = doctype
+
+            docid_filter_key = 'doc_id__{comp}'.format(comp=filter_comparison)
+            filter_args[docid_filter_key] = docid
+
+            query = query.filter(**filter_args)
+
+            remainder_count = query.count()
+            current_offset = document_count - remainder_count
+            current_page = math.floor(current_offset / limit)
+            previous_offset = max(0, (current_page - 1) * limit)
+            previous_cursor = cursor_from_queryset(previous_query, order_by_field,
+                                                   previous_offset)
+
+
+    next_cursor = cursor_from_queryset(query, order_by_field, limit)
+
+    results_query = query[:limit]
+
+    current_cursor = cursor_from_queryset(results_query, order_by_field, 0)
+
+    rows = [
+        {'doctype': document.doc_type,
+         'docid': document.doc_id,
+         'title': document.source_headline,
+         'url': document.source_url,
+         'source': document.source_name,
+         'characters': len(document.text),
+         'date': document.created.strftime('%Y-%m-%d')
+        }
+        for document in results_query
+    ]
+    response = {}
+    response['success'] = True
+    response['metaData'] = {
+        'fields': DocumentProxy.meta_fields()
+    }
+    response['cursors'] = {
+        'next': next_cursor,
+        'last': last_cursor,
+        'previous': '' if previous_cursor == current_cursor else previous_cursor,
+        'first': '',
+        'current': current_cursor
+    }
+    response['total'] = document_count
+    response['rows'] = rows
+
+    return HttpResponse(json.dumps(response), content_type='application/json')
+
+
+def stored_results(doc):
+    matches = list(Match.objects.filter(search_document=doc))
+    if len(matches) == 0:
+        return []
+
+    old_response = json.loads(matches[0].response)
+    for r in old_response['documents']['rows']:
+        if 'match_id' in r:
+            del r['match_id']
+
+    return old_response['documents']['rows']
+
+
+@csrf_exempt
+def mimicked_search(request, doctype=None):
+    try:
+        return real_mimicked_search(request, doctype)
+    except Exception, e:
+        return failure_response(repr(e))
+
+
+def real_mimicked_search(request, doctype):
+    text = request.POST.get('text') or request.GET.get('text')
+    url = request.POST.get('url') or request.GET.get('url')
+    uuid = request.POST.get('uuid') or request.GET.get('uuid')
+    title = request.POST.get('title') or request.GET.get('title')
+    doc = None
+
+    if not text and not url and not uuid:
+        return HttpResponseBadRequest('You must specify a url, a uuid, or some text')
+
+    result = {
+        'success': True,
+        'metaData': {
+            'fields': DocumentProxy.meta_fields()
+        }
+    }
+    if url or uuid:
+        try:
+            doc = recall_document(title, url, uuid, text)
+            result['uuid'] = doc.uuid
+            result['title'] = doc.title
+            result['text'] = doc.text
+            result['documents'] = {
+                'rows': stored_results(doc)
+            }
+
+        except SearchDocument.DoesNotExist:
+            return HttpResponseNotFound(str(uuid or url))
+
+    else:
+        # TODO: Search by text
+        return HttpResponseNotFound('Not yet implemented.')
+
+    return HttpResponse(json.dumps(result), content_type='application/json')
 
