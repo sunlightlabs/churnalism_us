@@ -138,6 +138,9 @@ def search_page(request, error=None):
         'error': error
     }
 
+    if settings.SIDEBYSIDE.get('allow_search') == True:
+        context['allow_search'] = True
+
     return render(request, 'sidebyside/search_page.html', context)
 
 
