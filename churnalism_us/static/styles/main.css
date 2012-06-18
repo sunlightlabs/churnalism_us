@@ -239,3 +239,7 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 .smallHeader .url-problem { font-size: .8em; font-size: 70%; text-transform: capitalize; color: #ACAAA3; margin-top: 5px;}
 
 .broken-url-text { border: 2px solid #f6f93a; padding: 13px 10px 10px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #f6f6cc; margin-bottom: 40px; text-align: center;} 
+
+#errorText { background: url(../images/bg_errorText.png) top left no-repeat;  width: 310px; height: 71px; }
+#errorTitle { background: url(../images/bg_errorTitle.png) top left no-repeat; width: 86px; height: 12px; margin-left: 365px; z-index: 3; position: absolute;}
+#errorBg { background: url(../images/bg_404.jpg) center top no-repeat; width: 385px; height: 219px; margin: 0 auto; padding-top: 55px; padding-left: 160px; margin-top: 5px;}
