@@ -18,9 +18,9 @@ ADMINS = (
     ('Kaitlin Lee','klee@sunlightfoundation.com'),
     ('timball', 'tball@sunlightfoundation.com'),
     ('Drew Vogel', 'dvogel@sunlightfoundation.com'),
-    ('Andrew Pendleton', 'apendleton@sunlightfoundation.com')
 )
 
+ADMIN_EMAILS = ('klee@sunlightfoundation.com', 'dvogel@sunlightfoundation.com')
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -190,6 +190,14 @@ LOGGING = {
         },
     }
 }
+
+
+#EMAIL_HOST = 'smtp.postmarkapp.com'
+#EMAIL_HOST_USER = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+#EMAIL_HOST_PASSWORD = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+EMAIL_BACKEND = 'postmark.backends.PostmarkBackend'
+POSTMARK_API_KEY = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+
 
 SIDEBYSIDE = {
     'max_doc_prefetch': 0,

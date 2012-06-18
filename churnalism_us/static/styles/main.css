@@ -166,7 +166,7 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 .introHighlight { background-color: #f6f93a;}
 
 .withSpace li { margin-bottom: 15px;}
-
+#message{ color: red; font-size: 1.2em;}
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-top: 1px dashed #a09e9e;}
 #matches li.last { border-bottom: 1px dashed #a09e9e; }

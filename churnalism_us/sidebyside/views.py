@@ -10,7 +10,7 @@ import readability
 import settings
 from operator import itemgetter
 from urlparse import urlparse
-
+from django.core.mail import send_mail
 import stream
 from lepl.apps.rfc3696 import HttpUrl
 from django import forms
@@ -28,6 +28,18 @@ from utils.textextract import readability_extract
 
 from django.conf import settings
 
+
+def contact_submission(request):
+    params = request.POST
+    if params.has_key('email') and params.has_key('text') and params.has_key('name'):
+        #has required params
+        
+        send_mail('Contact from %s at %s' % (params['name'], params['email']), params['text'], 'contact@sunlightfoundation.com', settings.ADMIN_EMAILS)
+       
+        return HttpResponse('OK', content_type="text/plain")
+        
+    else:
+        raise HttpResponseNotFound
 
 
 def ensure_url(url):
