@@ -2,8 +2,7 @@ from apiproxy.models import SearchDocument, Match, MatchedDocument
 from django import template
 from django.conf import settings
 from django.db.models import Q
-from analytics.get_most_read import get_most_viewed
-import analytics.sample_utils
+import pickle
 register = template.Library()
 
 @register.simple_tag
@@ -33,7 +32,8 @@ def latest(number_latest):
 @register.simple_tag
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
-    churns = []
+    churns = pickle.load(open(settings.PROJECT_ROOT + '/analytics/management/commands/most_read.dat'))
+    """
     data = get_most_viewed()
     for d in data:
         params = d.split('_')
@@ -59,7 +59,7 @@ def most_read(number_viewed):
                 continue
             except SearchDocument.DoesNotExist:
                 continue
-    
+    """
     return t.render(template.Context({'viewed': churns[:number_viewed]}))
  
 @register.simple_tag

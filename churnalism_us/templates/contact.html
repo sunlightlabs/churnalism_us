@@ -8,18 +8,19 @@
     <div id="halfColumnRt">
         <h2 class="withTip">Contact Us</h2>
         <span class="tip">Have comments or questions? We'd love to hear from you.</span>
-        <form action="" method="post">
+        <form id="contactform"  action="/submitcontact/" method="post">
+            {%csrf_token%}
             <ul class="withSpace">
                 <li>
-                    <label for="name">Name</label>
-                    <input type="text" name="q" id="name">
+                    <label for="name">Name*</label>
+                    <input type="text" name="name" id="name">
                 </li>
                 <li>
-                    <label for="email">Email</label>
-                    <input type="text" name="q" id="email">
+                    <label for="email">Email*</label>
+                    <input type="text" name="email" id="email">
                 </li>
                 <li>
-                    <label for="text">Comment</label>
+                    <label for="text">Comment*</label>
                     <textarea cols="32" id="text" name="text" rows="10"></textarea>
                 </li>
                 <li>
@@ -33,3 +34,26 @@
     <div class="clear"></div>
 </div>
 {% endblock body %}
+{% block js %}
+<script type="text/javascript" src="/static/scripts/jquery.form.js"></script>
+<script type="text/javascript">
+$(document).ready(function() { 
+    
+    var validate = function(){
+        if ($("#name").val() != false && $("#email").val() != false && $("#text") != false) {
+            return true
+        } else {    
+            $("ul.withSpace").prepend("<li id='message'>Please fill in all required fields</li>")
+            $("#message").delay(5000).fadeOut(500);
+            return false;
+        }  
+    }
+    var show_success = function(){
+        $("ul.withSpace").hide()
+        $("span.tip").text("Thanks for contacting us! Someone will reply shortly.");
+    }    
+    $('#contactform').ajaxForm( {'beforeSubmit': validate, 'success': show_success}); 
+}); 
+</script>
+
+{% endblock %}

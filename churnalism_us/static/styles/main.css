@@ -162,11 +162,12 @@ nav li a { width: 88px; height: 45px; }
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 #fullColumn input, #fullColumn textarea { width: 380px; padding: 10px 10px 5px; font-size: 110%; color: #7C7C7B; margin-bottom: 15px;}
 
+.maintenanceText { color: #AA4444; }
 #introText { font-size: 280%; line-height: 45px;}
 .introHighlight { background-color: #f6f93a;}
 
 .withSpace li { margin-bottom: 15px;}
-
+#message{ color: red; font-size: 1.2em;}
 #matches li.active { background: url(../images/bg_activeList.jpg) right top repeat-y; margin-right: -5px; position: relative; z-index: 2; padding: 0px 10px 0px 25px;}
 #matches li { padding: 20px 10px 20px 25px ; border-top: 1px dashed #a09e9e;}
 #matches li.last { border-bottom: 1px dashed #a09e9e; }
@@ -242,3 +243,7 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 .smallHeader .url-problem { font-size: .8em; font-size: 70%; text-transform: capitalize; color: #ACAAA3; margin-top: 5px;}
 
 .broken-url-text { border: 2px solid #f6f93a; padding: 13px 10px 10px; border-radius: 10px; -webkit-border-radius: 10px; -moz-border-radius: 10px; background-color: #f6f6cc; margin-bottom: 40px; text-align: center;} 
+
+#errorText { background: url(../images/bg_errorText.png) top left no-repeat;  width: 310px; height: 71px; }
+#errorTitle { background: url(../images/bg_errorTitle.png) top left no-repeat; width: 86px; height: 12px; margin-left: 365px; z-index: 3; position: absolute;}
+#errorBg { background: url(../images/bg_404.jpg) center top no-repeat; width: 385px; height: 219px; margin: 0 auto; padding-top: 55px; padding-left: 160px; margin-top: 5px;}

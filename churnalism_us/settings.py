@@ -15,9 +15,9 @@ ADMINS = (
     ('Kaitlin Lee','klee@sunlightfoundation.com'),
     ('timball', 'tball@sunlightfoundation.com'),
     ('Drew Vogel', 'dvogel@sunlightfoundation.com'),
-    ('Andrew Pendleton', 'apendleton@sunlightfoundation.com')
 )
 
+ADMIN_EMAILS = ('klee@sunlightfoundation.com', 'dvogel@sunlightfoundation.com')
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -160,6 +160,7 @@ INSTALLED_APPS = (
     'generictags',
     'sidebyside',
     'apiproxy',
+    'analytics',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -185,7 +186,16 @@ LOGGING = {
     }
 }
 
+
+#EMAIL_HOST = 'smtp.postmarkapp.com'
+#EMAIL_HOST_USER = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+#EMAIL_HOST_PASSWORD = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+EMAIL_BACKEND = 'postmark.backends.PostmarkBackend'
+POSTMARK_API_KEY = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+
+
 SIDEBYSIDE = {
+    'allow_search': True,
     'max_doc_prefetch': 0,
     'minimum_coverage_pct': 0,  # Plain-english percentages, e.g. 3 = 3%
     'minimum_coverage_chars': 0
