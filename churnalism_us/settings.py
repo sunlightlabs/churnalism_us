@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
     'celery_tasks',
+    'analytics',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -50,7 +50,7 @@ FLAGS = gflags.FLAGS
 # application, including client_id and client_secret. You get these values by
 # creating a new project in the Google APIs console and registering for
 # OAuth2.0 for installed applications: <https://code.google.com/apis/console>
-CLIENT_SECRETS = PROJECT_ROOT + '/analytics/client_secrets.json'
+CLIENT_SECRETS = PROJECT_ROOT + '/analytics/management/commands/client_secrets.json'
 
 
 # Helpful message to display in the browser if the CLIENT_SECRETS file
@@ -83,7 +83,7 @@ gflags.DEFINE_enum('logging_level', 'ERROR',
 # Name of file that will store the access and refresh tokens to access
 # the API without having to login each time. Make sure this file is in
 # a secure place.
-TOKEN_FILE_NAME = PROJECT_ROOT +  '/analytics/analytics.dat'
+TOKEN_FILE_NAME = PROJECT_ROOT +  '/analytics/management/commands/analytics.dat'
 
 
 def process_flags(argv):
