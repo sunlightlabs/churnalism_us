@@ -283,9 +283,13 @@ def permalink(request, uuid, doctype, docid):
             return redirect('sidebyside-uuid-search', uuid=uuid)
 
         if not matching_row.get('text'):
-            doc = sfm.document(doctype, docid)
-            if doc:
-                matching_row['text'] = doc['text']
+            try:
+                md = MatchedDocument.objects.get(doc_type=doctype, doc_id=docid)
+                matching_row['text'] = md.text
+            except MatchedDocument.DoesNotExist:
+                doc = sfm.document(doctype, docid)
+                if doc:
+                    matching_row['text'] = doc['text']
 
         return search_result_page(request, sfm_results,
                                   source_text=sfm_results['text'],
