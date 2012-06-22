@@ -196,58 +196,6 @@ def search(request, doctype=None):
 
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
-    if isinstance(response, str):
-        return HttpResponse(response, content_type='text/html')
-    else:
-        
-        embellish(text, 
-              response, 
-              reduce_frags=True,
-              add_coverage=True, 
-              add_snippets=True,
-              prefetch_documents=False)
-
-        response['uuid'] = doc.uuid
-        if (url or uuid) and 'text' not in response:
-            response['text'] = doc.text
-        if title and 'title' not in response:
-            response['title'] = doc.title
-
-        for r in response['documents']['rows']:
-            try:
-                md = MatchedDocument.objects.get(doc_id=r['docid'], doc_type=r['doctype'])
-            except:
-                md = MatchedDocument(doc_type=r['doctype'], 
-                                    doc_id=r['docid'], 
-                                    source_url=r['url'],
-                                    source_name=r['docid'], #will change this later, for now just use the doc id
-                                    source_headline=r['title'])
-                md.save() 
-
-            match_id = None
-            matches = Match.objects.filter(search_document=doc, matched_document=md)
-            if len(matches) > 0:
-                matches[0].number_matches += 1
-                matches[0].response = json.dumps(response)
-                matches[0].save()
-                match_id = matches[0].id
-            else:
-                stats = calculate_coverage(text, r)
-                match = Match(search_document=doc, 
-                              matched_document=md,
-                              percent_sourced=0, #don't need this since churn function picks higher of sourced or churned
-                              percent_churned=str(stats[1]),
-                              number_matches=1,
-                              response=json.dumps(response) )
-                match.save()
-                match_id = match.id
-            
-            r['match_id'] = match_id
-
-        #use celery tasks to fetch result text
-        update_matches.delay(response['documents']['rows'])
-
-        return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 def execute_search(doc, doctype=None):
     sfm = from_django_conf()
