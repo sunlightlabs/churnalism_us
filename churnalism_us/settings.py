@@ -1,14 +1,11 @@
 # Django settings for churnalism_us project.
 
 import os
-import djcelery
 from datetime import timedelta
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 DOMAIN = 'http://us.churnalism.com'
 DEBUG = True
-
-djcelery.setup_loader()
 
 BROKER_URL = "amqp://guest:guest@localhost:5672/"
 
@@ -145,7 +142,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    #'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
@@ -157,15 +154,12 @@ INSTALLED_APPS = (
     # devserver provides a threaded/forked replacement for runserver
     # This enables the server to handle simultaneous requests, which is
     # required by the sidebyside app, since it dogfoods the apiproxy app.
-    'devserver',
+    #'devserver',
 
     'gunicorn',
     'generictags',
     'sidebyside',
     'apiproxy',
-    'djcelery',
-    'kombu.transport.django',
-    'celery_tasks',
     'analytics',
 )
 
