@@ -8,13 +8,17 @@
  *
  *
  */
+String.prototype.trimRight = function() {
+    return this.replace(/\s+$/,'');
+}
+
 var textRenderer = function (node) {
+    console.log(node);
     var walker = document.createTreeWalker(
         node, 
         (NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT | 
         NodeFilter.SHOW_ENTITY | NodeFilter.SHOW_ENTITY_REFERENCE), 
-        { 
-            acceptNode: function(node){
+        function(node){
                 if (node.nodeType == 3) {
                     return NodeFilter.FILTER_ACCEPT; 
 				} else if (/^(p|br|pre)$/i.test(node.nodeName)) {
@@ -24,8 +28,7 @@ var textRenderer = function (node) {
                 } else {
                     return NodeFilter.FILTER_SKIP;
                 }
-            } 
-        }, 
+            }, 
         false
     );
 
@@ -135,7 +138,7 @@ ArticleExtractor = function (NS) {
     var ExtractedDocument = function (srcdoc) {
         var that = this;
         var srcdoc = srcdoc; // Do not touch -- just for calling .createElement()
-        var doc = srcdoc.documentElement.cloneNode(true);
+        var doc = srcdoc.getElementsByTagName('body')[0].cloneNode(true) //srcdoc.documentElement.cloneNode(true);
         var best_candidate = null;
         var article_elem = null;
         var title = null;
