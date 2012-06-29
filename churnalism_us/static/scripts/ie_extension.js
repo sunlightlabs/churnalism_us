@@ -1,3 +1,20 @@
+
+//TO DO
+//Figure out how to do options dialogue
+//If not, make default options pull from server
+//make these fetch from the server 
+var Params = {
+    'MINIMUM_COVERAGE_PCT': 1,
+    'MINIMUM_COVERAGE_CHARS': 300,
+    'WARNING_RIBBON_SRC': '/sidebyside/chrome/ribbon/'
+
+};
+
+var sufficient_coverage = function (row) {
+    return ((row['coverage'][0] >= Params['MINIMUM_COVERAGE_CHARS']) 
+            && (Math.round(row['coverage'][1]) >= Params['MINIMUM_COVERAGE_PCT']));
+};
+
 var prevent_scroll = function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -135,24 +152,28 @@ var load_results = function(result, request_text){
     }
     else {
         with_best_search_result(request_text, result, function(best_match){
-            //insert iframe notifier
-            var ribbon_frame = jQuery('<div id="churnalism-ribbon-container" style="width: 100%; background-color: #FCF8F5;"><iframe src="'+ options['search_server'] + options['ribbon'] + '?domain=' + window.location.href + '" id="churnalism-ribbon" name="churnalism-ribbon" frameborder="0" border="none" height=32 scrolling="no"></iframe></div>');
-//            ribbon_frame.attr('src', options['search_server'] + options['ribbon'] + '?domain=' + window.location.href);
-            ribbon_frame.prependTo('body');
-            insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
-            //bind handler events to buttons
 
- 
+            if (best_match && sufficient_coverage(best_match)) {
 
+                //insert iframe notifier
+                var ribbon_frame = jQuery('<div id="churnalism-ribbon-container" style="width: 100%; background-color: #FCF8F5;"><iframe src="'+ options['search_server'] + options['ribbon'] + '?domain=' + window.location.href + '" id="churnalism-ribbon" name="churnalism-ribbon" frameborder="0" border="none" height=32 scrolling="no"></iframe></div>');
+    //            ribbon_frame.attr('src', options['search_server'] + options['ribbon'] + '?domain=' + window.location.href);
+                ribbon_frame.prependTo('body');
+                insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
+                //bind handler events to buttons
 
-            window.addEventListener('message', function(event){
-                if (event.data == 'dismiss_churnalism_ribbon') {
-                    $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
-                } else if (event.data == 'show_churnalism_comparison') {
-                    inject_comparison_iframe(comparisonUrl(result.uuid, best_match.doctype, best_match.docid), options['search_server'] + '/sidebyside/loading/');
-                    $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
-                }
-            }, false);
+                window.addEventListener('message', function(event){
+                    if (event.data == 'dismiss_churnalism_ribbon') {
+                        $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
+                    } else if (event.data == 'show_churnalism_comparison') {
+                        inject_comparison_iframe(comparisonUrl(result.uuid, best_match.doctype, best_match.docid), options['search_server'] + '/sidebyside/loading/');
+                        $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
+                    }
+                }, false);
+            } else {
+                console.log('match percentge too low');
+                console.log(JSON.stringify(best_match));
+            }
         });
     } 
 };
