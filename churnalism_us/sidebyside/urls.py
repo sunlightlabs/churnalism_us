@@ -19,9 +19,12 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^search/$', 'search', name='sidebyside-search'),
     url(r'^shared/(?P<uuid>[a-z0-9]{32})/$', 'shared' , name='sidebyside-shared'),
     url(r'^confirmed/(?P<match_id>[0-9]+)/$', 'confirmed' , name='sidebyside-confirmed'),
+    url(r'^firefox/parameters/$', 'ffext_parameters', name='sidebyside-ff-parameters'),
+    url(r'^firefox/ribbon/$', 'ffext_ribbon', name='sidebyside-ff-ribbon'),
     url(r'^chrome/parameters/$', 'chromeext_parameters', name='sidebyside-chrome-parameters'),
     url(r'^chrome/ribbon/$', 'chromeext_ribbon', name='sidebyside-chrome-ribbon'),
     url(r'^loading/$', direct_to_template, {'template': 'sidebyside/loading.html'}, name='sidebyside-loading'),
+    url(r'^firefox/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'ffext_recall', name='sidebyside-chrome-uuid-recall'),
     url(r'^chrome/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'chromeext_recall', name='sidebyside-chrome-uuid-recall'),
     url(r'^generic/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'generic_recall', name='sidebyside-generic')
 

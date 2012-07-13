@@ -369,6 +369,17 @@ def chromeext_recall(request, uuid, doctype, docid):
     resp = render(request, 'sidebyside/chrome.html', scope)
     return resp
 
+def ffext_parameters(request):
+    return chromeext_parameters(request)
+
+def ffext_ribbon(request):
+    return chromeext_ribbon(request)
+
+def ffext_recall(request, uuid, doctype, docid):
+    scope = recall(request, uuid, doctype, docid)
+    resp = render(request, 'sidebyside/chrome.html', scope)
+    return resp
+
 def generic_recall(request, uuid, doctype, docid):
     scope = recall(request, uuid, doctype, docid)
     resp = render(request, 'sidebyside/chrome.html', scope)
