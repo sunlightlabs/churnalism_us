@@ -1,0 +1,52 @@
+#churnalism-mask {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 2137483639;
+	background: none gray;
+	opacity: 0.9;
+	margin: 0;
+	padding: 0;
+}
+
+#churnalism-overlay {
+	z-index: 2137483640;
+	border-width: 0;
+	background: none #f9f6ed;
+	position: fixed;
+	top: 2%;
+	bottom: 2%;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+}
+
+#churnalism-iframe {
+	border-top: 1px solid #ecc13d;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+}
+
+#churnalism-close {
+	background-image: none;
+	display: none;
+}
+
+#churnalism-ribbon {
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+	z-index: 2137483640;
+    position: static;
+    width: 100%;
+    height: 32px;
+    overflow: none;
+}
