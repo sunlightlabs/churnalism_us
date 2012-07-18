@@ -11,6 +11,11 @@
 	margin: 0;
 	padding: 0;
 }
+#churnalism-options {
+    position: absolute;
+    top: 50px;
+    left: 100px; 
+}
 
 #churnalism-overlay {
     display: none;
