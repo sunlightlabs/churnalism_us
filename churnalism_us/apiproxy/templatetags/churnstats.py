@@ -14,7 +14,7 @@ def latest(number_latest):
                       .filter(percent_churned__gte=settings.SIDEBYSIDE.get('minimum_coverage_pct', 0))
                       .filter(overlapping_characters__gte=settings.SIDEBYSIDE.get('minimum_coverage_chars', 0))
                       .filter(~Q(search_document__url=''))
-                      .filter(~Q(search_document__title__isnull=False))
+                      .filter(search_document__title__isnull=False)
                       .filter(~Q(search_document__title=''))
                       .order_by('-updated')[:20])
 
