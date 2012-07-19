@@ -311,8 +311,13 @@ def recall(request, uuid, doctype, docid):
         match = [r for r in sfm_results['documents']['rows']
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            raise Http404('Article {uuid} not found'.format(uuid=uuid))
+        else:
+            raise
     except IndexError:
-        raise Http404('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
+        raise Http404('Article {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
     if match_doc['success'] == True:
