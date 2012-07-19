@@ -303,7 +303,13 @@ def permalink(request, uuid, doctype, docid):
 
 def recall(request, uuid, doctype, docid):
     sfm = from_django_conf('sidebyside')
-    sfm_results = sfm.search(text=None, uuid=uuid)
+    try:
+        sfm_results = sfm.search(text=None, uuid=uuid)
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            raise Http404('Article {uuid} not found'.format(uuid=uuid))
+        else:
+            raise
 
     match_count = len(sfm_results['documents']['rows'])
 
@@ -311,11 +317,6 @@ def recall(request, uuid, doctype, docid):
         match = [r for r in sfm_results['documents']['rows']
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
-    except superfastmatch.SuperFastMatchError, e:
-        if e.status == httplib.NOT_FOUND:
-            raise Http404('Article {uuid} not found'.format(uuid=uuid))
-        else:
-            raise
     except IndexError:
         raise Http404('Article {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
