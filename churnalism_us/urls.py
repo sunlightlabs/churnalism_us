@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^sidebyside/', include('sidebyside.urls')),
     url(r'^api/', include('apiproxy.urls')),
     url(r'^submitcontact/', 'sidebyside.views.contact_submission', name='contact-submission'),
+    url(r'^cache/', include('django_memcached.urls')),
+    url(r'^iframe/', direct_to_template, {'template': 'extension_iframe.html'}, name="iframe"),
 )
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

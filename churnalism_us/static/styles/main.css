@@ -178,8 +178,9 @@ input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-borde
 
 .percentText { font-size: 95%; color: #cbcbc1; margin-bottom: 10px; display: block;}
 
-.sidebyside-link { background: url(../images/sidebyside2.png) bottom right no-repeat; float: right; height: 24px; width: 26px; margin-top:0px; margin-right:20px; }
+.sidebyside-link { background: url(../images/sidebyside2.png) right -17px no-repeat; float: right; height: 17px; width: 24px; margin-top:0px; margin-right:20px; }
 .sidebyside-link:hover { background: url(../images/sidebyside2.png) top right no-repeat; }
+.active .sidebyside-link:hover { background: url(../images/sidebyside2.png) bottom right no-repeat; }
 
 .characters { float: left;  }
 
