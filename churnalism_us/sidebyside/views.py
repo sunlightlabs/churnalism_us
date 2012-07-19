@@ -320,7 +320,7 @@ def recall(request, uuid, doctype, docid):
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
     except IndexError:
-        return HttpResponseNotFound('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
+        raise Http404('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
     if match_doc['success'] == True:
