@@ -14,7 +14,7 @@
         <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}"  {% if forloop.last%}class="last"{% endif %}  >
         <span class="textReplace scissorTop hidden">Scissor image</span>
         <span class="percentChurn">
-            <a class="characters" href="#">{{ row.coverage.0 }} Characters</a>
+            <a class="characters" href="{% url sidebyside-permalink results.uuid row.doctype row.docid %}">{{ row.coverage.0 }} Characters</a>
             <a title="View Side by Side" class="sidebyside-link textReplace"
                href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
@@ -76,6 +76,7 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			window.search_results = {{ results|jsonify|safe }};
+            window.base_url = {{ BASE_URL|jsonify|safe }};
 
             $("#truncate").markupAsArticle().pruneToHeight(230);
 		});

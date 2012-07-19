@@ -17,10 +17,7 @@ $(document).ready(function(){
 
     var fetch_document = function (doctype, docid, match_id, next) {
         var url = '/api/document/DOCTYPE/DOCID/'.replace('DOCTYPE', doctype).replace('DOCID', docid);
-        $.get(url, {
-            crossDomain: false,
-            cache: true,
-        }).success(function(resp){
+        $.get(url).success(function(resp){
             next(doctype, docid, match_id, resp); 
         });
     };
@@ -82,8 +79,7 @@ $(document).ready(function(){
             $.each(row['snippets'], function(idx, snippet){
                 var sub_snippets = snippet.split(/[\r\n]+/g).map(function(ss){ return ss.trim(); });
                 $.each(sub_snippets, function(idx, sub_snippet){
-                    if (sub_snippet.length > 0) {
-                        console.log('sub_snippet', sub_snippet);
+                    if (sub_snippet.length > 5) {
                         highlight_match(match_text_el(doctype, docid), sub_snippet);
                     }
                 });
@@ -123,7 +119,6 @@ $(document).ready(function(){
                 0, 0, scaled_dimensions.width, scaled_dimensions.height
             );
             Filters.filterCanvas(new_canvas, Filters.lineify, [0.7]);
-            var li = match_listitem_el(doctype, docid);
             jQuery('<img>').attr('src', new_canvas.toDataURL()).appendTo('#scrollColumn').click(function(click){
                 var y = click.pageY - jQuery(this).offset().top;
                 var pct = y / jQuery(this).height();
@@ -206,21 +201,40 @@ $(document).ready(function(){
                 $(".condense_control_less:visible").trigger("click");
                 select_document_tab(docattrs['doctype'], docattrs['docid']);
                 select_document(docattrs['doctype'], docattrs['docid'], match_id);
+                var url = [base_url, 'sidebyside', search_results.uuid, docattrs['doctype'], docattrs['docid']].join('/');
+                var state = {
+                    doctype: docattrs['doctype'],
+                    docid: docattrs['docid'],
+                    uuid: search_results.uuid
+                };
+                history.pushState(state, document.title, url);
             }
         }
 
         return false;
     });
 
-    var permalink_matches = permalink_pattern.exec(window.location.pathname);
-    if ((permalink_matches != null) && (permalink_matches.length == 4)) {
-        var doctype = permalink_matches[2];
-        var docid = permalink_matches[3];
-        select_document_tab(doctype, docid);
-        select_document(doctype, docid, null);
-    } else {
-        $("#matches li:first").trigger('click');
-    }
+    //var initialPath = location.pathname;
+    $(window).bind('popstate', function(event){
+        var state = event.originalEvent.state;
+        if (state != null) {
+            select_document_tab(state.doctype, state.docid);
+            select_document(state.doctype, state.docid, null);
+        }
+    });
+
+    var handle_permalink_path = function (path) {
+        var permalink_matches = permalink_pattern.exec(path);
+        if ((permalink_matches != null) && (permalink_matches.length == 4)) {
+            var doctype = permalink_matches[2];
+            var docid = permalink_matches[3];
+            select_document_tab(doctype, docid);
+            select_document(doctype, docid, null);
+        } else {
+            $("#matches li:first").trigger('click');
+        }
+    };
+    handle_permalink_path(window.location.pathname);
 
     sourcediv = $("div#source-text");
 
@@ -231,10 +245,7 @@ $(document).ready(function(){
      $("#btnConfirm").click(function(){
         if ($('ol#matches li.active').hasClass('confirmed') == false) {
             var that = this
-            $.get( $(that).attr('href'), {
-                crossDomain: false,
-                cache: false,
-            }).success(function(resp){
+            $.get($(that).attr('href')).success(function(resp){
                 $("ol#matches li.active").addClass('confirmed');
                 $(that).css('background-image', 'url(/static/images/btn_thanks.png)');
             });
