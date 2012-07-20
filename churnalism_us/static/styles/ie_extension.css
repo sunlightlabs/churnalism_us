@@ -1,6 +1,7 @@
 #churnalism-mask {
     display:none;
 	position: fixed;
+    height: 100%;
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -13,8 +14,9 @@
 }
 #churnalism-options {
     position: absolute;
-    top: 50px;
-    left: 100px; 
+    top: 100px;
+    left: 100px;
+    z-index: 2137483640 
 }
 
 #churnalism-overlay {
