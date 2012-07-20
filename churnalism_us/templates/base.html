@@ -52,16 +52,9 @@
 	   
 
             <div id="share">
-                <ul>
                     {% block share_url %}{% endblock %}
-                    <li>
-                        <a class="textReplace" id="facebook" href="#">share with facebook</a>
-                    </li>
-                    <li>
-                        <a class="textReplace" id="twitter" href="#">share with twitter</a>
-                    </li>
-                </ul>
-            </div>    
+                    <div id="gigya-share"></div> 
+            </div>   
         </header>  
         <div class="clear" id="container">
             {% block overlap %}{% endblock %}
@@ -111,6 +104,7 @@
     
     <script type="text/javascript" src="{{ABSOLUTE_STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
     <script type="text/javascript">
         var get_url = function(){
             var permalink = $("#share-page-url");
@@ -129,17 +123,24 @@
                 return $("title").text();
             }
         };
-        $("#twitter").click(function(){
-            var url = encodeURIComponent(get_url());
-            var title = encodeURIComponent(get_title());
-            window.open("https://twitter.com/share?url=" + url + "&text=I've found churnalism! " + title, 'width=300, height=400')
-        });
-        $("#facebook").click(function(){
-            var url = encodeURIComponent(get_url());
-            var title = encodeURIComponent(get_title());
-            window.open("http://www.facebook.com/sharer.php?u=" + url + "&t=" + title, "Share Churnalism on Facebook", 'height=350, width=670');
-            return false;
-        });
+
+        var ua = new gigya.socialize.UserAction();
+        ua.setLinkBack(get_url());
+        ua.setTitle(get_title());
+        ua.setDescription("I've found an article that contains Churnalism.");
+       
+        var params = {
+            containerID: 'gigya-share',
+            iconsOnly: true,
+            layout: 'horizontal',
+            noButtonBorders: true,
+            shareButtons: 'facebook,twitter',
+            shortURLs: 'never',
+            showCounts: 'none',
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+
     </script>
     {% block js %}
     {% endblock js %}

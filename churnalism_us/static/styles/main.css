@@ -151,13 +151,9 @@ nav li a { width: 88px; height: 45px; }
 #sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; }
 
 #share { float: right; margin-top: 75px; font-size: 95%; margin-right: 15px;}
-#share li { float: left; margin-left: 10px;}
 #share label { margin-top: 2px; float: left; margin-right: 5px;}
 #share input { padding: 4px 5px 2px; width: 130px; float: left;}
-#facebook { background: url(../images/social_sprites.png) left -188px no-repeat; height: 16px; width: 16px; margin-top: 3px;}
-#facebook:hover { background: url(../images/social_sprites.png) left -52px no-repeat;}
-#twitter { background: url(../images/social_sprites.png) left -103px no-repeat; height: 16px; width: 16px; margin-top: 3px;}
-#twitter:hover { background: url(../images/social_sprites.png) left -1px no-repeat;}
+#gigya-share { float:left; margin: 5px 0 0 10px; }
 
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 #fullColumn input, #fullColumn textarea { width: 380px; padding: 10px 10px 5px; font-size: 110%; color: #7C7C7B; margin-bottom: 15px;}
