@@ -195,7 +195,7 @@ def search_against_uuid(request, uuid):
                                   source_title=sfm_results.get('title'))
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
-            return document404(request, uuid=uuid)
+            raise Http404('No such article {0}'.format(uuid))
         elif settings.DEBUG == True:
             return HttpResponse(e.response[1], status=e.response[0])
         else:
@@ -257,7 +257,7 @@ def search_against_url(request, url):
                                   source_title=title, source_url=url)
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
-            return document404(request, url=url)
+            raise HttpResponse('No such article {0}'.format(url))
         elif settings.DEBUG == True:
             return HttpResponse(e.response[1], status=e.response[0])
         else:
@@ -270,7 +270,7 @@ def permalink(request, uuid, doctype, docid):
         sfm_results = sfm.search(text=None, uuid=uuid)
         drop_silly_results(sfm_results)
         if len(sfm_results['documents']['rows']) == 0:
-            return document404(request, uuid=uuid)
+            raise Http404('No such article {0}'.format(uuid))
 
         sort_by_coverage(sfm_results)
 
@@ -297,21 +297,19 @@ def permalink(request, uuid, doctype, docid):
                                   source_url=sfm_results.get('url'))
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
-            return document404(request, uuid=uuid)
+            raise Http404('No such article {0}'.format(uuid))
         else:
             raise
 
-
-def document404(request, uuid=None, url=None):
-    return render(request, 'documentmissing.html',
-                  {'uuid': uuid,
-                   'url': url
-                  })
-
-
 def recall(request, uuid, doctype, docid):
     sfm = from_django_conf('sidebyside')
-    sfm_results = sfm.search(text=None, uuid=uuid)
+    try:
+        sfm_results = sfm.search(text=None, uuid=uuid)
+    except superfastmatch.SuperFastMatchError, e:
+        if e.status == httplib.NOT_FOUND:
+            raise Http404('Article {uuid} not found'.format(uuid=uuid))
+        else:
+            raise
 
     match_count = len(sfm_results['documents']['rows'])
 
@@ -320,7 +318,7 @@ def recall(request, uuid, doctype, docid):
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
     except IndexError:
-        return HttpResponseNotFound('Document {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
+        raise Http404('Article {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
     if match_doc['success'] == True:

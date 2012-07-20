@@ -4,7 +4,7 @@
 
     {% for item in latest %}
         <li class="clear">
-            <a href="{% url sidebyside-permalink uuid=item.uuid doctype=item.doctype docid=item.docid %}">{% if item.title %} {{item.title}} {% else %} {{item.text|truncatewords:15 }} {%endif %}</a>
+            <a href="{% url sidebyside-uuid-search uuid=item.uuid %}">{{item.title}}</a>
         </li>
 {% endfor %}
     </ul>

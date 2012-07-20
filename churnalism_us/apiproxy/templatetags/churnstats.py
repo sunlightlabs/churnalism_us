@@ -16,17 +16,15 @@ def latest(number_latest):
                       .filter(~Q(search_document__url=''))
                       .filter(search_document__title__isnull=False)
                       .filter(~Q(search_document__title=''))
-                      .order_by('-updated')[:20])
+                      .order_by('-updated')
+                      .values('search_document__uuid',
+                              'search_document__title')[:20])
 
     for rm in recent_matches:
-        if rm.search_document_id not in dedupe and len(churns) < number_latest:
-            churns.append({'percent': rm.percent_churned, 
-                           'title': rm.search_document.title, 
-                           'text': rm.search_document.text, 
-                           'uuid': rm.search_document.uuid,
-                           'doctype': rm.matched_document.doc_type,
-                           'docid': rm.matched_document.doc_id})
-            dedupe.append(rm.search_document_id)
+        if rm['search_document__uuid'] not in dedupe and len(churns) < number_latest:
+            churns.append({'title': rm['search_document__title'], 
+                           'uuid': rm['search_document__uuid']})
+            dedupe.append(rm['search_document__uuid'])
 
     return t.render(template.Context({'latest': churns[:number_latest] }))
  

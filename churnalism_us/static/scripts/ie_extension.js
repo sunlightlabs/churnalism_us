@@ -142,11 +142,10 @@ var defaultOptions = {
     submit_urls: false,
 };
 
-var options = defaultOptions;
+var options;// = defaultOptions;
 
 var load_results = function(result, request_text){
     result = jQuery.parseJSON(result);
-    console.log(JSON.stringify(result));
     if (result == null || typeof(result) == 'undefined'){
         console.log("error");
     }
@@ -179,7 +178,6 @@ var load_results = function(result, request_text){
 };
 
 function search(article_text, article_title, url) {
-    
     var xdr = new XDomainRequest();
     xdr.open("POST", options['search_server'] + '/api/search/' );
     xdr.onload = function(){ load_results(xdr.responseText, article_text); };
@@ -236,13 +234,19 @@ var standardize_quotes = function (text, leftsnglquot, rightsnglquot, leftdblquo
 var extract_article = function() {
     jQuery('iframe').each(function(idx, iframe){
         var src = jQuery(iframe).attr('src');
-        if (/wmode=opaque/i.test(src)) {
-            src = src.replace(/wmode=opaque/i, 'wmode=transparent');
-        } else if (src != null) {
-            src = src + ((src.indexOf('?') == -1) ? '?' : '&') + 'wmode=transparent';
-        } 
-        jQuery(iframe).attr('src', src);
+        if (jQuery(iframe).attr('id') != 'churnalism_options'){
+        
+            if(/wmode=opaque/i.test(src)) {
+                src = src.replace(/wmode=opaque/i, 'wmode=transparent');
+            } else if (src != null) {
+                src = src + ((src.indexOf('?') == -1) ? '?' : '&') + 'wmode=transparent';
+            } 
+        
+            jQuery(iframe).attr('src', src);
+        }
     });
+
+    
     ArticleExtractor(window);
     var article_document = new ExtractedDocument(document);
     var article = article_document.get_article_text();
@@ -253,11 +257,33 @@ var extract_article = function() {
         'text': article,
         'title': title
     };
-    console.log(article);
     result = search(article, title, req['url']);
-    
 };
 
-load_script(defaultOptions['search_server'] + '/static/scripts/jquery-1.7.1.min.js', function(){load_script(defaultOptions['search_server'] + '/static/scripts/extractor.js', extract_article );});
+var receive_message = function(e) {
+    if(e.data.substr(0, 22) == 'var churnalism_options'  && e.origin !=="http://churnalism.sunlightfoundation.org"){
+        eval(e.data);
+        options = churnalism_options;
+        console.log('options set');
+    } else if (e.data == 'enlarge_iframe'){
+        jQuery("#churnalism_options").css('top', '0px').css('position', 'absolute');
+        jQuery("#churnalism_options")[0].width=900;
+        jQuery("#churnalism_options")[0].height=900;
+    } else {
+        console.log("domains don't match");
+    }
+}
+window.addEventListener("message", receive_message, false);
+
+//add iframe for churnalism dummy page, use for LocalStorage 
+jQuery('body').append('<iframe id="churnalism_options" src="http://churnalism.sunlightfoundation.com/iframe/" height="0" width="0"></iframe>');
+
+//make sure options iframe loads
+window.setTimeout( function() { 
+                                load_script(defaultOptions['search_server'] + '/static/scripts/jquery-1.7.1.min.js', 
+                                function(){
+                                    load_script(defaultOptions['search_server'] + '/static/scripts/extractor.js', extract_article );
+                                }) 
+                              }, 5000); //have to make sure options load before conducting search
 
 
