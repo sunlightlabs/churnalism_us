@@ -23,6 +23,7 @@ from copy import deepcopy
 
 from decimal import Decimal
 
+from django.views.decorators.cache import cache_page
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest, HttpResponseServerError)
 from django.shortcuts import get_object_or_404
@@ -131,8 +132,27 @@ def recall_document(title, url, uuid, text):
     return doc
 
 
+@sfm_proxy_view
+@cache_page(60 * 5)
+def uuid_search(request, uuid):
+    doc = get_object_or_404(SearchDocument, uuid=uuid)
+
+    response = execute_search(doc)
+    record_matches(doc, response)
+
+    # These changes are specific to this request and should not be stored in the database.
+    response['uuid'] = doc.uuid
+    response['text'] = doc.text
+    response['title'] = doc.title
+    response['url'] = doc.url
+
+    return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
+
+
+
 @csrf_exempt
 @sfm_proxy_view
+@cache_page(60 * 5)
 def search(request, doctype=None):
     """
     Proxies /search/ to Superfastmatch, returning the response with 

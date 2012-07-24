@@ -11,6 +11,7 @@ urlpatterns = patterns(
     url(r'^document/(\d+)/$', 'document_list'),
     url(r'^document/$', 'document_list'),
     url(r'^association/$', 'association'),
+    url(r'^search/([a-z0-9]{32})/$', 'uuid_search'),
     url(r'^search/$', 'search'),
     url(r'^search/(?P<doctype>[\d:]+)/$', 'search'),
 
