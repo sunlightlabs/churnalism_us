@@ -173,15 +173,15 @@ body { background-color: white;}
             }
       /* End boiler-plate */
 
-      body { font-size: 14px; }
+      body { font-size: 14px; padding-left:15px; }
       .ui-widget-content button { font-size: 13px; }
-      div.ui-widget-content { padding: 1em; }
+      div.ui-widget-content { padding: 1em;  }
       .ui-widget-content p { margin-bottom: 1em; }
-      .col { float: left; width: 368px; margin: 15px; border: 0 solid blue; height: 80%; }
+      .col { float: left; width: 400px; margin: 15px; border: 0 solid blue; height: 80%; }
       .clear { clear: both; }
       #options { min-width: 200px; max-width: 800px; margin: auto; margin-top: 2em;  }
       h1, h2 { padding: .5em; margin: 0; position: relative; }
-      #newSite { padding: .6em; margin: 0; }
+      #newSite { padding: .6em; margin: 20px;}
       #newSite input {
         font-size: 1.1em; padding: 0.5em; border: 1px solid #999; box-shadow: 0 0 6px rgba(0,0,0,0.5);
         display: block; width: 100%; box-sizing: border-box; -ms-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
@@ -198,11 +198,11 @@ body { background-color: white;}
       table.fixedHeader thead { position: relative; width: 100%; }
       table.fixedHeader thead tr { display: block; }
       html > body table.fixedHeader > tbody.scrollable { display: block; overflow: auto; width: 100%; }
-      #sites-list-container { max-height: 400px;  width: 100%; position: relative; overflow-y: auto; overflow-x: hidden; padding-right: 20px; }
-      #sites-list { width: 100%; }
-      #sites-list tbody { max-height: 400px; overflow: auto; }
+      #sites-list-container { max-height: 450px;  width: 100%; position: relative; overflow-y: auto; overflow-x: hidden; }
+      #sites-list { width: 100%; border: 1px solid #efefef; padding: 5px; }
+      #sites-list tbody { max-height: 600px; overflow: auto; }
       #sites-list th, #sites-list td {height: auto; }
-      #sites-list > tbody > tr > td:first-child { width: 254px; }
+      #sites-list > tbody > tr > td:first-child, td.site-url { width: 254px; }
       #sites-list th, #quickadd-list th { background: none transparent; padding: 0 18px 0 0; cursor: pointer; }
       #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/img/sortArrows_up.png) top right no-repeat; }
       #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/img/sortArrows_down.png) top right no-repeat; }
@@ -220,6 +220,7 @@ body { background-color: white;}
       */
       #search-server-header, #search-server-content { display: none; }
       ul#search-server-params { padding-left: 2em; list-style-type: square; }
+      #url-error {color:red; }
 
 </style>
 
@@ -242,20 +243,11 @@ body { background-color: white;}
         <div id="sites-list-container">
         </div>
 
-        <p>Or add any site manually:</p>
         <form id="newSite">
-            <input name="url" autocomplete="off" placeholder="Enter a new site here..." class="ui-corner-all" />
+            <label for="url"> Add a domain manually:</label>
+            <input name="url" autocomplete="off" placeholder="Enter a new site here..." class="ui-corner-all" id="url-add" />
         </form>
-        <div id="host-preview-container">
-            <div id="host-specificity" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"></div>
-            <label id="host-specificity-label"></label>
-            <label for="host-preview">Preview:</label>
-            <span id="host-preview"></span>
-            <br>
-            <br>
-            <button id="manually-add-host">Add to list</button>
-            <span id="host-warning"></span>
-        </div>
+        <button id="manually-add-host">Add to list</button>
     </div>
 </div>
  <div class="col">
@@ -299,12 +291,35 @@ body { background-color: white;}
 
 
 <script type="text/javascript" charset="utf-8">
-var list = '<table id="sites-list" class="fixedHeader"><thead><tr><th class="header headerSortDown">Web Address</th><th class="header"></th></tr></thead><tbody class="scrollable">';
-for (i in options['sites']){
-    list = list + '<tr><td>' + options['sites'][i] + '</td><td><button class="delete">Delete</button></td></tr>';
-}
-list = list + '</tbody></table>';
-jQuery('#sites-list-container').append(list);
+    var list = '<table id="sites-list" class="fixedHeader"><thead><tr><th class="header headerSortDown">Web Address</th><th class="header"></th></tr></thead><tbody class="scrollable">';
+    for (i in options['sites']){
+        list = list + '<tr><td class="site-url">' + options['sites'][i] + '</td><td><button class="delete">Delete</button></td></tr>';
+    }
+    list = list + '</tbody></table>';
+    jQuery('#sites-list-container').append(list);
+
+    $("#manually-add-host").click(function(){
+        var d = $("#url-add");
+        var in_list = false;
+        if (d.val() != undefined && d.val() != ''){
+            jQuery.each(jQuery("#sites-list").find('td.site-url'), function( ind, val){
+                if (jQuery(val).text().trim().toLowerCase() == d.val().trim().toLowerCase()) {
+                    // show_error_message('Domain is already in list');
+                    console.log('already in list')
+                    in_list = true;
+                    return false;
+                }
+            });
+            if (!in_list){
+                jQuery("#sites-list tbody").append('<tr><td>' + d.val() + '</td><td><button class="delete">Delete</button></td></tr>');
+            } else{
+                jQuery("#newSite").append('<span style="disply:none;" id="url-error">Domain is already in site list</span>').fadeIn('fast').find("#url-error").delay(5000).fadeOut('slow');
+            }
+        }
+        return false;
+    });
+    
+
 </script>
 </body>
 </html>

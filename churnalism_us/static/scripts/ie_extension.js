@@ -158,7 +158,6 @@ var load_results = function(result, request_text){
                 var ribbon_frame = jQuery('<div id="churnalism-ribbon-container" style="width: 100%; background-color: #FCF8F5;"><iframe src="'+ options['search_server'] + options['ribbon'] + '?domain=' + window.location.href + '" id="churnalism-ribbon" name="churnalism-ribbon" frameborder="0" border="none" height=32 scrolling="no"></iframe></div>');
     //            ribbon_frame.attr('src', options['search_server'] + options['ribbon'] + '?domain=' + window.location.href);
                 ribbon_frame.prependTo('body');
-                insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
                 //bind handler events to buttons
 
                 window.addEventListener('message', function(event){
@@ -266,17 +265,26 @@ var receive_message = function(e) {
         options = churnalism_options;
         console.log('options set');
     } else if (e.data == 'enlarge_iframe'){
-        jQuery("#churnalism_options").css('top', '0px').css('position', 'absolute');
-        jQuery("#churnalism_options")[0].width=900;
-        jQuery("#churnalism_options")[0].height=900;
+
+        var docwidth = jQuery(document).width();
+        var halfdelta = (docwidth - 850) / 2;
+
+        jQuery('body').append('<div id="churnalism-mask" style="display:block;position:absolute;height:100%; width:100%;"></div>');
+        jQuery('#churnalism-mask').css('height', jQuery(document).height());
+        jQuery("#churnalism_options").css('z-index', '2137483640').css('top', '100px').css('left', halfdelta + 'px').css('position', 'absolute');
+        jQuery("#churnalism_options")[0].width=850;
+        jQuery("#churnalism_options")[0].height=1150;
     } else {
         console.log("domains don't match");
     }
 }
 window.addEventListener("message", receive_message, false);
 
+//insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
+insert_css('http://churnalism.sunlightfoundation.com/static/styles/ie_extension.css');
+
 //add iframe for churnalism dummy page, use for LocalStorage 
-jQuery('body').append('<iframe id="churnalism_options" src="http://churnalism.sunlightfoundation.com/iframe/" height="0" width="0"></iframe>');
+jQuery('body').append('<iframe id="churnalism_options" src="http://churnalism.sunlightfoundation.com/iframe/" height="0" width="0" frameborder="0"></iframe>');
 
 //make sure options iframe loads
 window.setTimeout( function() { 

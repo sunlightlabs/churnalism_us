@@ -13,7 +13,7 @@ String.prototype.trimRight = function() {
 }
 
 var textRenderer = function (node) {
-    console.log(node);
+    //console.log(node);
     var walker = document.createTreeWalker(
         node, 
         (NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT | 
@@ -48,7 +48,7 @@ var textRenderer = function (node) {
 		} else if (/^(p|br|pre)$/i.test(walker.currentNode.nodeName)) {
 			rope.push(' \n');
         } else {
-            console.log('ArticleExtractor ignoring node: ' + walker.currentNode.nodeType + ' (' + walker.currentNode.nodeName + ')');
+            //console.log('ArticleExtractor ignoring node: ' + walker.currentNode.nodeType + ' (' + walker.currentNode.nodeName + ')');
 		}
     }
 
@@ -139,6 +139,7 @@ ArticleExtractor = function (NS) {
         var that = this;
         var srcdoc = srcdoc; // Do not touch -- just for calling .createElement()
         var doc = srcdoc.getElementsByTagName('body')[0].cloneNode(true) //srcdoc.documentElement.cloneNode(true);
+        console.log('in extractor');
         var best_candidate = null;
         var article_elem = null;
         var title = null;
@@ -281,7 +282,7 @@ ArticleExtractor = function (NS) {
                 node.extractionScore *= (1 - link_density(node));
 
                 if (((best_candidate == null) && (node.extractionScore != null)) || (node.extractionScore >= best_candidate.extractionScore)) {
-                    console.log('best candidate, with score', node.extractionScore, ' is now ', node);
+                    //console.log('best candidate, with score', node.extractionScore, ' is now ', node);
                     best_candidate = node;
                 }
             });
@@ -383,7 +384,7 @@ ArticleExtractor = function (NS) {
                 if (/p/i.test(node.tagName)) {
                     var density = link_density(node);
                     if (density > 0.85) {
-                        console.log('Link density of ' + density + ' for: ' + node.textContent);
+                        //console.log('Link density of ' + density + ' for: ' + node.textContent);
                         jQuery(node).remove();
                         return;
                     }
