@@ -79,7 +79,7 @@ so all links output must be absolute.
         <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/sidebyside_common.js"></script>
         <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/sidebyside_sidebyside.js"></script>
         <script type="text/x-jquery-template" id="connector-tmpl">
-            <svg id="fragment-connector" pointer-events="none">
+            <svg id="fragment-connector" class="fragment-connector" pointer-events="none">
                 <path id="bezier" stroke-width="3" fill="none"/>
                 <g stroke="none" stroke-width="3" fill="none">
                     <circle id="A" r="3" />
@@ -92,6 +92,7 @@ so all links output must be absolute.
         </script>
         <script type="text/javascript">
             var search_results = {{ results|jsonify|safe }};
+            var match_text = {{ match_text|jsonify|safe }};
         </script>
 {% endblock %}        
 

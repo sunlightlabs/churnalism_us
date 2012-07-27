@@ -1,6 +1,5 @@
 (function(){
-
-    function elementInViewport (el) {
+    var elementInViewport = function (el) {
         var rect = el.getBoundingClientRect();
         return (
             rect.top >= 0 &&
@@ -8,7 +7,14 @@
             rect.bottom <= window.innerHeight &&
             rect.right <= window.innerWidth
         );
-    }
+    };
+
+    var elementsOutsideViewport = function (els) {
+        return els.filter(function(idx){
+            return !elementInViewport(this);
+        });
+    };
+
     var top_of = function (elem) {
         return elem.offset().top;
     };
@@ -24,28 +30,34 @@
     var left_of = function (elem) {
         return elem.offset().left;
     };
-    var fragment_pair = function (frag_number) {
-        return $("span.churnalism-highlight").filter(function(){
+    var frag_number_matcher = function (frag_number) {
+        /* Useful for filtering jQuery elements */
+        return function(){
             var f = $(this).attr('churnalism:fragment');
             return ((f != null) && (f == frag_number));
-        });
+        };
     };
-    var other_fragment = function (fragment) {
-        var pair = fragment_pair(jQuery(fragment).attr('churnalism:fragment'));
-        return (fragment == pair[0]) ? pair[1] : pair[0];
-    };
-    var snippet_for_fragment = function (text, fragment) {
-        return text.slice(fragment[0], fragment[2]);
+    var fragment_elements = function (frag_number, ancestor) {
+        var context = ancestor || document;
+        return $("span.churnalism-highlight", context).filter(frag_number_matcher(frag_number));
     };
     var draw_connector = function (source_elem, target_elem) {
         var higher_elem = (top_of(source_elem) <= top_of(target_elem)) ? source_elem : target_elem;
-        var source_on_top = (source_elem == higher_elem);
+        var source_on_top = (top_of(source_elem) <= bottom_of(target_elem));
         var lower_elem = source_on_top ? target_elem : source_elem;
+
+        var source_elem = source_on_top ? $(".churnalism-highlight-lastchar", source_elem) : $(".churnalism-highlight-firstchar", source_elem);
+        var target_elem = source_on_top ? $(".churnalism-highlight-firstchar", target_elem) : $(".churnalism-highlight-lastchar", target_elem);
 
         var conn_top = top_of(higher_elem);
         var conn_height = (top_of(lower_elem) - top_of(higher_elem)) + lower_elem.outerHeight();
-        var conn_left = right_of(source_elem) - 3;
-        var conn_width = left_of(target_elem) - conn_left;
+        if (conn_height < higher_elem.outerHeight())
+            conn_height = higher_elem.outerHeight();
+        if (conn_height < lower_elem.outerHeight())
+            conn_height = lower_elem.outerHeight();
+        var conn_left = source_on_top ? right_of(source_elem) - 3 : left_of(source_elem);
+        var conn_right = source_on_top ? left_of(target_elem) : right_of(target_elem);
+        var conn_width = conn_right - conn_left;
 
         var svg = $($("#connector-tmpl").html());
         svg.css('position', 'absolute');
@@ -80,9 +92,10 @@
         // point E is always in terms of the target element. C is the mid-point.
         var STARTy = localize_y(source_on_top ? top_of(source_elem) : bottom_of(source_elem));
         var ENDy = localize_y(source_on_top ? bottom_of(target_elem) : top_of(target_elem));
-        var Ax = localize_x(right_of(source_elem)) - 3;
+        var Ax = localize_x(source_on_top ? right_of(source_elem) - 3 : left_of(source_elem));
         var Ay = localize_y(source_on_top ? bottom_of(source_elem) : top_of(source_elem));
-        var Ex = localize_x(left_of(target_elem));
+        Ay = localize_y(bottom_of(source_elem));
+        var Ex = localize_x(source_on_top ? left_of(target_elem) : right_of(target_elem));
         var Ey = localize_y(source_on_top ? top_of(target_elem) : bottom_of(target_elem));
         var Cx = Ax + ((Ex - Ax) / 2);
         var Cy = Ay + ((Ey - Ay) / 2);
@@ -120,58 +133,61 @@
                             .replace('ENDy', ENDy);
         $("#bezier", svg).attr('d', path);
     };
+  
+    var corresponding_fragment = function (a, bs) {
+        return jQuery(bs).filter(function(){ return this.isEqualNode(a); });
+    };
+
+    var all_fragments_correspond = function (as, bs) {
+        if (as.length != bs.length) {
+            return false;
+        }
+        jQuery(as).each(function(ix, a){
+            var found = corresponding_fragment(a, bs);
+            if (found.length != 1) {
+                return false;
+            }
+        });
+        return true;
+    };
 
     $(document).ready(function(){
-        var doc_text_el = document.getElementById('doc-text');
-        var match_text_el = document.getElementById('pr-text');
-        $(doc_text_el).html($(doc_text_el).text());
-        $(match_text_el).html($(match_text_el).text());
-        $(doc_text_el).markupAsArticle();
-        $(match_text_el).markupAsArticle();
-        $.each(search_results['documents']['rows'], function(idx, row){
-            row['snippets'].sort(function(a, b){ return a.length < b.length; });
-            $.each(row['snippets'], function(snippet_idx, snippet){
-                var sub_snippets = snippet.split(/[\r\n]+/).map(function(ss){ return ss.trim(); });
-                $.each(sub_snippets, function(subsnippet_idx, sub_snippet){
-                    if (sub_snippet.length > 0) {
-                        highlight_match(match_text_el, sub_snippet, snippet_idx);
-                        highlight_match(doc_text_el, sub_snippet, snippet_idx);
-                    }
-                });
-            });
-        });
+        var doc_text = search_results.text;
+        var highlighted = highlight_fragments(doc_text, match_text, search_results.documents.rows[0].fragments);
+        $("#doc-text").html(highlighted[0]);
+        $("#pr-text").html(highlighted[1]);
 
         $('.churnalism-highlight').hover(function(){
             var frag_number = $(this).attr('churnalism:fragment');
-            var fragments = fragment_pair(frag_number);
+            var fragments = fragment_elements(frag_number);
             fragments.addClass('churnalism-highlight-pair');
         });
         $('.churnalism-highlight').mouseout(function(){
             var frag_number = $(this).attr('churnalism:fragment');
-            var fragments = fragment_pair(frag_number);
+            var fragments = fragment_elements(frag_number);
             fragments.removeClass('churnalism-highlight-pair');
         });
         $('.churnalism-highlight').click(function(click){
             var frag_number = $(this).attr('churnalism:fragment');
-            var fragments = fragment_pair(frag_number);
+            var source_fragments = fragment_elements(frag_number, "#doc-text");
+            var target_fragments = fragment_elements(frag_number, "#pr-text");
             var was_selected = $(this).hasClass('churnalism-highlight-selected');
             if (! was_selected) {
                 $('.churnalism-highlight').removeClass('churnalism-highlight-selected');
-                $("#fragment-connector").remove();
-                fragments.addClass('churnalism-highlight-selected');
-                draw_connector(jQuery('.churnalism-highlight-lastchar', fragments[0]), jQuery('.churnalism-highlight-firstchar', fragments[1]));
+                $(".fragment-connector").remove();
+                source_fragments.addClass('churnalism-highlight-selected');
+                target_fragments.addClass('churnalism-highlight-selected');
+                draw_connector(source_fragments, target_fragments);
                 if (elementInViewport(this) == false) {
                     jQuery(this).scrollintoview({ duration: 'slow' });
                 }
             } else if (click.ctrlKey == true) {
                 $('.churnalism-highlight').removeClass('churnalism-highlight-selected');
-                $("#fragment-connector").remove();
+                $(".fragment-connector").remove();
             } else {
-                var other = other_fragment(this);
-                if (elementInViewport(other) == false) {
-                    var other_on_top = top_of(jQuery(other)) < top_of(jQuery(this));
-                    jQuery(other).scrollintoview({ duration: 'slow' });
-                }
+                var other_fragments = ($(this).parent().parent().attr('id') == 'doc-text') ? target_fragments : source_fragments;
+                var other_hidden_fragments = elementsOutsideViewport(other_fragments);
+                other_hidden_fragments.first().scrollintoview({ duration: 'slow' });
             }
             click.preventDefault(true);
             click.stopPropagation(true);
