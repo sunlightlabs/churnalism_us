@@ -75,11 +75,9 @@
 	<script type="text/javascript" src="{{ STATIC_URL }}scripts/highlight.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			window.search_results = {{ results|jsonify|safe }};
-            window.base_url = {{ BASE_URL|jsonify|safe }};
-
-            $("#truncate").markupAsArticle().pruneToHeight(230);
-		});
+                    window.search_results = {{ results|jsonify|safe }};
+                    window.base_url = {{ BASE_URL|jsonify|safe }};
+                });
 	</script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_common.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_search_result.js" %}></script>

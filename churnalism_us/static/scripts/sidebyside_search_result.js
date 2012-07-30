@@ -72,18 +72,12 @@ $(document).ready(function(){
         }
 
         textdiv = match_text_el(doctype, docid);
-        textdiv.html(document_response['text']);
-        textdiv.markupAsArticle();
         with_search_row(doctype, docid, function(row){
-            row['snippets'].sort(function(a, b){ return a.length < b.length; });
-            $.each(row['snippets'], function(idx, snippet){
-                var sub_snippets = snippet.split(/[\r\n]+/g).map(function(ss){ return ss.trim(); });
-                $.each(sub_snippets, function(idx, sub_snippet){
-                    if (sub_snippet.length > 5) {
-                        highlight_match(match_text_el(doctype, docid), sub_snippet);
-                    }
-                });
-            });
+            var highlighted = highlight_fragments(search_results.text,
+                                                  document_response.text,
+                                                  row.fragments);
+            $("#truncate").html(highlighted[0]).pruneToHeight(230);
+            textdiv.html(highlighted[1]);
         });
 
         setTimeout(function(){
