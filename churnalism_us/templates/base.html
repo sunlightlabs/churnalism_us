@@ -5,6 +5,10 @@
     <head>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
         <link rel="stylesheet" type="text/css" href="{{ ABSOLUTE_STATIC_URL }}styles/main.css">
+        <!--[if lt IE 9]>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+        <![endif]-->
         {% block head %}
         {% endblock head %}
         <title>{% block title %}Churnalism - US{% endblock %}</title>
@@ -98,6 +102,14 @@
             </div>    
             <div class="clear"></div>
         </footer>    
+        <!--[if lt IE 9]>
+        <script>
+            CFInstall.check({
+                mode: "overlay",
+                destination: window.location,
+            });
+        </script>
+        <![endif]-->
 
     </body>
 
