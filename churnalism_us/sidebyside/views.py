@@ -317,16 +317,18 @@ def recall(request, uuid, doctype, docid):
         match = [r for r in sfm_results['documents']['rows']
                  if r['doctype'] == int(doctype)
                  and r['docid'] == int(docid)][0]
+        sfm_results['documents']['rows'] = [match]
     except IndexError:
         raise Http404('Article {uuid} does not match document ({doctype}, {docid}).'.format(uuid=uuid, doctype=doctype, docid=docid))
 
     match_doc = sfm.document(match['doctype'], match['docid'])
-    if match_doc['success'] == True:
-        match_text = match_doc['text']
-        match_title = match.get('title', '')
-        match_url = match.get('url', '')
-	match_source = match.get('source', '')
-    sfm_results['documents']['rows'] = [match]
+    if match_doc['success'] == False:
+        raise Http404('Unable to retrieve document ({doctype}, {docid}).'.format(doctype=doctype, docid=docid))
+
+    match_text = match_doc['text']
+    match_title = match.get('title') or match_doc.get('title') or ''
+    match_url = match.get('url') or match_doc.get('url') or ''
+    match_source = match.get('source') or match_doc.get('source') or ''
 
     if sfm_results.has_key('title'):
         title = sfm_results['title']
