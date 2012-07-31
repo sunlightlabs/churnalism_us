@@ -1,17 +1,18 @@
 mysql-python
-django==1.3.1
-django-debug-toolbar
 lepl
 httplib2
 lxml
 readability-lxml
 requests
-gevent
+gevent>=1.0dev
 progressbar
 ipython
+django>=1.4.1
+django-debug-toolbar
 django-devserver
-celery
-django-celery
+django-staticfiles>=1.2.1
+django-storages>=1.1.4
+django-compressor>=1.1.2
 google-api-python-client==1.0beta8
 oauth2==1.5.211
 
