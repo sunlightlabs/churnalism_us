@@ -86,9 +86,10 @@
                     if (c >= 0) {
                         chain.push(fragment_open_tag(c));
                         chain.push(fragment_firstchar(text[ix]));
+                    } else {
+                        chain.push(text[ix]);
                     }
                 }
-                link = '';
             } else {
                 chain.push(link);
                 link = '';

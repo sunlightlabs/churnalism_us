@@ -86,6 +86,11 @@ $(document).ready(function(){
     };
 
     var show_thumbnail = function (textdiv) {
+        if (navigator.userAgent.indexOf('MSIE 9.0') >= 0) {
+            // IE 9.0 is just too slow.
+            return;
+        }
+
         var aspect_ratio = textdiv.height() / textdiv.width();
         var options = {
             logging: true,
@@ -185,6 +190,10 @@ $(document).ready(function(){
         click.stopPropagation();
     });
 
+    $("ol#matches li a.characters").click(function(click){
+        click.preventDefault();
+    });
+
     $("ol#matches li").click(function(click){
 
         if ($(this).hasClass("active") == false) {
@@ -201,7 +210,7 @@ $(document).ready(function(){
                     docid: docattrs['docid'],
                     uuid: search_results.uuid
                 };
-                history.pushState(state, document.title, url);
+                History.pushState(state, document.title, url);
             }
         }
 
@@ -209,8 +218,8 @@ $(document).ready(function(){
     });
 
     //var initialPath = location.pathname;
-    $(window).bind('popstate', function(event){
-        var state = event.originalEvent.state;
+    History.Adapter.bind(window, 'statechange', function(){
+        var state = History.getState();
         if (state != null) {
             select_document_tab(state.doctype, state.docid);
             select_document(state.doctype, state.docid, null);

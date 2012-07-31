@@ -53,7 +53,6 @@ Filters.grayscale = function(pixels, args) {
 };
 
 Filters.lineify = function (pixels, blend) {
-    console.log('lineify', pixels, blend);
     if ((blend < 0) || (blend > 1)) {
         throw new Exception("blend argument must be >= 0 and <= 1.");
     }
