@@ -98,7 +98,7 @@ var with_best_search_result = function (text, results, next) {
 };
 
 
-var defaultOptions = {
+/*var defaultOptions = {
     sites: [
         "www.reuters.com",
         "hosted.ap.org",
@@ -141,8 +141,25 @@ var defaultOptions = {
     ribbon: '/sidebyside/chrome/ribbon/',
     submit_urls: false,
 };
-
+*/
 var options;// = defaultOptions;
+
+var valid_domain = function(url, options){
+
+//    check  url against 'article' or 'news'
+    if (options['use_generic_news_pattern'] == true){
+        if( url.indexOf('news') != -1 || url.indexOf('article') != -1) {
+            return true;
+        }
+    }
+//   check url against whitelist
+    for( s in options['sites']) {
+        if (url.indexOf(options['sites'][s]) != -1){
+            return true;
+        }
+    }  
+    return false;
+}
 
 var load_results = function(result, request_text){
     result = jQuery.parseJSON(result);
@@ -264,34 +281,66 @@ var receive_message = function(e) {
         eval(e.data);
         options = churnalism_options;
         console.log('options set');
+        
+        jQuery("#churnalism_options").hide();
+        jQuery("#churnalism-mask").hide();
+
+        if (valid_domain(window.location.href, options)){
+            kickoff(); //start the chain of events
+        }
+        else {
+            
+            //    check url against local news affiliates, need to get list from server
+            var xdr = new XDomainRequest();
+            var match = false;
+            xdr.open("GET", options['search_server'] + '/static/localnews.json' );
+            xdr.onload = function(){ 
+                local_sites = JSON.parse(xdr.responseText);
+                for (ls in local_sites){
+                   if(window.location.href.indexOf(ls) != -1){
+                        kickoff();
+                        return;
+                   }  
+                }
+            };
+            xdr.onprogress = function(){};
+            xdr.ontimeout = function(){};
+            xdr.onerror = function(){ 
+                console.log('error');
+            }
+            xdr.send();
+
+        }
     } else if (e.data == 'enlarge_iframe'){
 
         var docwidth = jQuery(document).width();
         var halfdelta = (docwidth - 850) / 2;
 
-        jQuery('body').append('<div id="churnalism-mask" style="display:block;position:absolute;height:100%; width:100%;"></div>');
+        jQuery('body').append('<div id="churnalism-mask" style="display:block;position:fixed; top:0; left:0; margin:0; padding:0;height:100%; width:100%; background-color: gray;; opacity:.9; z-index: 2137483639;"></div>');
         jQuery('#churnalism-mask').css('height', jQuery(document).height());
         jQuery("#churnalism_options").css('z-index', '2137483640').css('top', '100px').css('left', halfdelta + 'px').css('position', 'absolute');
-        jQuery("#churnalism_options")[0].width=850;
+        jQuery("#churnalism_options")[0].width=900;
         jQuery("#churnalism_options")[0].height=1150;
     } else {
         console.log("domains don't match");
     }
 }
-window.addEventListener("message", receive_message, false);
 
-//insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
-insert_css('http://churnalism.sunlightfoundation.com/static/styles/ie_extension.css');
+
+
+window.addEventListener("message", receive_message, false);
 
 //add iframe for churnalism dummy page, use for LocalStorage 
 jQuery('body').append('<iframe id="churnalism_options" src="http://churnalism.sunlightfoundation.com/iframe/" height="0" width="0" frameborder="0"></iframe>');
 
-//make sure options iframe loads
-window.setTimeout( function() { 
-                                load_script(defaultOptions['search_server'] + '/static/scripts/jquery-1.7.1.min.js', 
-                                function(){
-                                    load_script(defaultOptions['search_server'] + '/static/scripts/extractor.js', extract_article );
-                                }) 
-                              }, 5000); //have to make sure options load before conducting search
-
-
+var kickoff = function() {
+    //insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
+    insert_css('http://churnalism.sunlightfoundation.com/static/styles/ie_extension.css');
+    //make sure options iframe loads
+    window.setTimeout( function() { 
+                                    load_script(options['search_server'] + '/static/scripts/jquery-1.7.1.min.js', 
+                                    function(){
+                                        load_script(options['search_server'] + '/static/scripts/extractor.js', extract_article );
+                                    }) 
+                                }, 5000); //have to make sure options load before conducting search
+}
