@@ -5,20 +5,13 @@
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" charset="utf8">
 var posted = false;
-
-var storage = window.localStorage;
-storage.clear();
-console.log(storage.getItem('options'));
-if (storage.getItem('options') == null){
-//    storage.setItem( 'options', JSON.stringify({
-
-        var defaults = {
+var defaults = {
         "search_server" : "http://churnalism.sunlightfoundation.com",
         "assets_server": "http://churnalism.sunlightfoundation.com",
         "ribbon": "/sidebyside/chrome/ribbon/",
-        "submit_urls": true,
+        "submit_urls": false,
         "use_generic_news_pattern": false,
-        "include_local_news": true,
+        "include_local_news": false,
         "sites": [
         "www.google.com/hostednews/...",
         "www.reuters.com",
@@ -95,29 +88,32 @@ if (storage.getItem('options') == null){
         ".msnbc.msn.com",
         ".foxnews.com",
         ".huffingtonpost.com"
-        ]
+        ],
     }
+var options;
+var storage = window.localStorage;
 
-    
-//));
+//storage.clear(); //debug to test - needs removal
 
-    console.log('options didnt exist');
-    if (!check_cookie) {
-        console.log('launch first time options');
-        var options = defaults;
+if (storage.getItem('options') == null){
+//    if (!check_cookie) {
+        options = defaults;
         parent.postMessage("enlarge_iframe", "*");  
     
-    } else{
-        console.log('cookie present');
-    }
+  //  } else{
+    //    console.log('cookie present');
+   // }
 
 } else{
     console.log('options existed');
+    parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
+    options  = JSON.parse(storage.getItem('options'));
 }
-//console.log(storage.getItem('options'));
-if (!posted) {
+
+/*if (!posted ) {
     parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
 } else { posted = true; }
+
 
 var check_cookie = function() {
     var c_name = 'churn_options';
@@ -132,12 +128,11 @@ var check_cookie = function() {
     }
     return false;
 } 
-
+*/
 </script>
 <link rel="stylesheet" href="http://churnalism.sunlightfoundation.com/static/styles/jquery-ui-1.8.20.custom.css" type="text/css">
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/parseuri.js"></script>
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
-<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tmpl.js"></script>
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tablesorter.min.js"></script>
 
 
@@ -204,8 +199,8 @@ body { background-color: white;}
       #sites-list th, #sites-list td {height: auto; }
       #sites-list > tbody > tr > td:first-child, td.site-url { width: 254px; }
       #sites-list th, #quickadd-list th { background: none transparent; padding: 0 18px 0 0; cursor: pointer; }
-      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/img/sortArrows_up.png) top right no-repeat; }
-      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/img/sortArrows_down.png) top right no-repeat; }
+      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/static/images/sortArrows_up.png) top right no-repeat; }
+      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/static/images/sortArrows_down.png) top right no-repeat; }
       #quickadd-list-container { width: 100%; height: 25%; }
       #quickadd-list { width: 100%; }
       #quickadd-list tbody { min-height: 1in; max-height: 2in; }
@@ -285,18 +280,24 @@ body { background-color: white;}
               <br />
               <br />
 
-              <span id="auto-save">These settings will save automatically.</span>
-              <button id="reset">Revert to defaults</button>
+              <button id="save">Save Options</button>
           </div>
 
 
 <script type="text/javascript" charset="utf-8">
+
+    // Display current settings in the form
     var list = '<table id="sites-list" class="fixedHeader"><thead><tr><th class="header headerSortDown">Web Address</th><th class="header"></th></tr></thead><tbody class="scrollable">';
     for (i in options['sites']){
         list = list + '<tr><td class="site-url">' + options['sites'][i] + '</td><td><button class="delete">Delete</button></td></tr>';
     }
     list = list + '</tbody></table>';
     jQuery('#sites-list-container').append(list);
+    
+    if (options['use_generic_news_pattern'] == true) { jQuery('#use-generic-news-pattern').attr('checked', true); }
+    if (options['include_local_news'] == true) { jQuery('#include-local-news').attr('checked', true); }
+    if (options['submit_urls'] == true) { jQuery('#submit-urls').attr('checked', true); }
+
 
     $("#manually-add-host").click(function(){
         var d = $("#url-add");
@@ -304,21 +305,62 @@ body { background-color: white;}
         if (d.val() != undefined && d.val() != ''){
             jQuery.each(jQuery("#sites-list").find('td.site-url'), function( ind, val){
                 if (jQuery(val).text().trim().toLowerCase() == d.val().trim().toLowerCase()) {
-                    // show_error_message('Domain is already in list');
-                    console.log('already in list')
+                    if (jQuery("#url-error").length == 0) {
+                        jQuery("#newSite").append('<span id="url-error">Domain is already in list</span>').find("#url-error").delay(5000).fadeOut('slow');
+                        console.log('already in list')
+                    }
                     in_list = true;
                     return false;
                 }
             });
             if (!in_list){
-                jQuery("#sites-list tbody").append('<tr><td>' + d.val() + '</td><td><button class="delete">Delete</button></td></tr>');
+                jQuery("#sites-list tbody").append('<tr><td class="site-url">' + d.val() + '</td><td><button class="delete">Delete</button></td></tr>').scrollTop(10000);
+                d.val('');
             } else{
-                jQuery("#newSite").append('<span style="disply:none;" id="url-error">Domain is already in site list</span>').fadeIn('fast').find("#url-error").delay(5000).fadeOut('slow');
+                
             }
         }
         return false;
     });
+   
+    $("button.delete").click(function(){
+        jQuery(this).parent().parent().remove();
+    });
     
+    $("#save").click(function(){
+        
+        var sites = [];
+        jQuery.each(jQuery("#sites-list").find('td.site-url'), function( ind, val){
+            sites.push(jQuery(val).text().trim().toLowerCase());
+        });
+        
+        var submit_urls = false;
+        if (jQuery('#submit-urls').attr('checked')) {
+            submit_urls = true;
+        }
+
+        var use_generic_news_pattern = false;
+        if (jQuery('#use-generic-news-pattern').attr('checked')){
+            use_generic_news_pattern = true;
+        }
+
+        var include_local_news = false;
+        if(jQuery('#include-local-news').attr('checked')){
+            include_local_news = true;
+        }
+        options['sites'] = sites;
+        options['submit_urls'] = submit_urls;
+        options['use_generic_news_pattern'] = use_generic_news_pattern;
+        options['include_local_news'] = include_local_news;
+
+        storage.setItem('options', JSON.stringify(options));
+        //send message  
+         
+        parent.postMessage("var churnalism_options = " + JSON.stringify(options) + ";", "*");    
+
+        return false;
+
+    });
 
 </script>
 </body>
