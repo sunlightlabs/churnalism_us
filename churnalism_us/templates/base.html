@@ -4,7 +4,7 @@
 <html>
     <head>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="{{ ABSOLUTE_STATIC_URL }}styles/main.css">
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/main.css">
         <!--[if lt IE 9]>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
@@ -114,8 +114,9 @@
     </body>
 
     
-    <script type="text/javascript" src="{{ABSOLUTE_STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery.history.js"></script>
     <script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
     <script type="text/javascript">
         var get_url = function(){
