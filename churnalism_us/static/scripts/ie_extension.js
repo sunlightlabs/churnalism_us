@@ -181,7 +181,7 @@ var load_results = function(result, request_text){
                     if (event.data == 'dismiss_churnalism_ribbon') {
                         $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
                     } else if (event.data == 'show_churnalism_comparison') {
-                        inject_comparison_iframe(comparisonUrl(result.uuid, best_match.doctype, best_match.docid), options['search_server'] + '/sidebyside/loading/');
+                        inject_comparison_iframe(comparisonUrl(result.uuid, best_match.doctype, best_match.docid), options['search_server'] + '/sidebyside/ie_loading/');
                         $("#churnalism-ribbon-container").slideUp('fast', function(){ $(this).remove(); });
                     }
                 }, false);

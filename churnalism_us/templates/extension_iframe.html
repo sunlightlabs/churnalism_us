@@ -133,7 +133,6 @@ var check_cookie = function() {
 <link rel="stylesheet" href="http://churnalism.sunlightfoundation.com/static/styles/jquery-ui-1.8.20.custom.css" type="text/css">
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/parseuri.js"></script>
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
-<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tmpl.js"></script>
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tablesorter.min.js"></script>
 
 
@@ -200,8 +199,8 @@ body { background-color: white;}
       #sites-list th, #sites-list td {height: auto; }
       #sites-list > tbody > tr > td:first-child, td.site-url { width: 254px; }
       #sites-list th, #quickadd-list th { background: none transparent; padding: 0 18px 0 0; cursor: pointer; }
-      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/img/sortArrows_up.png) top right no-repeat; }
-      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/img/sortArrows_down.png) top right no-repeat; }
+      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/static/images/sortArrows_up.png) top right no-repeat; }
+      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/static/images/sortArrows_down.png) top right no-repeat; }
       #quickadd-list-container { width: 100%; height: 25%; }
       #quickadd-list { width: 100%; }
       #quickadd-list tbody { min-height: 1in; max-height: 2in; }
@@ -322,6 +321,10 @@ body { background-color: white;}
             }
         }
         return false;
+    });
+   
+    $("button.delete").click(function(){
+        jQuery(this).parent().parent().remove();
     });
     
     $("#save").click(function(){
