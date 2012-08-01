@@ -194,7 +194,9 @@ $(document).ready(function(){
         click.preventDefault();
     });
 
-    $("ol#matches li").click(function(click){
+    $("ol#matches li").click(function(click, options){
+        options = options || {}
+        if (options.replace !== true) options.replace = false;
 
         if ($(this).hasClass("active") == false) {
             var match_id = $(click.currentTarget).attr('match');
@@ -210,16 +212,21 @@ $(document).ready(function(){
                     docid: docattrs['docid'],
                     uuid: search_results.uuid
                 };
-                History.pushState(state, document.title, url);
+                if (history && history.pushState && history.replaceState) {
+                    if (options.replace == true) {
+                        history.replaceState(state, document.title, url);
+                    } else {
+                        history.pushState(state, document.title, url);
+                    }
+                }
             }
         }
 
         return false;
     });
 
-    //var initialPath = location.pathname;
-    History.Adapter.bind(window, 'statechange', function(){
-        var state = History.getState();
+    $(window).bind('popstate', function(event){
+        var state = event.originalEvent.state;
         if (state != null) {
             select_document_tab(state.doctype, state.docid);
             select_document(state.doctype, state.docid, null);
@@ -234,7 +241,7 @@ $(document).ready(function(){
             select_document_tab(doctype, docid);
             select_document(doctype, docid, null);
         } else {
-            $("#matches li:first").trigger('click');
+            $("#matches li:first").trigger('click', {replace:true});
         }
     };
     handle_permalink_path(window.location.pathname);
