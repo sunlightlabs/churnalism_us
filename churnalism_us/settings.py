@@ -84,7 +84,6 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, 'static'),
-    os.path.join(PROJECT_ROOT, 'sidebyside', 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -119,7 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -127,7 +126,7 @@ MIDDLEWARE_CLASSES = (
 
 INTERNAL_IPS = ('127.0.0.1', )
 
-ROOT_URLCONF = 'churnalism_us.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -150,13 +149,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'debug_toolbar',
+    'django_memcached',
 
     # devserver provides a threaded/forked replacement for runserver
     # This enables the server to handle simultaneous requests, which is
     # required by the sidebyside app, since it dogfoods the apiproxy app.
-    #'devserver',
+    'devserver',
 
-    'gunicorn',
+    #'gunicorn',
     'generictags',
     'sidebyside',
     'apiproxy',
@@ -187,11 +187,12 @@ LOGGING = {
 }
 
 
-#EMAIL_HOST = 'smtp.postmarkapp.com'
-#EMAIL_HOST_USER = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
-#EMAIL_HOST_PASSWORD = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+EMAIL_HOST = 'smtp.postmarkapp.com'
+EMAIL_HOST_USER = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+EMAIL_HOST_PASSWORD = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
 EMAIL_BACKEND = 'postmark.backends.PostmarkBackend'
 POSTMARK_API_KEY = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
+POSTMARK_SENDER = 'churnalism@sunlightfoundation.com'
 
 
 SIDEBYSIDE = {
