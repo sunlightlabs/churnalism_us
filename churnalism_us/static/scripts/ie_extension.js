@@ -194,16 +194,31 @@ var load_results = function(result, request_text){
 };
 
 function search(article_text, article_title, url) {
+    var uuid = UUID.uuid5(UUID.NAMESPACE_URL, url);
+    var search_url = options['search_server'] + '/api/search/' + uuid.toString() + '/';
     var xdr = new XDomainRequest();
-    xdr.open("POST", options['search_server'] + '/api/search/' );
+    xdr.open("GET", search_url );
     xdr.onload = function(){ load_results(xdr.responseText, article_text); };
     xdr.onprogress = function(){};
     xdr.ontimeout = function(){};
     xdr.onerror = function(){ 
-        console.log('error');
+        console.log('error or no uuid match');
+        var x = new XDomainRequest();
+        x.open("POST", options['search_server'] + '/api/search/' );
+        x.onload = function(){ load_results(x.responseText, article_text); };
+        x.onprogress = function(){};
+        x.ontimeout = function(){};
+        x.onerror = function(){ 
+            console.log('error');
+        }
+        x.send('url=' + encodeURIComponent(url) + '&text='+ encodeURIComponent(article_text) + '&title=' + encodeURIComponent(article_title));
     }
     xdr.send('url=' + encodeURIComponent(url) + '&text='+ encodeURIComponent(article_text) + '&title=' + encodeURIComponent(article_title));
 }
+
+
+
+
 
 
 function load_script(url, callback){
@@ -337,10 +352,18 @@ var kickoff = function() {
     //insert_css(options['assets_server'] + '/static/styles/ie_extension.css');
     insert_css('http://churnalism.sunlightfoundation.com/static/styles/ie_extension.css');
     //make sure options iframe loads
-    window.setTimeout( function() { 
-                                    load_script(options['search_server'] + '/static/scripts/jquery-1.7.1.min.js', 
-                                    function(){
-                                        load_script(options['search_server'] + '/static/scripts/extractor.js', extract_article );
-                                    }) 
-                                }, 5000); //have to make sure options load before conducting search
+ //  window.setTimeout( function() { 
+
+    load_script(options['search_server'] + '/static/scripts/core-min.js', function(){
+        load_script(options['search_server'] + '/static/scripts/sha1-min.js', function(){
+            load_script(options['search_server'] + '/static/scripts/uuid35.js', function(){
+                load_script(options['search_server'] + '/static/scripts/jquery-1.7.1.min.js', function(){
+                    load_script(options['search_server'] + '/static/scripts/extractor.js', extract_article );
+                });
+            });
+        });
+    });
+
+ 
+//                                }, 5000); //have to make sure options load before conducting search
 }

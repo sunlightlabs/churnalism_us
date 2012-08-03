@@ -19,6 +19,8 @@ import json
 import socket
 import math
 import urllib
+import datetime
+import logging
 from copy import deepcopy
 
 from decimal import Decimal
@@ -53,6 +55,16 @@ def sfm_proxy_view(viewfunc):
                                 status=502)
     return handled
 
+def timed(viewfunc):
+    @wraps(viewfunc)
+    def handled(*args, **kwargs):
+        t1 = datetime.datetime.now()
+        r = viewfunc(*args, **kwargs)
+        t2 = datetime.datetime.now()
+        dur = t2 - t1
+        logging.debug("{0} call took {1} seconds".format(viewfunc.__name__, dur.total_seconds()))
+        return r
+    return handled
 
 @sfm_proxy_view
 def association(request, doctype=None):
@@ -70,6 +82,7 @@ def association(request, doctype=None):
 
 
 @sfm_proxy_view
+@cache_page(60 * 5)
 def document_list(request, doctype=None):
     """
     Proxies requests for lists of documents to Superfastmatch.
@@ -93,7 +106,20 @@ def document(request, doctype, docid):
     """
 
     sfm = from_django_conf()
-    response = sfm.document(doctype, docid)
+    if request.method == 'POST':
+        params = request.POST
+        if params['put'] == 'False':
+            response = sfm.add(doctype, docid, params["text"], False, title=params['title'], date=params['date'], source=params['source'])
+        else: 
+            response = sfm.add(doctype, docid, params["text"], True, title=params['title'], date=params['date'], source=params['source'])
+
+        
+#    elif request.method == 'PUT':
+ #       response = sfm.add(doctype, docid, request.POST["text"], False)
+
+    else:
+        response = sfm.document(doctype, docid)
+
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
@@ -133,12 +159,12 @@ def recall_document(title, url, uuid, text):
 
 
 @sfm_proxy_view
-@cache_page(60 * 5)
+#@cache_page(60 * 5)
 def uuid_search(request, uuid):
     doc = get_object_or_404(SearchDocument, uuid=uuid)
 
     response = execute_search(doc)
-    record_matches(doc, response)
+    #record_matches(doc, response)
 
     # These changes are specific to this request and should not be stored in the database.
     response['uuid'] = doc.uuid
@@ -217,24 +243,40 @@ def search(request, doctype=None):
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
+@timed
 def execute_search(doc, doctype=None):
     sfm = from_django_conf()
-    response = sfm.search(doc.text, doctype)
+    @timed
+    def _srch():
+        return sfm.search(doc.text, doctype)
+    response = _srch()
 
     if isinstance(response, str):
         # Pass the SFM error back to the client
         return HttpResponse(response, content_type='text/html')
 
 
-    drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
-    ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
-                        doc.text, response)
+    @timed
+    def _drop():
+        drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
+    _drop()
+
+    @timed
+    def _ignore():
+        ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
+                            doc.text, response)
+    _ignore()
+
     if doc.url:
         response['documents']['rows'][:] = [r for r in response['documents']['rows']
+    
                                             if r.get('url') != doc.url]
-    embellish(doc.text,
-              response,
-              **settings.APIPROXY.get('embellishments', {}))
+    @timed
+    def _embellish():
+        embellish(doc.text,
+                  response,
+                  **settings.APIPROXY.get('embellishments', {}))
+    _embellish()
     return response
 
 

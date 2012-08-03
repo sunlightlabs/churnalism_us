@@ -4,7 +4,6 @@
 
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" charset="utf8">
-var posted = false;
 var defaults = {
         "search_server" : "http://churnalism.sunlightfoundation.com",
         "assets_server": "http://churnalism.sunlightfoundation.com",
@@ -93,42 +92,17 @@ var defaults = {
 var options;
 var storage = window.localStorage;
 
-//storage.clear(); //debug to test - needs removal
 
 if (storage.getItem('options') == null){
-//    if (!check_cookie) {
-        options = defaults;
-        parent.postMessage("enlarge_iframe", "*");  
+    options = defaults;
+    parent.postMessage("enlarge_iframe", "*");  
     
-  //  } else{
-    //    console.log('cookie present');
-   // }
-
 } else{
     console.log('options existed');
     parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
     options  = JSON.parse(storage.getItem('options'));
 }
 
-/*if (!posted ) {
-    parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
-} else { posted = true; }
-
-
-var check_cookie = function() {
-    var c_name = 'churn_options';
-    var i,x,y,cookies=document.cookie.split(";");
-    for (i = 0; i < cookies.length; i++){
-        x=cookies[i].substr(0,cookies[i].indexOf("="));
-        y=cookies[i].substr(cookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-        if (x==c_name){
-            return true;
-        }
-    }
-    return false;
-} 
-*/
 </script>
 <link rel="stylesheet" href="http://churnalism.sunlightfoundation.com/static/styles/jquery-ui-1.8.20.custom.css" type="text/css">
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/parseuri.js"></script>
@@ -287,7 +261,7 @@ body { background-color: white;}
 <script type="text/javascript" charset="utf-8">
 
     // Display current settings in the form
-    var list = '<table id="sites-list" class="fixedHeader"><thead><tr><th class="header headerSortDown">Web Address</th><th class="header"></th></tr></thead><tbody class="scrollable">';
+    var list = '<table id="sites-list" class="fixedHeader"><thead><tr><th class="header headerSortDown">Web Address</th><th></th></tr></thead><tbody class="scrollable">';
     for (i in options['sites']){
         list = list + '<tr><td class="site-url">' + options['sites'][i] + '</td><td><button class="delete">Delete</button></td></tr>';
     }
@@ -298,6 +272,11 @@ body { background-color: white;}
     if (options['include_local_news'] == true) { jQuery('#include-local-news').attr('checked', true); }
     if (options['submit_urls'] == true) { jQuery('#submit-urls').attr('checked', true); }
 
+    $("#sites-list").tablesorter({ 
+        headers: {
+                1:{ sorter: false}
+                }
+    });
 
     $("#manually-add-host").click(function(){
         var d = $("#url-add");
