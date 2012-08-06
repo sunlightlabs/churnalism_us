@@ -71,6 +71,11 @@ class SearchDocument(models.Model):
     title = models.TextField(null=True,
                              blank=False)
 
+    user_agent = models.CharField(max_length=255,
+                                  null=True,
+                                  blank=True,
+                                  db_index=False)
+
     created = models.DateTimeField(auto_now_add=True,
                                    db_index=True)
 

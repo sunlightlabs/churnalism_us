@@ -91,7 +91,8 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder'
 )
 
 # Make this unique, and don't share it with anybody.
@@ -150,6 +151,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'debug_toolbar',
     'django_memcached',
+    'django_extensions',
+    'storages',
 
     # devserver provides a threaded/forked replacement for runserver
     # This enables the server to handle simultaneous requests, which is
@@ -162,6 +165,9 @@ INSTALLED_APPS = (
     'apiproxy',
     'analytics',
 )
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.symlinkorcopy.SymlinkOrCopyStorage'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

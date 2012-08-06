@@ -218,11 +218,15 @@ def search(request, doctype=None):
             return HttpResponseNotFound(str(url or uuid))
         else:
             doc = SearchDocument()
+            print text
             doc.text = text
             if title:
                 doc.title = title
             if url:
                 doc.url = url
+            ua_string = request.META.get('HTTP_USER_AGENT')
+            if ua_string is not None:
+                doc.user_agent = ua_string[:255]
             doc.save()
 
 
