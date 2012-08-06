@@ -24,7 +24,7 @@ import logging
 from copy import deepcopy
 
 from decimal import Decimal
-
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 from django.http import (HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest, HttpResponseServerError)
@@ -99,6 +99,7 @@ def document_list(request, doctype=None):
         return HttpResponse(json.dumps(response), content_type='application/json')
 
 
+@csrf_exempt
 @sfm_proxy_view
 def document(request, doctype, docid):
     """
