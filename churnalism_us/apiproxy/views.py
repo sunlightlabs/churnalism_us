@@ -113,10 +113,6 @@ def document(request, doctype, docid):
         else: 
             response = sfm.add(doctype, docid, params["text"], True, title=params['title'], date=params['date'], source=params['source'])
 
-        
-#    elif request.method == 'PUT':
- #       response = sfm.add(doctype, docid, request.POST["text"], False)
-
     else:
         response = sfm.document(doctype, docid)
 
@@ -164,7 +160,10 @@ def uuid_search(request, uuid):
     doc = get_object_or_404(SearchDocument, uuid=uuid)
 
     response = execute_search(doc)
-    #record_matches(doc, response)
+    if isinstance(response, HttpResponse):
+        return response
+
+    record_matches(doc, response)
 
     # These changes are specific to this request and should not be stored in the database.
     response['uuid'] = doc.uuid
@@ -229,6 +228,9 @@ def search(request, doctype=None):
 
     # The actual proxying:
     response = execute_search(doc, doctype)
+    if isinstance(response, HttpResponse):
+        return response
+
     record_matches(doc, response)
 
     # These changes are specific to this request and should not be stored in the database.
@@ -243,40 +245,27 @@ def search(request, doctype=None):
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
-@timed
 def execute_search(doc, doctype=None):
     sfm = from_django_conf()
-    @timed
-    def _srch():
-        return sfm.search(doc.text, doctype)
-    response = _srch()
+    response = sfm.search(doc.text, doctype)
 
     if isinstance(response, str):
         # Pass the SFM error back to the client
         return HttpResponse(response, content_type='text/html')
 
 
-    @timed
-    def _drop():
-        drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
-    _drop()
+    drop_common_fragments(settings.APIPROXY.get('commonality_threshold', 0.4), response)
 
-    @timed
-    def _ignore():
-        ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
-                            doc.text, response)
-    _ignore()
+    ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
+                        doc.text, response)
 
     if doc.url:
         response['documents']['rows'][:] = [r for r in response['documents']['rows']
     
                                             if r.get('url') != doc.url]
-    @timed
-    def _embellish():
-        embellish(doc.text,
-                  response,
-                  **settings.APIPROXY.get('embellishments', {}))
-    _embellish()
+    embellish(doc.text,
+                response,
+                **settings.APIPROXY.get('embellishments', {}))
     return response
 
 
