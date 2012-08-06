@@ -123,7 +123,9 @@ class IncorrectTextReport(models.Model):
 
     # remote_addr, user_agent, languages, and encodings all come from the
     # headers in HttpReuest.META. We save them as diagnostic information.
-    remote_addr = models.CharField(max_length=15,
+    # remote_addr is a sha1 hash of the address to avoid multiple users
+    # of the same proxy from having to enter the same problem report.
+    remote_addr = models.CharField(max_length=40,
                                    blank=False,
                                    null=False)
 

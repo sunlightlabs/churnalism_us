@@ -5,6 +5,7 @@ from __future__ import division
 import json
 import re
 import httplib
+import hashlib
 import lxml.html
 import readability
 import settings
@@ -416,8 +417,8 @@ class ProblemReportForm(forms.Form):
     problem_description = forms.CharField(max_length=10000, widget=forms.Textarea)
 
 
-def get_or_create_problem_report(request, search_document, remote_addr):
-    (report, created) = IncorrectTextReport.objects.get_or_create(search_document=search_document, remote_addr=remote_addr)
+def get_or_create_problem_report(request, search_document, remote_addr_hash):
+    (report, created) = IncorrectTextReport.objects.get_or_create(search_document=search_document, remote_addr=remote_addr_hash)
     if created:
         report.user_agent = request.META.get('HTTP_USER_AGENT')
         report.languages = request.META.get('HTTP_ACCEPT_LANGUAGE')
@@ -431,7 +432,8 @@ def describe_text_problem(request, uuid):
     if not remote_addr:
         return render(request, 'sidebyside/text_problem.html', {'report': None})
 
-    report = get_or_create_problem_report(request, search_document, remote_addr)
+    remote_addr_hash = hashlib.sha1(remote_addr).hexdigest()
+    report = get_or_create_problem_report(request, search_document, remote_addr_hash)
     scope = {
         'uuid': uuid,
         'search_document': search_document,
