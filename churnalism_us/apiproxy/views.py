@@ -205,6 +205,12 @@ def url_search(request, doctype):
         return response
 
     record_matches(doc, response)
+
+    response['uuid'] = doc.uuid
+    response['text'] = doc.text
+    response['title'] = doc.title
+    response['url'] = doc.url
+
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
