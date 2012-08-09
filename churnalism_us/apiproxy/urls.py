@@ -14,6 +14,7 @@ urlpatterns = patterns(
     url(r'^search/([a-z0-9]{32})/$', 'uuid_search'),
     url(r'^search/$', 'search'),
     url(r'^search/(?P<doctype>[\d:]+)/$', 'search'),
+    url(r'^search/(?P<url>http[s]?://.*)$', 'url_search'),
 
     url(r'^mimicry/document/(\d+)/(\d+)/$', 'mimicked_document'),
     url(r'^mimicry/document/(\d+)/$', 'mimicked_document_list'),

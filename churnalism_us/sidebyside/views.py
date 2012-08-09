@@ -7,25 +7,22 @@ import re
 import httplib
 import hashlib
 import lxml.html
-import readability
+import lxml.etree
 import settings
 from operator import itemgetter
 from urlparse import urlparse
 from django.core.mail import send_mail
-import stream
 from lepl.apps.rfc3696 import HttpUrl
 from django import forms
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
-from django.views.decorators.csrf import csrf_exempt
-from utils.slurp_url import slurp_url
+from utils.fetch_and_clean import fetch_and_clean
 
 from apiproxy.models import SearchDocument, Match, MatchedDocument, IncorrectTextReport
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
-from utils.textextract import readability_extract
 
 from django.conf import settings
 
@@ -54,41 +51,6 @@ def ensure_url(url):
         return url
     
     raise ValueError('{url} is not a valid URL.'.format(url=url))
-
-
-def render_text(el):
-    """ like lxml.html text_content(), but with tactical use of whitespace for block elements """
-
-    inline_tags = ( 'a', 'abbr', 'acronym', 'b', 'basefont', 'bdo', 'big',
-        'br',
-        'cite', 'code', 'dfn', 'em', 'font', 'i', 'img', 'input',
-        'kbd', 'label', 'q', 's', 'samp', 'select', 'small', 'span',
-        'strike', 'strong', 'sub', 'sup', 'textarea', 'tt', 'u', 'var',
-        'applet', 'button', 'del', 'iframe', 'ins', 'map', 'object',
-        'script' )
-
-    txt = u''
-    if isinstance(el, lxml.html.HtmlComment):
-        return txt
-
-    tag = str(el.tag).lower()
-    if tag not in inline_tags:
-        txt += u"\n";
-
-    if el.text is not None:
-        txt += unicode(el.text)
-    for child in el.iterchildren():
-        txt += render_text(child)
-        if child.tail is not None:
-            txt += unicode(child.tail)
-
-    if el.tag=='br' or tag not in inline_tags:
-        txt += u"\n";
-
-    txt = re.sub(r'[\r\n]{2,}', '\n\n', txt)
-    txt = re.sub(r'[\r\n]\s+[\r\n]', '\n\n', txt)
-
-    return txt
 
 
 def attach_document_text(results, maxdocs=None):
@@ -214,26 +176,6 @@ def search_against_url(request, url):
     (scheme, _1, _2, _3, _4, _5) = urlparse(url)
     if scheme not in ('http', 'https'):
         return search_page(request, error='The URL must begin with either http or https.')
-
-    def fetch_and_clean(url):
-        html = slurp_url(url, use_cache=True)
-        if not html:
-            raise Exception('Failed to fetch {0}'.format(url))
-
-        htmldoc = lxml.html.fromstring(html)
-        to_remove = [e
-                     for e in htmldoc.iterdescendants()
-                     if e.tag == lxml.etree.Comment
-                     or e.tag == 'script'
-                     or e.tag == 'noscript'
-                     or e.tag == 'object'
-                     or e.tag == 'embed']
-        for e in to_remove:
-            e.getparent().remove(e)
-        html = lxml.html.tostring(htmldoc)
-
-        (title, text) = readability_extract(html)
-        return (title, text)
 
     sfm = from_django_conf('sidebyside')
     (title, text) = fetch_and_clean(url)

@@ -27,15 +27,16 @@ from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 from django.http import (HttpResponse, HttpResponseNotFound,
-                         HttpResponseBadRequest, HttpResponseServerError)
+                         HttpResponseBadRequest, HttpResponseServerError,
+                         Http404)
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
 from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
+from utils.fetch_and_clean import fetch_and_clean
 
 from django.conf import settings
 
@@ -174,6 +175,34 @@ def uuid_search(request, uuid):
 
     return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
+
+def fetch_and_store(url):
+    try:
+        (title, text) = fetch_and_clean(url)
+    except Exception:
+        raise Http404(url)
+
+    doc = SearchDocument()
+    doc.url = url
+    doc.title = title
+    doc.text = text
+    doc.save()
+    return doc
+
+
+@sfm_proxy_view
+def url_search(request, url):
+    try:
+        doc = SearchDocument.objects.get(url=url)
+    except SearchDocument.DoesNotExist:
+        doc = fetch_and_store(url)
+
+    response = execute_search(doc)
+    if isinstance(response, HttpResponse):
+        return response
+
+    record_matches(doc, response)
+    return HttpResponse(json.dumps(response, indent=2), content_type='application/json')
 
 
 @csrf_exempt
