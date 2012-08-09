@@ -158,10 +158,10 @@ def recall_document(title, url, uuid, text):
 
 @sfm_proxy_view
 #@cache_page(60 * 5)
-def uuid_search(request, uuid):
+def uuid_search(request, doctype, uuid):
     doc = get_object_or_404(SearchDocument, uuid=uuid)
 
-    response = execute_search(doc)
+    response = execute_search(doc, doctype)
     if isinstance(response, HttpResponse):
         return response
 
@@ -191,13 +191,16 @@ def fetch_and_store(url):
 
 
 @sfm_proxy_view
-def url_search(request, url):
+def url_search(request, doctype):
+    url = request.GET.get('url')
+    if not url:
+        return HttpResponseNotFound(url)
     try:
         doc = SearchDocument.objects.get(url=url)
     except SearchDocument.DoesNotExist:
         doc = fetch_and_store(url)
 
-    response = execute_search(doc)
+    response = execute_search(doc, doctype)
     if isinstance(response, HttpResponse):
         return response
 
@@ -216,10 +219,23 @@ def search(request, doctype=None):
     retrieval. This same view handles search via UUID recall.
     """
 
-    text = request.POST.get('text') or request.GET.get('text')
-    url = request.POST.get('url') or request.GET.get('url')
-    uuid = request.POST.get('uuid') or request.GET.get('uuid')
-    title = request.POST.get('title') or request.GET.get('title')
+    if request.method == 'GET':
+        uuid = request.GET.get('uuid')
+        url = request.GET.get('url')
+        if uuid:
+            return uuid_search(request, doctype, uuid)
+        elif url:
+            return url_search(request, doctype)
+        else:
+            return HttpResponseBadRequest('GET request with no URL or UUID')
+
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Only GET and POST search requests allowed.')
+
+    text = request.POST.get('text')
+    url = request.POST.get('url')
+    uuid = request.POST.get('uuid')
+    title = request.POST.get('title')
     doc = None
 
     if not text and not url and not uuid:
