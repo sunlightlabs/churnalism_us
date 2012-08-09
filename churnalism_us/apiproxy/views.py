@@ -158,7 +158,7 @@ def recall_document(title, url, uuid, text):
 
 @sfm_proxy_view
 #@cache_page(60 * 5)
-def uuid_search(request, doctype, uuid):
+def uuid_search(request, uuid, doctype=None):
     doc = get_object_or_404(SearchDocument, uuid=uuid)
 
     response = execute_search(doc, doctype)
@@ -223,7 +223,7 @@ def search(request, doctype=None):
         uuid = request.GET.get('uuid')
         url = request.GET.get('url')
         if uuid:
-            return uuid_search(request, doctype, uuid)
+            return uuid_search(request, uuid, doctype)
         elif url:
             return url_search(request, doctype)
         else:
