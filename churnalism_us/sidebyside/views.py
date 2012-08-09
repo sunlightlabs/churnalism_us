@@ -301,6 +301,16 @@ def chromeext_parameters(request):
     }
     return HttpResponse(json.dumps(results), content_type='application/json')
 
+def ie8ext_ribbon(request):
+    scope = {
+        'fake_domain': request.GET.get('domain'),
+        'doctype': request.GET.get('doctype'),
+        'docid': request.GET.get('docid'),
+        'uuid': request.GET.get('uuid')
+    }
+    return render(request, 'sidebyside/ie8_ribbon.html', scope)
+
+
 def chromeext_ribbon(request):
     scope = {
         'fake_domain': request.GET.get('domain')

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script type="text/javascript" src="http://use.typekit.com/afk5tze.js"></script>
+        <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+        <link rel="stylesheet" type="text/css" href="{{ ABSOLUTE_STATIC_URL }}styles/main.css">
+        <style type="text/css">
+            html { overflow: hidden; padding: 0; margin: 0; border-width: 0; width: 100%; height: 32px;
+                -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+                -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+                box-sizing: border-box;         /* Opera/IE 8+ */
+                background-color: transparent;
+            }
+            body { overflow: hidden; padding: 0; margin: 0; border-width: 0; width: 100%; height: 32px; border-bottom: 2px solid black; }
+            div#container { height: 100%; padding: 5px 10px; }
+            #alert { font-size: 14px; font-weight: bold; }
+            #explain { font-size: 12px; font-weight: normal; margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique;}
+            img.found { position: relative; top: 3px; }
+
+            div#message { display: inline-block; vertical-align: middle; padding: 0; }
+            div#actions { display: inline-block; vertical-align: middle; margin: 0; text-align: right; float: right;}
+            button#show-comparison, button#dismiss { display: inline-block; text-indent: 0; background: none none; }
+            .callOut { text-transform: uppercase; color: #393434;}
+            button { background-color: #F6F93A; border: 1px solid #dee127; -moz-border-radius: 2px; -webkit-border-radius: 2px; color: #766f06;}
+            button:hover { background-color: #f5f69f;}
+        </style>
+    </head>
+
+    <body>
+
+        <div id="container" style="position: relative;">
+            <div id="message">
+                <span id="alert">
+                    <img class="found" src="{{ ABSOLUTE_STATIC_URL }}images/bg_alert.png">
+                    <span class="callOut">Churnalism Alert:</span>
+                </span>
+                <span id="explain">Portions of this website may have been copied from a press release, wikipedia, or other original source.</span>
+            </div>
+            <div id="actions">
+                <button id="show-comparison"><span>Show Me</span></button>
+                <button id="dismiss"><span>Dismiss</span></button>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    </body>
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ ABSOLUTE_STATIC_URL }}scripts/sidebyside_common.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("button#show-comparison").click(function(event){
+                window.open('/sidebyside/generic/{{uuid}}/{{doctype}}/{{docid}}/');
+                //parent.postMessage('show_churnalism_comparison', '{{ fake_domain }}');
+            });
+
+            $("button#dismiss").click(function(event){
+                $("body").fadeOut('fast', function(){ 
+                    parent.postMessage('dismiss_churnalism_ribbon', '{{ fake_domain }}');
+                });
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-22821126-19']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+    </script>
+
+</html>
+

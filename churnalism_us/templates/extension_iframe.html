@@ -3,7 +3,171 @@
 <head>
 
 <script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-1.7.1.min.js"></script>
+<script src='http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js'></script>
+<link rel="stylesheet" href="http://churnalism.sunlightfoundation.com/static/styles/jquery-ui-1.8.20.custom.css" type="text/css">
+<script src="http://churnalism.sunlightfoundation.com/static/scripts/parseuri.js"></script>
+<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
+<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tablesorter.min.js"></script>
+
+
+<style type="text/css">
+body { background-color: white;}
+ /*  HTML5 ✰ Boilerplate  */
+
+        html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+        small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, figcaption, figure,  footer, header, hgroup, 
+        menu, nav, section, summary, time, mark, audio, video {
+          margin:0;
+          padding:0;
+          border:0;
+          outline:0;
+          font-size:100%;
+          vertical-align:baseline;
+          font-family: sans-serif;
+        }                  
+        article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+        p { margin: 10px 5px 20px 5px; line-height: 20px; font-size: 14px; }
+        ul, ol { list-style: none; }
+        blockquote, q { 
+            background:url('../images/quotes.png') 12px top no-repeat ;
+            quotes: '»' '«' ;
+            margin-left:30px;
+            padding-left:35px;
+            border-left: 1px solid #E5E4DB;
+            color: #726B68; 
+            margin-bottom: 1em;
+            }
+      /* End boiler-plate */
+
+      body { font-size: 14px; padding-left:15px; }
+      .ui-widget-content button { font-size: 13px; }
+      div.ui-widget-content { padding: 1em;  }
+      .ui-widget-content p { margin-bottom: 1em; }
+      .col { float: left; width: 400px; margin: 15px; border: 0 solid blue; height: 80%; }
+      .clear { clear: both; }
+      #options { min-width: 200px; max-width: 800px; margin: auto; margin-top: 2em;  }
+      h1, h2 { padding: .5em; margin: 0; position: relative; }
+      #newSite { padding: .6em; margin: 20px;}
+      #newSite input {
+        font-size: 1.1em; padding: 0.5em; border: 1px solid #999; box-shadow: 0 0 6px rgba(0,0,0,0.5);
+        display: block; width: 100%; box-sizing: border-box; -ms-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+      }
+        #sites-
+      #host-preview-container { display: none; padding: 1em; }
+      #host-preview-container label { font-weight: bold; font-size: 13px; }
+      #host-preview { font-size: 15px; }
+      #host-specificity { display: inline-block; width: 45%; height: 12px; margin: 0 1em 1em 1em; padding: 0; }
+      #host-specificity-label { display: inline-block; font-weight: bold; font-size: 12px; vertical-align: top; }
+      #host-warning { color: rgb(99, 0, 0); font-size: 11px; }
+      input#search-server { width: 98%; margin: auto auto; }
+      table.fixedHeader { overflow: hidden; }
+      table.fixedHeader thead { position: relative; width: 100%; }
+      table.fixedHeader thead tr { display: block; }
+      html > body table.fixedHeader > tbody.scrollable { display: block; overflow: auto; width: 100%; }
+      #sites-list-container { max-height: 450px;  width: 100%; position: relative; overflow-y: auto; overflow-x: hidden; }
+      #sites-list { width: 100%; border: 1px solid #efefef; padding: 5px; }
+      #sites-list tbody { max-height: 600px; overflow: auto; }
+      #sites-list th, #sites-list td {height: auto; }
+      #sites-list > tbody > tr > td:first-child, td.site-url { width: 254px; }
+      #sites-list th, #quickadd-list th { background: none transparent; padding: 0 18px 0 0; cursor: pointer; }
+      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/static/images/sortArrows_up.png) top right no-repeat; }
+      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/static/images/sortArrows_down.png) top right no-repeat; }
+      #quickadd-list-container { width: 100%; height: 25%; }
+      #quickadd-list { width: 100%; }
+      #quickadd-list tbody { min-height: 1in; max-height: 2in; }
+      #quickadd-list > tbody > tr > td:first-child { width: 230px; }
+      #quickadd-list-empty-placeholder { color: gray; font-size: 2em; text-align: center; vertical-align: middle; }
+
+      #sites-list tr.odd, #quickadd-list tr.odd { background-color: # }
+      #sites-list td:first-child, #quickadd-list td:first-child { letter-spacing: 115%; }
+      /*
+      .ui-widget-content { padding: 0 1em 1em 1em; }
+      .ui-widget-content p { font-size: 12px; }
+      */
+      #search-server-header, #search-server-content { display: none; }
+      ul#search-server-params { padding-left: 2em; list-style-type: square; }
+      #url-error {color:red; }
+
+</style>
+
+</head>
+<body>
+<div id="gcf-detect", style="display:none;">
+
+<div class="col">
+    <img src="http://churnalism.sunlightfoundation.com/static/images/logo.png" />
+    <h1>Welcome to the Churnalism Options!</h1>
+    <p>Here are some options you can configure when using Churnalism in your browser. These will be saved until you delete your browser's history. Internet Explorer has an option where you can delete all of your history except for sites marked as 'favorite'. To make it easier to retain your data, add 'http://churnalism.sunlightfoundation.com' to your favorites.</p> 
+
+    <h1 class="ui-widget-header ui-corner-top">
+        Sites to Examine
+    </h1>
+    <div class="ui-widget ui-widget-content ui-corner-bottom">
+        <p>
+        The Churnalism extension is intended to examine news articles. To avoid examining web pages that are not news articles, it will only examine pages that match patterns in this list.
+        </p>
+
+        <div id="sites-list-container">
+        </div>
+
+        <form id="newSite">
+            <label for="url"> Add a domain manually:</label>
+            <input name="url" autocomplete="off" placeholder="Enter a new site here..." class="ui-corner-all" id="url-add" />
+        </form>
+        <button id="manually-add-host">Add to list</button>
+    </div>
+</div>
+ <div class="col">
+              <h1 class="ui-widget-header ui-corner-top">
+                  Privacy
+              </h1>
+              <div id="privacy" class="ui-widget ui-widget-content ui-corner-bottom">
+                  <p>When the Churnalism extension examines a news article it submits the article text and the URL to our servers. Pairing the text and the URL allows us to deliver more accurate results. We do not track your browsing history but we do want you to feel comfortable using our tools so you are able to disable URL submission by unchecking this box.</p>
+
+                  <input type="checkbox" id="submit-urls" /> Submit URLs of news articles?
+              </div>    
+
+              <br />
+              <br />
+
+              <h1 class="ui-widget-header ui-corner-top">
+                  Check Local News Affiliates
+              </h1>
+              <div class="ui-widget ui-widget-content ui-corner-bottom">
+                  <p>We've also included a list of websites for local TV news affiliates. You can easily include all of these websites here. <a target="_blank" href="/html/localnews.html">Which sites are included?</a></p>
+                  <input type="checkbox" id="include-local-news" class="ui-corner-all" /> Include local news affiliates?
+              </div>
+
+              <br />
+              <br />
+
+              <h1 class="ui-widget-header ui-corner-top">
+                  Check all News Articles
+              </h1>
+              <div class="ui-widget ui-widget-content ui-corner-bottom">
+                  <p>Usually only the websites in the list below are searched for Churnalism. The extionsion can also search all pages with the word "news" or "article" in the web address. This is an imperfect test of whether a web page is a news article, so it may miss some news articles and it may consider some non-news pages to be news.</p>
+                  <input type="checkbox" id="use-generic-news-pattern" class="ui-corner-all" /> Check for "news" and "article" in web address?
+              </div>
+
+              <br />
+              <br />
+
+              <button id="save">Save Options</button>
+          </div>
+
 <script type="text/javascript" charset="utf8">
+console.log('loading iframe');
+
+
+if(typeof String.prototype.trim !== 'function') {
+  String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, ''); 
+  }
+}
+
 var defaults = {
         "search_server" : "http://churnalism.sunlightfoundation.com",
         "assets_server": "http://churnalism.sunlightfoundation.com",
@@ -96,7 +260,6 @@ var storage = window.localStorage;
 if (storage.getItem('options') == null){
     options = defaults;
     parent.postMessage("enlarge_iframe", "*");  
-    
 } else{
     console.log('options existed');
     parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
@@ -104,158 +267,6 @@ if (storage.getItem('options') == null){
 }
 
 </script>
-<link rel="stylesheet" href="http://churnalism.sunlightfoundation.com/static/styles/jquery-ui-1.8.20.custom.css" type="text/css">
-<script src="http://churnalism.sunlightfoundation.com/static/scripts/parseuri.js"></script>
-<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
-<script src="http://churnalism.sunlightfoundation.com/static/scripts/jquery.tablesorter.min.js"></script>
-
-
-<style type="text/css">
-body { background-color: white;}
- /*  HTML5 ✰ Boilerplate  */
-
-        html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-        abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
-        small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
-        fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
-        article, aside, canvas, details, figcaption, figure,  footer, header, hgroup, 
-        menu, nav, section, summary, time, mark, audio, video {
-          margin:0;
-          padding:0;
-          border:0;
-          outline:0;
-          font-size:100%;
-          vertical-align:baseline;
-          font-family: sans-serif;
-        }                  
-        article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-        p { margin: 10px 5px 20px 5px; line-height: 20px; font-size: 14px; }
-        ul, ol { list-style: none; }
-        blockquote, q { 
-            background:url('../images/quotes.png') 12px top no-repeat ;
-            quotes: '»' '«' ;
-            margin-left:30px;
-            padding-left:35px;
-            border-left: 1px solid #E5E4DB;
-            color: #726B68; 
-            margin-bottom: 1em;
-            }
-      /* End boiler-plate */
-
-      body { font-size: 14px; padding-left:15px; }
-      .ui-widget-content button { font-size: 13px; }
-      div.ui-widget-content { padding: 1em;  }
-      .ui-widget-content p { margin-bottom: 1em; }
-      .col { float: left; width: 400px; margin: 15px; border: 0 solid blue; height: 80%; }
-      .clear { clear: both; }
-      #options { min-width: 200px; max-width: 800px; margin: auto; margin-top: 2em;  }
-      h1, h2 { padding: .5em; margin: 0; position: relative; }
-      #newSite { padding: .6em; margin: 20px;}
-      #newSite input {
-        font-size: 1.1em; padding: 0.5em; border: 1px solid #999; box-shadow: 0 0 6px rgba(0,0,0,0.5);
-        display: block; width: 100%; box-sizing: border-box; -ms-box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
-      }
-        #sites-
-      #host-preview-container { display: none; padding: 1em; }
-      #host-preview-container label { font-weight: bold; font-size: 13px; }
-      #host-preview { font-size: 15px; }
-      #host-specificity { display: inline-block; width: 45%; height: 12px; margin: 0 1em 1em 1em; padding: 0; }
-      #host-specificity-label { display: inline-block; font-weight: bold; font-size: 12px; vertical-align: top; }
-      #host-warning { color: rgb(99, 0, 0); font-size: 11px; }
-      input#search-server { width: 98%; margin: auto auto; }
-      table.fixedHeader { overflow: hidden; }
-      table.fixedHeader thead { position: relative; width: 100%; }
-      table.fixedHeader thead tr { display: block; }
-      html > body table.fixedHeader > tbody.scrollable { display: block; overflow: auto; width: 100%; }
-      #sites-list-container { max-height: 450px;  width: 100%; position: relative; overflow-y: auto; overflow-x: hidden; }
-      #sites-list { width: 100%; border: 1px solid #efefef; padding: 5px; }
-      #sites-list tbody { max-height: 600px; overflow: auto; }
-      #sites-list th, #sites-list td {height: auto; }
-      #sites-list > tbody > tr > td:first-child, td.site-url { width: 254px; }
-      #sites-list th, #quickadd-list th { background: none transparent; padding: 0 18px 0 0; cursor: pointer; }
-      #sites-list th.headerSortUp, #quickadd-list th.headerSortUp { background: url(/static/images/sortArrows_up.png) top right no-repeat; }
-      #sites-list th.headerSortDown, #quickadd-list th.headerSortDown { background: url(/static/images/sortArrows_down.png) top right no-repeat; }
-      #quickadd-list-container { width: 100%; height: 25%; }
-      #quickadd-list { width: 100%; }
-      #quickadd-list tbody { min-height: 1in; max-height: 2in; }
-      #quickadd-list > tbody > tr > td:first-child { width: 230px; }
-      #quickadd-list-empty-placeholder { color: gray; font-size: 2em; text-align: center; vertical-align: middle; }
-
-      #sites-list tr.odd, #quickadd-list tr.odd { background-color: # }
-      #sites-list td:first-child, #quickadd-list td:first-child { letter-spacing: 115%; }
-      /*
-      .ui-widget-content { padding: 0 1em 1em 1em; }
-      .ui-widget-content p { font-size: 12px; }
-      */
-      #search-server-header, #search-server-content { display: none; }
-      ul#search-server-params { padding-left: 2em; list-style-type: square; }
-      #url-error {color:red; }
-
-</style>
-
-</head>
-<body>
-
-<div class="col">
-    <img src="http://churnalism.sunlightfoundation.com/static/images/logo.png" />
-    <h1>Welcome to the Churnalism Options!</h1>
-    <p>Here are some options you can configure when using Churnalism in your browser. These will be saved until you delete your browser's history. Internet Explorer has an option where you can delete all of your history except for sites marked as 'favorite'. To make it easier to retain your data, add 'http://churnalism.sunlightfoundation.com' to your favorites.</p> 
-
-    <h1 class="ui-widget-header ui-corner-top">
-        Sites to Examine
-    </h1>
-    <div class="ui-widget ui-widget-content ui-corner-bottom">
-        <p>
-        The Churnalism extension is intended to examine news articles. To avoid examining web pages that are not news articles, it will only examine pages that match patterns in this list.
-        </p>
-
-        <div id="sites-list-container">
-        </div>
-
-        <form id="newSite">
-            <label for="url"> Add a domain manually:</label>
-            <input name="url" autocomplete="off" placeholder="Enter a new site here..." class="ui-corner-all" id="url-add" />
-        </form>
-        <button id="manually-add-host">Add to list</button>
-    </div>
-</div>
- <div class="col">
-              <h1 class="ui-widget-header ui-corner-top">
-                  Privacy
-              </h1>
-              <div id="privacy" class="ui-widget ui-widget-content ui-corner-bottom">
-                  <p>When the Churnalism extension examines a news article it submits the article text and the URL to our servers. Pairing the text and the URL allows us to deliver more accurate results. We do not track your browsing history but we do want you to feel comfortable using our tools so you are able to disable URL submission by unchecking this box.</p>
-
-                  <input type="checkbox" id="submit-urls" /> Submit URLs of news articles?
-              </div>    
-
-              <br />
-              <br />
-
-              <h1 class="ui-widget-header ui-corner-top">
-                  Check Local News Affiliates
-              </h1>
-              <div class="ui-widget ui-widget-content ui-corner-bottom">
-                  <p>We've also included a list of websites for local TV news affiliates. You can easily include all of these websites here. <a target="_blank" href="/html/localnews.html">Which sites are included?</a></p>
-                  <input type="checkbox" id="include-local-news" class="ui-corner-all" /> Include local news affiliates?
-              </div>
-
-              <br />
-              <br />
-
-              <h1 class="ui-widget-header ui-corner-top">
-                  Check all News Articles
-              </h1>
-              <div class="ui-widget ui-widget-content ui-corner-bottom">
-                  <p>Usually only the websites in the list below are searched for Churnalism. The extionsion can also search all pages with the word "news" or "article" in the web address. This is an imperfect test of whether a web page is a news article, so it may miss some news articles and it may consider some non-news pages to be news.</p>
-                  <input type="checkbox" id="use-generic-news-pattern" class="ui-corner-all" /> Check for "news" and "article" in web address?
-              </div>
-
-              <br />
-              <br />
-
-              <button id="save">Save Options</button>
-          </div>
 
 
 <script type="text/javascript" charset="utf-8">
