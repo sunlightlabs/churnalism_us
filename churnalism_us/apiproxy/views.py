@@ -270,7 +270,6 @@ def search(request, doctype=None):
             return HttpResponseNotFound(str(url or uuid))
         else:
             doc = SearchDocument()
-            print text
             doc.text = text
             if title:
                 doc.title = title
