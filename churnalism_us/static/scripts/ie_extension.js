@@ -369,6 +369,7 @@ load_script('http://churnalism.sunlightfoundation.com/static/scripts/jquery-1.7.
 });
 
 var success_fallback = function(response) {
+    //console.log('found match');
      var resp = JSON.parse(response);
      if (resp['documents']['rows'].length > 0){
         var match = resp['documents']['rows'][0];
@@ -412,7 +413,7 @@ var fallback_search = function() {
     xdr.onerror = function(){ 
         //console.log('error or no uuid match');
         var x = new XDomainRequest();
-        x.open("POST", options['search_server'] + '/api/search/' );
+        x.open("GET", options['search_server'] + '/api/search/' );
         x.onload = function(){ 
             success_fallback(x.responseText);
         };

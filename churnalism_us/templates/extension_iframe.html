@@ -159,7 +159,7 @@ body { background-color: white;}
           </div>
 
 <script type="text/javascript" charset="utf8">
-console.log('loading iframe');
+//console.log('loading iframe');
 
 
 if(typeof String.prototype.trim !== 'function') {
@@ -261,7 +261,7 @@ if (storage.getItem('options') == null){
     options = defaults;
     parent.postMessage("enlarge_iframe", "*");  
 } else{
-    console.log('options existed');
+    //console.log('options existed');
     parent.postMessage("var churnalism_options = " + storage.getItem('options') + ";", "*");    
     options  = JSON.parse(storage.getItem('options'));
 }
@@ -297,7 +297,7 @@ if (storage.getItem('options') == null){
                 if (jQuery(val).text().trim().toLowerCase() == d.val().trim().toLowerCase()) {
                     if (jQuery("#url-error").length == 0) {
                         jQuery("#newSite").append('<span id="url-error">Domain is already in list</span>').find("#url-error").delay(5000).fadeOut('slow');
-                        console.log('already in list')
+                        //console.log('already in list')
                     }
                     in_list = true;
                     return false;
