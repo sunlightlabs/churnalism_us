@@ -187,7 +187,7 @@ def search_against_url(request, url):
 
         #if they submit a url, don't return the exact same url in the results
         for r in sfm_results['documents']['rows']:
-            if r['url'] == url:
+            if r.get('url') == url:
                 sfm_results['documents']['rows'].remove(r)
     
         if sfm_results.has_key('text'): text = sfm_results['text']
