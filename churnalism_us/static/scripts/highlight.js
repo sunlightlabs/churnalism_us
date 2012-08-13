@@ -139,6 +139,40 @@
         return chain.join('');
     };
 
+    var index_fragments = function (fragments) {
+        return fragments.map(function (fragment, idx) { return [idx, fragment]; });
+    };
+
+    var remap_fragment_indexes = function (fragments) {
+        for (var i = 0; i < fragments.length; i++) {
+            var fi = fragments[i];
+            var idxi = fi[0];
+            var offseti1 = fi[1][0];
+            var offseti2 = fi[1][1];
+            var lengthi = fi[1][2];
+
+            if (idxi != i)
+                continue;
+
+            for (var j = i; j < fragments.length; j++) {
+                var fj = fragments[j];
+                var idxj = fj[0];
+                var offsetj1 = fj[1][0];
+                var offsetj2 = fj[1][1];
+                var lengthj = fj[1][2];
+
+                if (idxj != j)
+                    continue;
+
+                if ((offseti1 == offsetj1) && (lengthi == lengthj)) {
+                    fi[0] = idxj;
+                } else if ((offseti2 == offsetj2) && (lengthi == lengthj)) {
+                    fj[0] = idxi;
+                }
+            }
+        }
+    };
+
     window.highlight_fragments = function (lefttext, righttext, fragments) {
         var leftbitmap = new Array(lefttext.length);
         var rightbitmap = new Array(righttext.length);
@@ -151,13 +185,17 @@
             rightbitmap[ix] = -1;
         }
 
+        fragments = index_fragments(fragments);
+        remap_fragment_indexes(fragments);
+
         for (var ix = 0; ix < fragments.length; ix++) {
-            var frag = fragments[ix];
+            var idx = fragments[ix][0];
+            var frag = fragments[ix][1];
             for (var x = frag[0]; x < frag[0] + frag[2]; x++) {
-                leftbitmap[x] = ix;
+                leftbitmap[x] = idx;
             }
             for (var x = frag[1]; x < frag[1] + frag[2]; x++) {
-                rightbitmap[x] = ix;
+                rightbitmap[x] = idx;
             }
         }
 
