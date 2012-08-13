@@ -162,7 +162,7 @@ var valid_domain = function(url, options){
 var load_results = function(result, request_text){
     result = jQuery.parseJSON(result);
     if (result == null || typeof(result) == 'undefined'){
-        console.log("error");
+        //console.log("error");
     }
     else {
         with_best_search_result(request_text, result, function(best_match){
@@ -197,8 +197,8 @@ var load_results = function(result, request_text){
 
                 }
             } else {
-                console.log('match percentge too low');
-                console.log(JSON.stringify(best_match));
+                //console.log('match percentge too low');
+                //console.log(JSON.stringify(best_match));
             }
         });
     } 
@@ -213,14 +213,14 @@ function search(article_text, article_title, url) {
     xdr.onprogress = function(){};
     xdr.ontimeout = function(){};
     xdr.onerror = function(){ 
-        console.log('error or no uuid match');
+        //console.log('error or no uuid match');
         var x = new XDomainRequest();
         x.open("POST", options['search_server'] + '/api/search/' );
         x.onload = function(){ load_results(x.responseText, article_text); };
         x.onprogress = function(){};
         x.ontimeout = function(){};
         x.onerror = function(){ 
-            console.log('error');
+            //console.log('error');
         }
         x.send('url=' + encodeURIComponent(url) + '&text='+ encodeURIComponent(article_text) + '&title=' + encodeURIComponent(article_title));
     }
@@ -306,7 +306,7 @@ var receive_message = function(e) {
     if(e.data.substr(0, 22) == 'var churnalism_options'  && e.origin !=="http://churnalism.sunlightfoundation.org"){
         eval(e.data);
         options = churnalism_options;
-        console.log('options set');
+        //console.log('options set');
         
         jQuery("#churnalism_options").hide();
         jQuery("#churnalism-mask").hide();
@@ -336,7 +336,7 @@ var receive_message = function(e) {
             xdr.onprogress = function(){};
             xdr.ontimeout = function(){};
             xdr.onerror = function(){ 
-                console.log('error');
+                //console.log('error');
             }
             xdr.send();
 
@@ -352,7 +352,7 @@ var receive_message = function(e) {
         jQuery("#churnalism_options")[0].width=900;
         jQuery("#churnalism_options")[0].height=1150;
     } else {
-        console.log("domains don't match");
+        //console.log("domains don't match");
     }
 }
 
@@ -372,8 +372,8 @@ var success_fallback = function(response) {
      var resp = JSON.parse(response);
      if (resp['documents']['rows'].length > 0){
         var match = resp['documents']['rows'][0];
-        console.log('found a match');
-        console.log(match['url']);
+        //console.log('found a match');
+        //console.log(match['url']);
     
         //check match percentage
         if( sufficient_coverage(match)) {
@@ -382,10 +382,10 @@ var success_fallback = function(response) {
             ribbon_frame.prependTo('body');
 
         } else {
-            console.log('match percentage too low')
+            //console.log('match percentage too low')
         }
     } else {
-        console.log('no match at all');
+        //console.log('no match at all');
     }
 }
 
@@ -400,7 +400,7 @@ var fallback = function() {
 var fallback_search = function() {
     var url = window.location.href;
     var uuid = UUID.uuid5(UUID.NAMESPACE_URL, url);
-    console.log(uuid);
+    //console.log(uuid);
     var search_url = options['search_server'] + '/api/search/' + uuid.toString() + '/';
     var xdr = new XDomainRequest();
     xdr.open("GET", search_url );
@@ -410,7 +410,7 @@ var fallback_search = function() {
     xdr.onprogress = function(){};
     xdr.ontimeout = function(){};
     xdr.onerror = function(){ 
-        console.log('error or no uuid match');
+        //console.log('error or no uuid match');
         var x = new XDomainRequest();
         x.open("POST", options['search_server'] + '/api/search/' );
         x.onload = function(){ 
@@ -419,7 +419,7 @@ var fallback_search = function() {
         x.onprogress = function(){};
         x.ontimeout = function(){};
         x.onerror = function(){ 
-            console.log('error');
+            //console.log('error');
         }
         x.send();
     }
