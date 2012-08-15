@@ -23,6 +23,8 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^firefox/ribbon/$', 'ffext_ribbon', name='sidebyside-ff-ribbon'),
     url(r'^chrome/parameters/$', 'chromeext_parameters', name='sidebyside-chrome-parameters'),
     url(r'^chrome/ribbon/$', 'chromeext_ribbon', name='sidebyside-chrome-ribbon'),
+
+    url(r'^ie9/ribbon/$', 'ie9ext_ribbon', name='sidebyside-ie9-ribbon'),
     url(r'^ie8/ribbon/$', 'ie8ext_ribbon', name='sidebyside-ie8-ribbon'),
     url(r'^loading/$', direct_to_template, {'template': 'sidebyside/loading.html'}, name='sidebyside-loading'),
     url(r'^ie_loading/$', direct_to_template, {'template': 'sidebyside/ie_loading.html'}, name='sidebyside-ie-loading'),

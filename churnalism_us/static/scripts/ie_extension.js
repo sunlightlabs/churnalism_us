@@ -4,7 +4,7 @@
 var Params = {
     'MINIMUM_COVERAGE_PCT': 1,
     'MINIMUM_COVERAGE_CHARS': 300,
-    'WARNING_RIBBON_SRC': '/sidebyside/chrome/ribbon/',
+    'WARNING_RIBBON_SRC': '/sidebyside/ie9/ribbon/',
     'RIBBON_FALLBACK': '/sidebyside/ie8/ribbon/'
 };
 
@@ -154,7 +154,7 @@ var valid_domain = function(url, options){
     for( s in options['sites']) {
         if (url.indexOf(options['sites'][s]) != -1){
             return true;
-        }
+      }
     }  
     return false;
 }
@@ -170,7 +170,7 @@ var load_results = function(result, request_text){
             if (best_match && sufficient_coverage(best_match)) {
 
                 //insert iframe notifier
-                var ribbon_frame = jQuery('<div id="churnalism-ribbon-container" style="width: 100%; background-color: #FCF8F5;"><iframe src="'+ options['search_server'] + options['ribbon'] + '?domain=' + window.location.href + '" id="churnalism-ribbon" name="churnalism-ribbon" frameborder="0" border="none" height=32 scrolling="no"></iframe></div>');
+                var ribbon_frame = jQuery('<div id="churnalism-ribbon-container" style="width: 100%; background-color: #FCF8F5;"><iframe src="'+ options['search_server'] + Params['WARNING_RIBBON_SRC'] + '?domain=' + window.location.href + '" id="churnalism-ribbon" name="churnalism-ribbon" frameborder="0" border="none" height=32 scrolling="no"></iframe></div>');
     //            ribbon_frame.attr('src', options['search_server'] + options['ribbon'] + '?domain=' + window.location.href);
                 ribbon_frame.prependTo('body');
                 //bind handler events to buttons
@@ -310,36 +310,38 @@ var receive_message = function(e) {
         
         jQuery("#churnalism_options").hide();
         jQuery("#churnalism-mask").hide();
-
-        if (valid_domain(window.location.href, options)){
-            if (parseInt(jQuery.browser.version) < 9) {
-                fallback(); //for IE8 and below
-            } else {
-                kickoff(); //start the chain of events
-            }
-        }
-        else {
-            
-            //    check url against local news affiliates, need to get list from server
-            var xdr = new XDomainRequest();
-            var match = false;
-            xdr.open("GET", options['search_server'] + '/static/localnews.json' );
-            xdr.onload = function(){ 
-                local_sites = JSON.parse(xdr.responseText);
-                for (ls in local_sites){
-                   if(window.location.href.indexOf(ls) != -1){
-                        kickoff();
-                        return;
-                   }  
+        
+        if (jQuery("#churnalism-ribbon-container").length == 0 ){
+            if ( valid_domain(window.location.href, options)){
+                if (parseInt(jQuery.browser.version) < 9) {
+                    fallback(); //for IE8 and below
+                } else {
+                    kickoff(); //start the chain of events
                 }
-            };
-            xdr.onprogress = function(){};
-            xdr.ontimeout = function(){};
-            xdr.onerror = function(){ 
-                //console.log('error');
             }
-            xdr.send();
+            else {
+                
+                //    check url against local news affiliates, need to get list from server
+                var xdr = new XDomainRequest();
+                var match = false;
+                xdr.open("GET", options['search_server'] + '/static/localnews.json' );
+                xdr.onload = function(){ 
+                    local_sites = JSON.parse(xdr.responseText);
+                    for (ls in local_sites){
+                    if(window.location.href.indexOf(ls) != -1){
+                            kickoff();
+                            return;
+                    }  
+                    }
+                };
+                xdr.onprogress = function(){};
+                xdr.ontimeout = function(){};
+                xdr.onerror = function(){ 
+                    //console.log('error');
+                }
+                xdr.send();
 
+            }
         }
     } else if (e.data == 'enlarge_iframe'){
 
@@ -351,6 +353,7 @@ var receive_message = function(e) {
         jQuery("#churnalism_options").css('z-index', '2137483640').css('top', '100px').css('left', halfdelta + 'px').css('position', 'absolute');
         jQuery("#churnalism_options")[0].width=900;
         jQuery("#churnalism_options")[0].height=1150;
+        jQuery("#churnalism_options").show();
     } else {
         //console.log("domains don't match");
     }

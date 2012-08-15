@@ -139,7 +139,7 @@ ArticleExtractor = function (NS) {
         var that = this;
         var srcdoc = srcdoc; // Do not touch -- just for calling .createElement()
         var doc = srcdoc.getElementsByTagName('body')[0].cloneNode(true) //srcdoc.documentElement.cloneNode(true);
-        console.log('in extractor');
+        //console.log('in extractor');
         var best_candidate = null;
         var article_elem = null;
         var title = null;
