@@ -20,7 +20,7 @@
 
             div#message { display: inline-block; vertical-align: middle; padding: 0; }
             div#actions { display: inline-block; vertical-align: middle; margin: 0; text-align: right; float: right;}
-            button#show-comparison, button#dismiss { display: inline-block; text-indent: 0; background: none none; }
+            button#show-comparison, button#dismiss, button#options { display: inline-block; text-indent: 0; background: none none; }
             .callOut { text-transform: uppercase; color: #393434;}
             button { background-color: #F6F93A; border: 1px solid #dee127; -moz-border-radius: 2px; -webkit-border-radius: 2px; color: #766f06;}
             button:hover { background-color: #f5f69f;}
@@ -40,6 +40,7 @@
             <div id="actions">
                 <button id="show-comparison"><span>Show Me</span></button>
                 <button id="dismiss"><span>Dismiss</span></button>
+                <button id="options"><span>Options</span></button>
             </div>
             <div class="clear"></div>
         </div>
@@ -59,6 +60,9 @@
                 $("body").fadeOut('fast', function(){ 
                     parent.postMessage('dismiss_churnalism_ribbon', '{{ fake_domain }}');
                 });
+            });
+            $("button#options").click(function(event){
+                parent.postMessage('show_churnalism_options', '{{ fake_domain }}');
             });
         });
     </script>
