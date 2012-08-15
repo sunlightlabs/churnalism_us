@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
     <app appid='jjhknhpkjokolakbjggllomjdioebfco'>
-        <updatecheck codebase='https://s3.amazonaws.com/churnalism.sunlightfoundation.com/chromeext/churnalism-ext-latest.crx' version='0.9.9' prodversionmin='16.0.912.77' />
+        <updatecheck codebase='https://s3.amazonaws.com/churnalism.sunlightfoundation.com/chromeext/churnalism-ext-latest.crx' version='0.9.10' prodversionmin='16.0.912.77' />
     </app>
 </gupdate>
