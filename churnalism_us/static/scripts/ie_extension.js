@@ -96,50 +96,6 @@ var with_best_search_result = function (text, results, next) {
 };
 
 
-/*var defaultOptions = {
-    sites: [
-        "www.reuters.com",
-        "hosted.ap.org",
-        ".nytimes.com",
-        "www.washingtonpost.com",
-        "www.ft.com",
-        "www.bbc.co.uk/news/...",
-        "www.guardian.co.uk",
-        "www.dailymail.co.uk",
-        "www.telegraph.co.uk",
-        "www.prnewswire.com",
-        "www.pcmag.com",
-        "online.wsj.com",
-        "www.usatoday.com",
-        "www.latimes.com",
-        "www.mercurynews.com",
-        "www.nypost.com",
-        "www.nydailynews.com",
-        "www.denverpost.com",
-        "www.freep.com",
-        "www.jsonline.com",
-        "www.chicagotribune.com",
-        ".cnn.com",
-        ".time.com",
-        "www.miamiherald.com",
-        "www.startribune.com",
-        "www.newsday.com",
-        "www.azcentral.com",
-        "www.chron.com",
-        "www.suntimes.com",
-        "www.dallasnews.com",
-        "www.mcclatchydc.com",
-        "www.scientificamerican.com",
-        "www.sciencemag.org",
-        "www.newscientist.com",
-    ],
-    use_generic_news_pattern: false,
-    search_server: 'http://churnalism.sunlightfoundation.com',
-    assets_server: 'http://churnalism.sunlightfoundation.com',
-    ribbon: '/sidebyside/chrome/ribbon/',
-    submit_urls: false,
-};
-*/
 var options;// = defaultOptions;
 
 var valid_domain = function(url, options){
@@ -147,16 +103,21 @@ var valid_domain = function(url, options){
 //    check  url against 'article' or 'news'
     if (options['use_generic_news_pattern'] == true){
         if( url.indexOf('news') != -1 || url.indexOf('article') != -1) {
+            //console.log('generic news pattern')
             return true;
         }
     }
 //   check url against whitelist
     for( s in options['sites']) {
         if (url.indexOf(options['sites'][s]) != -1){
+            //console.log('in site list');
             return true;
       }
     }  
     return false;
+
+//where is the check for local news?
+
 }
 
 var load_results = function(result, request_text){
@@ -328,10 +289,10 @@ var receive_message = function(e) {
                 xdr.onload = function(){ 
                     local_sites = JSON.parse(xdr.responseText);
                     for (ls in local_sites){
-                    if(window.location.href.indexOf(ls) != -1){
+                        if(window.location.href.indexOf(local_sites[ls]) != -1){
                             kickoff();
                             return;
-                    }  
+                        }  
                     }
                 };
                 xdr.onprogress = function(){};
