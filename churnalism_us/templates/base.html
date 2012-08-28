@@ -17,6 +17,11 @@
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
         <script type="text/javascript">
 
+        var ie_ext_options = function() {
+        // This means extension is loaded. Insert an alert for them to update their options
+            $('header').prepend('<span id="ie-ext-options" style="display:none;"><a href="/iframe/">Edit your extension options</a></span>').find('#ie-ext-options').slideDown()
+        }
+
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-22821126-19']);
         _gaq.push(['_trackPageview']);
@@ -30,10 +35,9 @@
         var track_click = function(permalink) {
             var parts = permalink.split('/');
             var keys = parts[parts.length-4] + '_' + parts[parts.length-3] + '_' + parts[parts.length-2]
-        
             if (keys != ''){
                 _gaq.push(['_setCustomVar', 1, 'document_uuid', keys, 3]);
-                _gaq.push(['_trackEvent', 'search', 'search']);
+                _gaq.push(['_trackPageview']);
             }
         }
         </script>

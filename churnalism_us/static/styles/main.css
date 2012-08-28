@@ -244,3 +244,8 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #errorText { background: url(../images/bg_errorText.png) top left no-repeat;  width: 310px; height: 71px; }
 #errorTitle { background: url(../images/bg_errorTitle.png) top left no-repeat; width: 86px; height: 12px; margin-left: 365px; z-index: 3; position: absolute;}
 #errorBg { background: url(../images/bg_404.jpg) center top no-repeat; width: 385px; height: 219px; margin: 0 auto; padding-top: 55px; padding-left: 160px; margin-top: 5px;}
+
+#ie-ext-options { margin-left: 10px; background-color:#F2F0F1; padding:10px; display: inline-block; border: 1px solid #CDC8C8; }
+#ie-ext-options a {color: #7C7C7B; }
+
+
