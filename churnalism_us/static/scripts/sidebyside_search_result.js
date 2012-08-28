@@ -222,7 +222,7 @@ $(document).ready(function(){
             }
         }
 
-        return false;
+//        return false;
     });
 
     $(window).bind('popstate', function(event){
