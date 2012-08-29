@@ -31,9 +31,9 @@ var load_ga = function() {
     
 }
 
-var track_event = function(event_name) {
+var track_event = function(event_name, category) {
     var tracker = _gat._getTracker('UA-22821126-19')
-    var successful = tracker._trackEvent('search', event_name, null, null, true);
+    var successful = tracker._trackEvent(category, event_name, null, null, true);
 }
     
 var inject_comparison_iframe = function (url, loading_url) {
@@ -139,7 +139,8 @@ var valid_domain = function(url, options){
 var load_results = function(result, request_text){
     result = jQuery.parseJSON(result);
     if (result == null || typeof(result) == 'undefined'){
-        //console.log("error");
+        //console.log("error"); 
+        track_event('normal_miss', 'search');
     }
     else {
         with_best_search_result(request_text, result, function(best_match){
@@ -186,19 +187,26 @@ function search(article_text, article_title, url) {
     var search_url = options['search_server'] + '/api/search/' + uuid.toString() + '/';
     var xdr = new XDomainRequest();
     xdr.open("GET", search_url );
-    xdr.onload = function(){ load_results(xdr.responseText, article_text); };
+    xdr.onload = function(){ 
+        track_event('optimistic_hit', 'search');
+        load_results(xdr.responseText, article_text); 
+    };
     xdr.onprogress = function(){};
     xdr.ontimeout = function(){};
     xdr.onerror = function(){ 
         //console.log('error or no uuid match');
+        track_event('optimistic_miss', 'search');
         var x = new XDomainRequest();
         x.open("POST", options['search_server'] + '/api/search/' );
-        x.onload = function(){ load_results(x.responseText, article_text); };
+        x.onload = function(){ 
+            track_event('normal_hit', 'search');
+            load_results(x.responseText, article_text); 
+        };
         x.onprogress = function(){};
         x.ontimeout = function(){};
         x.onerror = function(){ 
             //console.log('error');
-            track_event('search_error');
+            track_event('normal_error', 'diagnostic');
         }
         x.send('url=' + encodeURIComponent(url) + '&text='+ encodeURIComponent(article_text) + '&title=' + encodeURIComponent(article_title));
     }
