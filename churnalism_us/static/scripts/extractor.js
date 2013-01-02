@@ -91,11 +91,11 @@ ArticleExtractor = function (NS, loglevel) {
                 var el = elems[idx];
                 if ((el.parentNode !== null) && (el.parentNode.parentNode !== null)) {
                     log.debug('Removed', node_desc(el));
-                    //if (el.parentNode.childNodes.length == 1) {
-                    //    el.parentNode.parentNode.removeChild(el.parentNode);
-                    //} else {
+                    if (el.parentNode.childNodes.length == 1) {
+                        el.parentNode.parentNode.removeChild(el.parentNode);
+                    } else {
                         el.parentNode.removeChild(el);
-                    //}
+                    }
                 }
             }
         }
