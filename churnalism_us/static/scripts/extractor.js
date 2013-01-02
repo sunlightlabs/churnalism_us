@@ -112,9 +112,6 @@ ArticleExtractor = function (NS, loglevel) {
     var ExtractedDocument = function (source_document) {
         var that = this;
 
-        //var doc = source_document.getElementsByTagName('body')[0].cloneNode(true);
-        //doc.documentElement.appendChild(source_document.body.cloneNode(true));
-        //log.debug("DOCUMENT LENGTH:", doc.documentElement.innerHTML.length);
         var doc = source_document.implementation.createHTMLDocument(document.title);
         doc.documentElement.appendChild(source_document.head.cloneNode(true));
         doc.documentElement.appendChild(source_document.body.cloneNode(true));
@@ -125,7 +122,7 @@ ArticleExtractor = function (NS, loglevel) {
         var title = null;
 
         var textRenderer = function (root) {
-            var walker = source_document.createTreeWalker(
+            var walker = doc.createTreeWalker(
                 root,
                 (NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT |
                 NodeFilter.SHOW_ENTITY | NodeFilter.SHOW_ENTITY_REFERENCE),
@@ -253,7 +250,7 @@ ArticleExtractor = function (NS, loglevel) {
             };
 
             var walker = null;
-            walker = source_document.createTreeWalker(manip_target,
+            walker = doc.createTreeWalker(manip_target,
                                           NodeFilter.SHOW_ELEMENT,
                                           accept_unlikely,
                                           false);
