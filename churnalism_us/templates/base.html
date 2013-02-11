@@ -12,6 +12,9 @@
         {% block head %}
         {% endblock head %}
         <title>{% block title %}Churnalism - US{% endblock %}</title>
+
+        <meta property="og:description" content="Check out this new tool that tells you when news articles may have similarities from press releases.">
+        <meta property="og:image" content="{{ STATIC_URL }}images/sitelogo.png">
         
         <script type="text/javascript" src="http://use.typekit.com/afk5tze.js"></script>
         <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -50,7 +53,6 @@
                     <li id="about"><a class="textReplace" href="{% url about %}">About</a></li>
                     <li id="contact"><a class="textReplace" href="{% url contact %}">Contact</a></li>
                     <li id="downloads" style="width:105px;"><a class="textReplace" href="{% url downloads %}">Downloads</a></li>
-<!--                    <li id="api"><a class="textReplace" href="#">Api</a></li>-->
                     <li id="sunlight" class="textReplace" >Product of: <a class="textReplace" id="logo_mst" href="http://mediastandardstrust.org/">Media Standards Trust</a> <a id="logo_sunlight" class="textReplace" href="http://sunlightfoundation.com">Sunlight Foundation</a></li>
                 </ul>    
             </nav>   
@@ -64,7 +66,7 @@
 
             <div id="share">
                 {% block share_url %} {% endblock %}
-                    <div id="gigya-share" class="share-buttons" data-socialite="auto" data-services="twitter-tweet, facebook-like" data-options="linkback={%block social_media_url%}{% endblock %}" data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
+                    <div id="gigya-share" class="share-buttons" data-socialite="auto" data-services="twitter-tweet, facebook-like" data-options="linkback={%block social_media_url%}{% endblock %}" data-twitter-tweet-options="text=Churnalism lets you know when journalism copies occur online.&amp;url=http://churnalism.sunlightfoundation.com/" data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
             </div>   
         </header>  
         <div class="clear" id="container">
@@ -142,24 +144,6 @@
                 return $("title").text();
             }
         };
-
-   /*     var ua = new gigya.socialize.UserAction();
-        ua.setLinkBack(get_url());
-        ua.setTitle(get_title());
-        ua.setDescription("I've found an article that contains Churnalism.");
-       
-        var params = {
-            containerID: 'gigya-share',
-            iconsOnly: true,
-            layout: 'horizontal',
-            noButtonBorders: true,
-            shareButtons: 'facebook,twitter',
-            shortURLs: 'never',
-            showCounts: 'none',
-            userAction: ua
-        };
-        gigya.socialize.showShareBarUI(params);
-*/
     </script>
     {% block js %}
     {% endblock js %}
