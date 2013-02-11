@@ -7,19 +7,19 @@
 <div id="fullColumn">
     <div id="halfColumnRt">
         <h2 class="withTip">Downloads</h2>
-        <p>If you don't want to have to visit churnalism.sunlightfoundation.com each time you want to submit an article, install one of our browser extensions. These extensions run in the background, checking news stories you read against the churnalism database. If something matches, you'll get a notification at the top of the page that allows you to view the match. Click on the notification to get a side by side comparison of the article you're reading and its best match.</p><p>
+        <p>If you don't want to have to visit <a href="{% url index %}">Churnalism</a> each time you want to submit an article, install one of our web browser extensions instead. These extensions run in the background, checking news stories you read against the Churnalism database. If something matches, you'll get a notification at the top of the page that allows you to view the match. Click on the notification to view a side by side comparison of the article you're reading and its best match.</p><p>
 
-<p>We currently have extensions for Chrome (version 16+), Firefox (version 14+), and Internet Explorer (versions 8 &amp; 9). Click on a logo to get started!</p>
+<p>We currently have extensions for Chrome (version 16+), Firefox (version 14+) and Internet Explorer (versions 8 &amp; 9). Click on a logo to get started!</p>
 
 <a href="{{ STATIC_URL }}chromeext/churnalism-ext-latest.crx"><img src="/static/images/chrome_100.png" />&nbsp;</a>
 <a href="{{ STATIC_URL }}ffext/churnalism-latest.xpi"><img src="/static/images/ff_logo_100.png" />&nbsp;</a>
 <a href="/static/ieext/churnsetup.zip"><img src="/static/images/ie_logo_100.jpg" />&nbsp;</a>
 
         <br><br>
-<p>For Internet Explorer 64-bit users (only available on Windows 7), please install <a href="/static/ieext/setupchurn_x64_addon.msi">this addon</a>, after installing the extension linked in the icon above. This will ensure that the browser extension works in both versions of IE on your computer.</p>
+<p>For Internet Explorer 64-bit users (only available on Windows 7), please install <a href="/static/ieext/setupchurn_x64_addon.msi">this addon</a>, after installing the extension linked to the icon above. This will ensure that the browser extension works in both versions of IE on your computer.</p>
         <h2 class="withTip">Your Privacy</h2>
         <p>
-        The process of checking news articles for Churnalism involves sending the article text, the title, and the url of the web page to our servers. This information is retained to allow future searches for the same content to be served faster. We also retain the version of your browser (also known as the user-agent string) to allow us to identify problems and continually improve the service. No identifying information, such as your IP address, is retained.
+        The process of checking news articles for Churnalism involves sending the article text, the title and the url of the web page to our servers. This information is retained to allow future searches for the same content to be served faster. We also retain the version of your browser (also known as the user-agent string) to allow us to identify problems and continually improve the service. No identifying information, such as your IP address, is retained.
         </p>
         <p>
         If you are still concerned about your privacy, you can limit your use to the website. When you use the website to search by the web address of a news article, the text of the article is retrieved by our servers, in which case we do not need to retain the version of your browser.
