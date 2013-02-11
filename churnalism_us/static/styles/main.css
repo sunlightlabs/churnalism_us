@@ -115,14 +115,14 @@ body { background: url(../images/bg.jpg) top left repeat;}
 
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
-.contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
+.downloads #halfColumnRt, .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
 #scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; display: none; }
 
 .textReplace { text-indent: -9999em; display: block;}
 .tip { font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique; color: #6c6967; display: block; margin-bottom: 15px;}
 .withTip { margin-bottom: 10px;}
 
-h1 { width: 197px; height: 70px; float: left; margin: 15px 0 20px 20px;}
+h1 { width: 100%; height: 90px; float: left; margin: 15px 0px;}
 h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
@@ -150,9 +150,9 @@ nav li a { width: 88px; height: 45px; }
 #logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
 #sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; }
 
-#share { float: right; margin-top: 75px; font-size: 95%; margin-right: 15px;}
-#share label { margin-top: 2px; float: left; margin-right: 5px;}
-#share input { padding: 4px 5px 2px; width: 130px; float: left;}
+#share { float: right; margin-top: 0px; font-size: 95%; margin-right: 15px;}
+#share label { margin-top: 17px; float: left; margin-right: 5px;}
+#share input { padding: 4px 5px 2px; width: 130px; float: left; margin-top:12px;}
 #gigya-share { float:left; margin: 5px 0 0 10px; }
 
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
@@ -248,4 +248,5 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #ie-ext-options { margin-left: 10px; background-color:#F2F0F1; padding:10px; display: inline-block; border: 1px solid #CDC8C8; }
 #ie-ext-options a {color: #7C7C7B; }
 
-
+#beta {float:right; width: 400px; margin-right: 0px; margin-top: -60px; border: 2px solid #F6F93A; padding: 7px; border-radius: 4px; }
+#beta a {background: none; }
