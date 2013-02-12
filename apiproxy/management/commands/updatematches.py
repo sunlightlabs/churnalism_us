@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.core.management.base import BaseCommand
 import superfastmatch
 from apiproxy.views import execute_search, record_matches
@@ -12,7 +14,7 @@ def prune_old_matches(search_doc, search_results):
     for match in matches:
         md = match.matched_document
         if (md.doc_type, md.doc_id) not in docpairs:
-            print "Deleting match: {0} => {1}".format(search_doc, md)
+            print u"Deleting match: {0} => {1}".format(search_doc, md)
             match.delete()
 
 class Command(BaseCommand):
@@ -23,7 +25,7 @@ class Command(BaseCommand):
         self.sfm = superfastmatch.DjangoClient()
 
         for search_doc in SearchDocument.objects.all():
-            print "Updating {0}: {1}".format(search_doc.uuid, search_doc.title or "(untitled)")
+            print u"Updating {0}: {1}".format(search_doc.uuid, search_doc.title or "(untitled)")
             response = execute_search(search_doc)
             record_matches(search_doc, response, update_matches=True)
             prune_old_matches(search_doc, response)
