@@ -4,3 +4,6 @@
 *.pid
 .static
 local_settings.py
+churnalism_us/analytics.dat
+churnalism_us/client_secrets.json
+churnalism_us/most_read.dat
