@@ -8,7 +8,6 @@ import httplib
 import hashlib
 import lxml.html
 import lxml.etree
-import settings
 from operator import itemgetter
 from urlparse import urlparse
 from django.core.mail import send_mail

@@ -28,7 +28,3 @@ urlpatterns = patterns('',
     url(r'^iframe/', direct_to_template, {'template': 'extension_iframe.html'}, name="iframe"),
 )
 
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()
-

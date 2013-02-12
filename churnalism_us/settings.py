@@ -127,7 +127,7 @@ MIDDLEWARE_CLASSES = (
 
 INTERNAL_IPS = ('127.0.0.1', )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'churnalism_us.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -154,12 +154,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'storages',
 
-    # devserver provides a threaded/forked replacement for runserver
-    # This enables the server to handle simultaneous requests, which is
-    # required by the sidebyside app, since it dogfoods the apiproxy app.
-    'devserver',
-
-    #'gunicorn',
     'generictags',
     'sidebyside',
     'apiproxy',

@@ -42,7 +42,7 @@ import httplib2
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run
-from settings import PROJECT_ROOT
+from django.conf import settings
 
 FLAGS = gflags.FLAGS
 
@@ -50,7 +50,7 @@ FLAGS = gflags.FLAGS
 # application, including client_id and client_secret. You get these values by
 # creating a new project in the Google APIs console and registering for
 # OAuth2.0 for installed applications: <https://code.google.com/apis/console>
-CLIENT_SECRETS = PROJECT_ROOT + '/analytics/management/commands/client_secrets.json'
+CLIENT_SECRETS = os.path.join(settings.PROJECT_ROOT, 'client_secrets.json')
 
 
 # Helpful message to display in the browser if the CLIENT_SECRETS file
@@ -83,7 +83,7 @@ gflags.DEFINE_enum('logging_level', 'ERROR',
 # Name of file that will store the access and refresh tokens to access
 # the API without having to login each time. Make sure this file is in
 # a secure place.
-TOKEN_FILE_NAME = PROJECT_ROOT +  '/analytics/management/commands/analytics.dat'
+TOKEN_FILE_NAME = os.path.join(settings.PROJECT_ROOT, 'analytics.dat')
 
 
 def process_flags(argv):

@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
+import pickle
 import analytics_utils
 from datetime import datetime, timedelta
 from apiclient.errors import HttpError
 from oauth2client.client import AccessTokenRefreshError
 from django.core.management.base import BaseCommand
 from apiproxy.models import SearchDocument, MatchedDocument, Match
-import pickle
-import settings
+from django.conf import settings
 
 # The table ID is used to identify from which Google Anlaytics profile
 # to retrieve data. This ID is in the format ga:xxxx where xxxx is the
@@ -94,7 +95,8 @@ def most_read(number_viewed):
                 continue
     
     #serialize this data
-    pickle.dump(churns, open(settings.PROJECT_ROOT + '/analytics/management/commands/most_read.dat', 'w'))
+    with file(os.path.join(settings.PROJECT_ROOT, 'most_read.dat'), 'w') as outf:
+        pickle.dump(churns, outf)
      
 class Command(BaseCommand):
     help = 'Get the analytics stats'
