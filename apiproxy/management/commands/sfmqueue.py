@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.core.management.base import NoArgsCommand
-import superfastmatch
+from superfastmatch.djangoclient import from_django_conf
 
 
 def freq(it):
@@ -15,7 +17,7 @@ class Command(NoArgsCommand):
     args = ''
 
     def handle(self, *args, **options):
-        sfm = superfastmatch.DjangoClient('default', parse_response=True)
+        sfm = from_django_conf('default')
         response = sfm.queue()
 
         if response['success'] == True:
