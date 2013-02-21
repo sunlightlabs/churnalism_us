@@ -6,9 +6,13 @@ import requests
 from django.core.cache import cache
 
 
-def slurp_url(url, use_cache=False):
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1041.0 Safari/535.21'
+
+def slurp_url(url, use_cache=False, timeout=5, user_agent=None):
     def _slurp_url(url):
-        resp = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1041.0 Safari/535.21'}, config={'verbose': sys.stderr})
+        resp = requests.get(url,
+                            headers={'User-Agent': user_agent or DEFAULT_USER_AGENT},
+                            timeout=timeout)
         if resp.status_code == 200:
             return resp.text
         else:

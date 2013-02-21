@@ -8,6 +8,7 @@ import httplib
 import hashlib
 import lxml.html
 import lxml.etree
+import requests
 from operator import itemgetter
 from urlparse import urlparse
 from django.core.mail import send_mail
@@ -177,7 +178,11 @@ def search_against_url(request, url):
         return search_page(request, error='The URL must begin with either http or https.')
 
     sfm = from_django_conf('sidebyside')
-    (title, text) = fetch_and_clean(url)
+    try:
+        (title, text) = fetch_and_clean(url)
+    except requests.exceptions.Timeout:
+        return search_page(request, error="Sorry, that news article couldn't be retrieved.")
+
     try:
         sfm_results = sfm.search(text=text, title=title, url=url)
         drop_silly_results(sfm_results)
