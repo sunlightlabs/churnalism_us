@@ -121,7 +121,7 @@ def document(request, doctype, docid):
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
-        return HttpResponse(json.dumps(response), content_type='application/json')
+        return HttpResponse(json.dumps(response), status=202, content_type='application/json')
 
 
 def recall_document(title, url, uuid, text):
