@@ -111,7 +111,7 @@ def document(request, doctype, docid):
     if request.method == 'POST':
         params = request.POST
         text = params['text']
-        defer = ('put' not in params) or (params['put'] != 'False')
+        defer = ('put' not in params) or (params['put'] == 'False')
         params = dict([(k, v)
                        for (k, v) in params.items()
                        if k not in ['put', 'text']])
