@@ -110,10 +110,12 @@ def document(request, doctype, docid):
     sfm = from_django_conf()
     if request.method == 'POST':
         params = request.POST
-        if params['put'] == 'False':
-            response = sfm.add(doctype, docid, params["text"], False, title=params['title'], date=params['date'], source=params['source'])
-        else: 
-            response = sfm.add(doctype, docid, params["text"], True, title=params['title'], date=params['date'], source=params['source'])
+        text = params['text']
+        defer = ('put' not in params) or (params['put'] != 'False')
+        params = dict([(k, v)
+                       for (k, v) in params.items()
+                       if k not in ['put', 'text']])
+        response = sfm.add(doctype, docid, text=text, defer=defer, **params)
 
     else:
         response = sfm.document(doctype, docid)
