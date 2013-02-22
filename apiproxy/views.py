@@ -116,14 +116,18 @@ def document(request, doctype, docid):
                        for (k, v) in params.items()
                        if k not in ['put', 'text']])
         response = sfm.add(doctype, docid, text=text, defer=defer, **params)
+        http_status = 202
 
     else:
         response = sfm.document(doctype, docid)
+        http_status = 200
 
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
     else:
-        return HttpResponse(json.dumps(response), status=202, content_type='application/json')
+        return HttpResponse(json.dumps(response),
+                            status=http_status,
+                            content_type='application/json')
 
 
 def recall_document(title, url, uuid, text):
