@@ -66,10 +66,12 @@
 
 	   
 
+            {% comment %}
             <div id="share">
                 {% block share_url %} {% endblock %}
                     <div id="gigya-share" class="share-buttons" data-socialite="auto" data-services="twitter-tweet, facebook-like" data-options="linkback={%block social_media_url%}{% endblock %}" data-twitter-tweet-options="text=Churnalism lets you know when journalism copies occur online.&amp;url=http://churnalism.sunlightfoundation.com/" data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
             </div>   
+            {% endcomment %}
         </header>  
         <div class="clear" id="container">
             {% block overlap %}{% endblock %}
