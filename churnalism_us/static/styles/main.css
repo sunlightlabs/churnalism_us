@@ -248,6 +248,9 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 #ie-ext-options { margin-left: 10px; background-color:#F2F0F1; padding:10px; display: inline-block; border: 1px solid #CDC8C8; }
 #ie-ext-options a {color: #7C7C7B; }
 
-#beta {float:right; width: 400px; margin-right: 0px; margin-top: -60px; border: 2px solid #F6F93A; padding: 7px; border-radius: 4px; }
+#beta {float:right; width: 474px; margin-right: 36px; margin-top: -60px; border: 2px solid #F6F93A; padding: 7px; border-radius: 4px; }
 #beta a {background: none; }
 .beta-instructions { list-style-type: disc; margin: 0 0 0 4em; }
+p.screenshots { padding: 0 60px; }
+p.screenshots img { margin: auto 20px; }
+.screenshot-thumbnail { width: 320px; height: 200px; }
