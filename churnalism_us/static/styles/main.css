@@ -123,7 +123,7 @@ body { background: url(../images/bg.jpg) top left repeat;}
 .withTip { margin-bottom: 10px;}
 
 h1 { width: 100%; height: 90px; float: left; margin: 15px 0px;}
-h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
+h1 a.logo { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
 .smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px; margin-top:20px;}
@@ -254,3 +254,30 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 p.screenshots { padding: 0 60px; }
 p.screenshots img { margin: auto 20px; }
 .screenshot-thumbnail { width: 320px; height: 200px; }
+
+div.extension-dl
+    { float:right; width: 474px; margin-right: 36px; margin-top: -60px;
+      border: 1px solid #cccccc; padding: 7px; border-radius: 4px;
+      background-color: #fdfdfd; display: inline-block;
+      width: 206px; height: 59px; padding: 0; overflow: hidden; }
+
+div.extension-dl a,
+div.extension-dl span
+    { margin: 0; padding: 0; background-color: #fdfdfd; }
+
+div#extension-dl-firefox a 
+    { display: inline-block; }
+
+div#extension-dl-firefox a img 
+    { margin: 4px 4px 4px 4px; }
+
+div#extension-dl-firefox a span
+    { font-size: 13px; opacity: 0.9;
+      color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 130px; }
+
+div#extension-dl-ie a img
+    { width: 68px; height: 58px; }
+
+div#extension-dl-ie a span
+    { font-size: 13px; opacity: 0.9;
+      color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 132px; }

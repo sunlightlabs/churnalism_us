@@ -59,12 +59,19 @@
                 </ul>    
             </nav>   
             <div class="clear"></div> 
-            <h1><a class="textReplace" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a>
-            <span id="beta">Churnalism US is currently in beta testing. If you have feedback, please <a href="{% url contact %}">contact us</a>. You may experience some performance issues as we test out varying configurations.</span>
-            
+            <h1>
+                <a class="textReplace logo" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a>
+                <div id="extension-dl-chrome" style="display: none;" class="extension-dl">
+                    <a href="https://chrome.google.com/webstore/detail/churnalism/igpjommbbpdncpcnjkombboimdclgdhm?hl=en&gl=US"><img src="{{ STATIC_URL }}images/ChromeWebStore_Badge_v2_206x58.png"></a>
+                </div>
+                <div id="extension-dl-firefox" style="display: none;" class="extension-dl">
+                    <a href="https://addons.mozilla.org/en-US/firefox/addon/churnalism/"><img src="{{ STATIC_URL }}images/firefox_logo-only_RGB_56x59.png">&nbsp; <span>Download the<br>Firefox add-on</span></a>
+                </div>
+                <div id="extension-dl-ie" style="display: none;" class="extension-dl">
+                    <a href="{% url downloads %}"><img src="{{ STATIC_URL }}images/ie_logo_84x72.png">&nbsp; <span>Download the browser extension</span></a>
+                </div>
             </h1>
 
-	   
 
             {% comment %}
             <div id="share">
@@ -129,6 +136,7 @@
     
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/browserdetect.js"></script>
     <script type="text/javascript" src="https://s3.amazonaws.com/assets.sunlightfoundation.com/social/scripts/simple-socialite-pack.min.js"></script>
     <script type="text/javascript">
         var get_url = function(){

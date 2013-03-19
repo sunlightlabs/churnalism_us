@@ -44,3 +44,25 @@
     <div class="clear"></div>
 </div>
 {% endblock body %}
+
+{% block js %}
+    {{ block.master }}
+        <script type="text/javascript">
+        var show_extension_dl = function(){
+            if (BrowserDetect.browser == 'Chrome') {
+                if (BrowserDetect.version >= 16) {
+                    jQuery("#extension-dl-chrome").fadeIn();
+                }
+            } else if (BrowserDetect.browser == 'Firefox') {
+                if (BrowserDetect.version >= 19) {
+                    jQuery("#extension-dl-firefox").fadeIn();
+                }
+            } else if (BrowserDetect.browser == 'Explorer') {
+                if ((BrowserDetect.version >= 8) && (BrowserDetect.version <= 9)) {
+                    jQuery("#extension-dl-ie").fadeIn();
+                }
+            }
+        };
+        show_extension_dl();
+    </script>
+{% endblock js %}
