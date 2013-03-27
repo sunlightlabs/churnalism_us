@@ -206,6 +206,7 @@ APIPROXY = {
     'document_timeout': timedelta(hours=4),
     'proper_noun_threshold': 0.8,
     'commonality_threshold': 0.3,
+    'minimum_unique_characters': 4,
     'embellishments': {
         'reduce_frags': False,
         'add_coverage': True,

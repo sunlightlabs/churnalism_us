@@ -35,7 +35,9 @@ import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
-from apiproxy.filters import drop_common_fragments, ignore_proper_nouns
+from apiproxy.filters import (drop_common_fragments,
+                              ignore_proper_nouns,
+                              ignore_repetitious_characters)
 from utils.fetch_and_clean import fetch_and_clean
 
 from django.conf import settings
@@ -319,6 +321,9 @@ def execute_search(doc, doctype=None):
 
     ignore_proper_nouns(settings.APIPROXY.get('proper_noun_threshold', 0.8),
                         doc.text, response)
+
+    ignore_repetitious_characters(settings.APIPROXY.get('minimum_unique_characters', 3),
+                                  doc.text, response)
 
     if doc.url:
         response['documents']['rows'][:] = [r for r in response['documents']['rows']

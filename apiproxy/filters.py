@@ -96,3 +96,28 @@ def ignore_proper_nouns(threshold, text, results):
             new_rows.append(new_row)
 
     results['documents']['rows'] = new_rows
+
+
+def ignore_repetitious_characters(threshold, text, results):
+    """
+    Removes fragments that repeat the same characters too many times.
+    threshold: the minimum number of unique characters in a snippet
+    For example, with threshold = 4, it will remove each of these:
+        ------------------------------------------\n
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahhhhhhhhhhhhhhhhhhh!
+        abcabcabcabcabcabcabcabcabcabcabc
+    """
+    def _snippet(fragment):
+        return text[fragment[0]:][:fragment[2]]
+
+    rows = results['documents']['rows']
+    for row in rows:
+        row['fragments'][:] = [
+            fragment
+            for fragment in row['fragments']
+            if len(set(_snippet(fragment))) >= threshold
+        ]
+
+    rows[:] = [row for row in rows if len(row['fragments']) > 0]
+
+
