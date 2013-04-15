@@ -116,6 +116,8 @@ body { background: url(../images/bg.jpg) top left repeat;}
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
 .downloads #halfColumnRt, .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
+.downloads .iconWrapper { float: left; position: relative; }
+.downloads p.comingSoon { color: #F93C39; font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; padding-top: 0; position: relative; top: -10px; }
 #scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; display: none; }
 
 .textReplace { text-indent: -9999em; display: block;}
