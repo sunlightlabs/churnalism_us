@@ -116,8 +116,9 @@ body { background: url(../images/bg.jpg) top left repeat;}
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
 .downloads #halfColumnRt, .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
-.downloads .iconWrapper { float: left; position: relative; }
-.downloads p.comingSoon { color: #F93C39; font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; padding-top: 0; position: relative; top: -10px; }
+.comingSoon { color: #7c7c7b; font-family: Georgia, 'Times New Roman', Times, serif; font-style: italic; font-weight: normal; }
+.downloads .iconWrapper { float: left; position: relative; border: 1px solid #cccccc; background: #fdfdfd; border-radius: 4px; padding: 8px; margin-right: 10px; }
+.downloads p.comingSoon { position: absolute; top: 98px; left: 39%; }
 #scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; display: none; }
 
 .textReplace { text-indent: -9999em; display: block;}
@@ -258,7 +259,7 @@ p.screenshots img { margin: auto 20px; }
 .screenshot-thumbnail { width: 320px; height: 200px; }
 
 div.extension-dl
-    { float:right; width: 474px; margin-right: 36px; margin-top: -60px;
+    { float:right; width: 474px; margin-right: 0; margin-top: -60px;
       border: 1px solid #cccccc; padding: 7px; border-radius: 4px;
       background-color: #fdfdfd; display: inline-block;
       width: 206px; height: 59px; padding: 0; overflow: hidden; }
@@ -276,6 +277,8 @@ div#extension-dl-firefox a img
 div#extension-dl-firefox a span
     { font-size: 13px; opacity: 0.9;
       color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 130px; }
+div#extension-dl-firefox a span.comingSoon
+    { width: auto; float: none; margin: 0; }
 
 div#extension-dl-ie a img
     { width: 68px; height: 58px; }
