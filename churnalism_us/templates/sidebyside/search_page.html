@@ -37,6 +37,16 @@
                 <li>
             </ul>
         </form>
+
+        <div id="extension-dl-chrome" style="display: none;" class="extension-dl">
+            <a href="https://chrome.google.com/webstore/detail/churnalism/igpjommbbpdncpcnjkombboimdclgdhm?hl=en&gl=US"><img src="{{ STATIC_URL }}images/ChromeWebStore_Badge_v2_206x58.png"></a>
+        </div>
+        <div id="extension-dl-firefox" style="display: none;" class="extension-dl">
+            <a href="https://addons.mozilla.org/en-US/firefox/addon/churnalism/"><img src="{{ STATIC_URL }}images/firefox_logo-only_RGB_56x59.png">&nbsp; <span>Download the<br>Firefox add-on <span class="comingSoon">beta</span></span></a>
+        </div>
+        <div id="extension-dl-ie" style="display: none;" class="extension-dl">
+            <a href="{% url downloads %}"><img src="{{ STATIC_URL }}images/ie_logo_84x72.png">&nbsp; <span>Download the browser extension</span></a>
+        </div>
         {% else %}
         <div><p id="introText" class="maintenanceText">Churnalism is currently in maintenance mode, so the search feature is disabled. Rest assured that we are working on the issue.</p></div>
         {% endif %}

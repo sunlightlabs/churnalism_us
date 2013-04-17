@@ -259,7 +259,7 @@ p.screenshots img { margin: auto 20px; }
 .screenshot-thumbnail { width: 320px; height: 200px; }
 
 div.extension-dl
-    { float:right; width: 474px; margin-right: 0; margin-top: -60px;
+    { float:right; width: 474px; margin-right: -22px; margin-top: -45px;
       border: 1px solid #cccccc; padding: 7px; border-radius: 4px;
       background-color: #fdfdfd; display: inline-block;
       width: 206px; height: 59px; padding: 0; overflow: hidden; }
