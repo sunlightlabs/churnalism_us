@@ -155,7 +155,7 @@ nav li a { width: 88px; height: 45px; }
 
 #share { float: right; margin-top: 0px; font-size: 95%; margin-right: 34px; vertical-align: top; }
 #share label { margin-top: 17px; float: left; margin-right: 5px;}
-#share input { padding: 4px 5px 2px; width: 130px; float: left; margin-top:12px;}
+#share input { padding: 4px 5px 2px; width: 130px; float: left; margin-top: 15px;}
 #gigya-share { float:left; margin: 5px 0 0 10px; }
 
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
