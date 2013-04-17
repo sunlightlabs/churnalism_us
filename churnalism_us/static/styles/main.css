@@ -116,6 +116,9 @@ body { background: url(../images/bg.jpg) top left repeat;}
 #halfColumn { width: 365px; float: left; margin-left: 60px;}
 #halfColumnRt { float: left; width: 380px; padding-left: 25px; margin-left: 25px; border-left: 1px dashed #DFDAD6;}
 .downloads #halfColumnRt, .contact #halfColumnRt, .about #halfColumnRt { width: 600px;}
+.comingSoon { color: #7c7c7b; font-family: Georgia, 'Times New Roman', Times, serif; font-style: italic; font-weight: normal; }
+.downloads .iconWrapper { float: left; position: relative; border: 1px solid #cccccc; background: #fdfdfd; border-radius: 4px; padding: 8px; margin-right: 10px; }
+.downloads p.comingSoon { position: absolute; top: 98px; left: 39%; }
 #scrollColumn { position: fixed; padding: 1em 1em 1em 0.75em; background: #E9E7F1 none; border: #D5D5D7 1px solid; border-left: #D5D5D7 1px solid; display: none; }
 
 .textReplace { text-indent: -9999em; display: block;}
@@ -123,7 +126,7 @@ body { background: url(../images/bg.jpg) top left repeat;}
 .withTip { margin-bottom: 10px;}
 
 h1 { width: 100%; height: 90px; float: left; margin: 15px 0px;}
-h1 a { width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
+h1 a.logo { display: inline-block; width: 197px; height: 70px; background: url(../images/logo.png) top left no-repeat;}
 
 h2 { color: #252323; text-transform: uppercase; font-size: 250%; font-weight: normal; text-transform: capitalize; margin-bottom: 25px; line-height: 30px;}
 .smallHeader { text-transform: uppercase; font-size: 130%; color: #454542; margin-bottom: 15px; line-height: 18px; margin-top:20px;}
@@ -150,7 +153,7 @@ nav li a { width: 88px; height: 45px; }
 #logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
 #sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; }
 
-#share { float: right; margin-top: 0px; font-size: 95%; margin-right: 15px;}
+#share { float: right; margin-top: 0px; font-size: 95%; margin-right: 34px; vertical-align: top; }
 #share label { margin-top: 17px; float: left; margin-right: 5px;}
 #share input { padding: 4px 5px 2px; width: 130px; float: left; margin-top:12px;}
 #gigya-share { float:left; margin: 5px 0 0 10px; }
@@ -254,3 +257,32 @@ footer { padding-top: 40px; margin-bottom: 30px;}
 p.screenshots { padding: 0 60px; }
 p.screenshots img { margin: auto 20px; }
 .screenshot-thumbnail { width: 320px; height: 200px; }
+
+div.extension-dl
+    { float:right; width: 474px; margin-right: -22px; margin-top: -45px;
+      border: 1px solid #cccccc; padding: 7px; border-radius: 4px;
+      background-color: #fdfdfd; display: inline-block;
+      width: 206px; height: 59px; padding: 0; overflow: hidden; }
+
+div.extension-dl a,
+div.extension-dl span
+    { margin: 0; padding: 0; background-color: #fdfdfd; }
+
+div#extension-dl-firefox a 
+    { display: inline-block; }
+
+div#extension-dl-firefox a img 
+    { margin: 4px 4px 4px 4px; }
+
+div#extension-dl-firefox a span
+    { font-size: 13px; opacity: 0.9;
+      color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 130px; }
+div#extension-dl-firefox a span.comingSoon
+    { width: auto; float: none; margin: 0; }
+
+div#extension-dl-ie a img
+    { width: 68px; height: 58px; }
+
+div#extension-dl-ie a span
+    { font-size: 13px; opacity: 0.9;
+      color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 132px; }
