@@ -37,6 +37,16 @@
                 <li>
             </ul>
         </form>
+
+        <div id="extension-dl-chrome" style="display: none;" class="extension-dl">
+            <a href="https://chrome.google.com/webstore/detail/churnalism/igpjommbbpdncpcnjkombboimdclgdhm?hl=en&gl=US"><img src="{{ STATIC_URL }}images/ChromeWebStore_Badge_v2_206x58.png"></a>
+        </div>
+        <div id="extension-dl-firefox" style="display: none;" class="extension-dl">
+            <a href="https://addons.mozilla.org/en-US/firefox/addon/churnalism/"><img src="{{ STATIC_URL }}images/firefox_logo-only_RGB_56x59.png">&nbsp; <span>Download the<br>Firefox add-on <span class="comingSoon">beta</span></span></a>
+        </div>
+        <div id="extension-dl-ie" style="display: none;" class="extension-dl">
+            <a href="{% url downloads %}"><img src="{{ STATIC_URL }}images/ie_logo_84x72.png">&nbsp; <span>Download the browser extension</span></a>
+        </div>
         {% else %}
         <div><p id="introText" class="maintenanceText">Churnalism is currently in maintenance mode, so the search feature is disabled. Rest assured that we are working on the issue.</p></div>
         {% endif %}
@@ -44,3 +54,25 @@
     <div class="clear"></div>
 </div>
 {% endblock body %}
+
+{% block js %}
+    {{ block.master }}
+        <script type="text/javascript">
+        var show_extension_dl = function(){
+            if (BrowserDetect.browser == 'Chrome') {
+                if (BrowserDetect.version >= 16) {
+                    jQuery("#extension-dl-chrome").fadeIn();
+                }
+            } else if (BrowserDetect.browser == 'Firefox') {
+                if (BrowserDetect.version >= 19) {
+                    jQuery("#extension-dl-firefox").fadeIn();
+                }
+            } else if (BrowserDetect.browser == 'Explorer') {
+                if ((BrowserDetect.version >= 8) && (BrowserDetect.version <= 9)) {
+                    jQuery("#extension-dl-ie").fadeIn();
+                }
+            }
+        };
+        show_extension_dl();
+    </script>
+{% endblock js %}

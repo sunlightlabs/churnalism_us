@@ -59,19 +59,14 @@
                 </ul>    
             </nav>   
             <div class="clear"></div> 
-            <h1><a class="textReplace" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a>
-            <span id="beta">Churnalism US is currently in beta testing. If you have feedback, please <a href="{% url contact %}">contact us</a>. You may experience some performance issues as we test out varying configurations.</span>
-            
-            </h1>
+            <h1>
+                <a class="textReplace logo" href="/">Churnalism <small>US Tool for Jounalistic Accountability</small></a>
 
-	   
-
-            {% comment %}
-            <div id="share">
-                {% block share_url %} {% endblock %}
+                <div id="share">
+                    {% block share_url %} {% endblock %}
                     <div id="gigya-share" class="share-buttons" data-socialite="auto" data-services="twitter-tweet, facebook-like" data-options="linkback={%block social_media_url%}{% endblock %}" data-twitter-tweet-options="text=Churnalism lets you know when journalism copies occur online.&amp;url=http://churnalism.sunlightfoundation.com/" data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
-            </div>   
-            {% endcomment %}
+                </div>   
+            </h1>
         </header>  
         <div class="clear" id="container">
             {% block overlap %}{% endblock %}
@@ -129,6 +124,7 @@
     
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/browserdetect.js"></script>
     <script type="text/javascript" src="https://s3.amazonaws.com/assets.sunlightfoundation.com/social/scripts/simple-socialite-pack.min.js"></script>
     <script type="text/javascript">
         var get_url = function(){
