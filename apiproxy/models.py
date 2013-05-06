@@ -186,16 +186,19 @@ class Match(models.Model):
     matched_document = models.ForeignKey(MatchedDocument,
                                          db_index=True)
 
-    overlapping_characters = models.IntegerField(null=True)
+    overlapping_characters = models.IntegerField(null=True,
+                                                 db_index=True)
 
     #This is the percentage of the SearchDocument that is included in the MatchedDocument (source doc) using character overlap
     percent_churned = models.DecimalField(max_digits=5, 
                                           decimal_places=2,
-                                          null=True)
+                                          null=True,
+                                          db_index=True)
 
     fragment_density = models.DecimalField(max_digits=5,
                                            decimal_places=2,
-                                           null=True)
+                                           null=True,
+                                           db_index=True)
 
     #This is the number of matches between the same SearchDocument and the same MatchedDocument
     number_matches = models.IntegerField(null=False, default=0)
