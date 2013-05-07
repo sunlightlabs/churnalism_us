@@ -344,6 +344,7 @@ APIPROXY = {
         '^(www\.)?wellsfargo\.com',
         '^(www\.)?whitehouse\.gov',
         '^(www\.)?wilsoncenter\.org',
+        '^(.*\.)?wikipedia\.org'
     ],
     'document_timeout': timedelta(hours=4),
     'proper_noun_threshold': 0.8,
