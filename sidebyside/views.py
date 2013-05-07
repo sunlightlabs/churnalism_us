@@ -19,6 +19,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
 from utils.fetch_and_clean import fetch_and_clean
 
+from apiproxy.blacklist import check_url_blacklist
 from apiproxy.models import SearchDocument, Match, MatchedDocument, IncorrectTextReport
 
 import superfastmatch
@@ -118,6 +119,12 @@ def search_result_page(request, results, source_text,
 
 
 def search(request, url=None, uuid=None):
+    url = request.GET.get('url') or request.POST.get('url')
+    if url:
+        (url_is_blacklisted, pattern_match) = check_url_blacklist(url)
+        if url_is_blacklisted:
+            return search_page(request, error="{} is one of our press release sources so checking pages from that site would yield false results.".format(pattern_match.string))
+
     if request.method == 'GET':
         url = url or request.GET.get('url')
         if url not in ('', None):

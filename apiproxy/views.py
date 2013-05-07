@@ -33,6 +33,7 @@ from django.shortcuts import get_object_or_404
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
+from apiproxy.blacklist import check_url_blacklist
 from apiproxy.models import SearchDocument, MatchedDocument, Match
 from apiproxy.embellishments import calculate_coverage, embellish
 from apiproxy.filters import (drop_common_fragments,
@@ -68,6 +69,14 @@ def timed(viewfunc):
         logging.debug("{0} call took {1} seconds".format(viewfunc.__name__, dur.total_seconds()))
         return r
     return handled
+
+class EmptySearchResult(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        super(EmptySearchResult, self).__init__(
+            content='{"documents": {"rows": [], "metaData": {"fields": []}}, "success": true}',
+            content_type='application/json',
+            status=200,
+            *args, **kwargs)
 
 @sfm_proxy_view
 def association(request, doctype=None):
@@ -203,6 +212,7 @@ def url_search(request, doctype):
     url = request.GET.get('url')
     if not url:
         return HttpResponseNotFound(url)
+    
     try:
         doc = SearchDocument.objects.get(url=url)
     except SearchDocument.DoesNotExist:
@@ -232,6 +242,14 @@ def search(request, doctype=None):
     database for later retrieval. It is assigned a UUID for later
     retrieval. This same view handles search via UUID recall.
     """
+
+    # This avoids useless matches when someone searches against a URL
+    # that is from one of our corpus sources.
+    url = request.GET.get('url') or request.POST.get('url')
+    if url:
+        (url_is_blacklisted, _) = check_url_blacklist(url)
+        if url_is_blacklisted:
+            return EmptySearchResult()
 
     if request.method == 'GET':
         uuid = request.GET.get('uuid')
