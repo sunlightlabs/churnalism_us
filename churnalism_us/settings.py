@@ -17,7 +17,9 @@ ADMINS = (
     ('Drew Vogel', 'dvogel@sunlightfoundation.com'),
 )
 
-ADMIN_EMAILS = ('klee@sunlightfoundation.com', 'dvogel@sunlightfoundation.com')
+ADMIN_EMAILS = ('klee@sunlightfoundation.com',
+                'dvogel@sunlightfoundation.com',
+                'nicko@sunlightfoundation.com')
 MANAGERS = ADMINS
 
 DATABASES = {
