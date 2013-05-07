@@ -9,7 +9,7 @@
 {% block social_media_url %} {% url sidebyside-uuid-search uuid=results.uuid %} {% endblock %}
 {% block body %}
 <div id="ltColumn">
-    <h2 class="smallHeader">Possible Churns</h2>
+    <h2 class="smallHeader">Results</h2>
     <ol id="matches">
         {% for row in results.documents.rows %}
         <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}"  {% if forloop.last%}class="last"{% endif %}  >
@@ -21,7 +21,7 @@
             <div class="clear"></div>
         </span>
         <dl>
-            <dt>From:</dt>
+            <dt class="textReplace">From:</dt>
             <dd>
             <a class="articleTitle" id="match-url" href="{{row.url}}">{{row.title}}</a>
             <span class="entryMetaData">
