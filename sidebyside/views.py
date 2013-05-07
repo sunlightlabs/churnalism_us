@@ -2,12 +2,10 @@
 
 from __future__ import division
 
+import logging
 import json
-import re
 import httplib
 import hashlib
-import lxml.html
-import lxml.etree
 import requests
 from operator import itemgetter
 from urlparse import urlparse
@@ -165,6 +163,7 @@ def search_against_uuid(request, uuid):
                                   source_title=sfm_results.get('title'))
     except superfastmatch.SuperFastMatchError, e:
         if e.status == httplib.NOT_FOUND:
+            logging.critical(u'Error communicating with the superfastmatch server: {}'.format(unicode(e)))
             raise Http404('No such article {0}'.format(uuid))
         elif settings.DEBUG == True:
             return HttpResponse(e.response[1], status=e.response[0])
