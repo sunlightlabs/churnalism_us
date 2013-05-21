@@ -1,0 +1,22 @@
+{% extends "admin/change_form.html" %}
+{% load staticfiles %}
+{% block extrahead %}{{ block.super }}
+    <style type="text/css">
+        fieldset {
+            display: inline-block;
+            vertical-align: top;
+            width: 45%;
+        }
+        .submit-row {
+            clear: both;
+        }
+    </style>
+
+    <script type="text/javascript" src="{% static "scripts/jquery-1.7.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "scripts/sidebyside_common.js" %}"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            $(".field-document_text p").markupAsArticle();
+        });
+    </script>
+{% endblock %}

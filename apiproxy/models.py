@@ -138,6 +138,12 @@ class IncorrectTextReport(models.Model):
     created = models.DateTimeField(auto_now_add=True,
                                    db_index=True)
 
+    def document_text(self):
+        return self.search_document.text
+
+    def document_url(self):
+        return self.search_document.url
+
     class Meta:
         unique_together = ("search_document", "remote_addr")
 
