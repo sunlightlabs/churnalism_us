@@ -221,10 +221,16 @@ dt { font-weight: bold; color: #595855; font-size: 85%; text-transform: uppercas
 footer { padding-top: 40px; margin-bottom: 30px;}
 #emailSignup span { color: #969090; font-size: 85%; margin-bottom: 10px;}
 #emailSignup{ padding-top: 20px;}
-#signUp li { float: left; margin-right: 10px; }
-#signUp input { padding: 8px 10px 5px; font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique; font-size: 85%; }
-#signUp button, #submitBtn { background: url(../images/btn_submit.png) top left no-repeat; width: 95px; height: 30px;}
-#signUp button:hover, #submitBtn:hover { background: url(../images/btn_submit.png) bottom left no-repeat; }
+#signUp li,
+#sfapp-subscribe-form li { float: left; margin-right: 10px; }
+#signUp input,
+#sfapp-subscribe-form input { padding: 8px 10px 5px; font-family: Georgia, 'Times New Roman', Times, serif; font-style: oblique; font-size: 85%; }
+#signUp button,
+#submitBtn,
+#sfapp-subscribe-form button { background: url(../images/btn_submit.png) top left no-repeat; width: 95px; height: 30px;}
+#signUp button:hover,
+#submitBtn:hover,
+#sfapp-subscribe-form button:hover { background: url(../images/btn_submit.png) bottom left no-repeat; }
 #email { width: 170px; }
 #zip { width: 80px;}
 #doc-text p, #pr-text p {

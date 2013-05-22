@@ -91,7 +91,7 @@
             <div id="emailSignup">
                 <h5>Like This Project and Want to Discover Others Like It?</h5>
                 <span class="tip">Join the Sunlight Foundation's open government community to learn more</span>
-                <form action="/search/" method="get" id="signUp">
+                <form action="http://sunlightfoundation.com/subscribe/" method="get" id="sfapp-subscribe-form">
                     <ul>
                         <li>
                             <label class="hidden">Email Address</label>
@@ -122,10 +122,10 @@
 
     </body>
 
-    
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/jquery-ui-1.8.17.custom.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}scripts/browserdetect.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}sfapp/js/sfapp.js"></script>
     <script type="text/javascript" src="https://s3.amazonaws.com/assets.sunlightfoundation.com/social/scripts/simple-socialite-pack.min.js.gz"></script>
     <script type="text/javascript">
         var get_url = function(){

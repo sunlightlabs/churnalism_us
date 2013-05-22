@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'storages',
 
+    'sfapp',
     'generictags',
     'sidebyside',
     'apiproxy',
