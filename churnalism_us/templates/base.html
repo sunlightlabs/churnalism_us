@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load compress %}
 {% load churnstats %}
 <html>
     <head>
@@ -91,21 +92,20 @@
             <div id="emailSignup">
                 <h5>Like This Project and Want to Discover Others Like It?</h5>
                 <span class="tip">Join the Sunlight Foundation's open government community to learn more</span>
-                <form action="http://sunlightfoundation.com/subscribe/" method="get" id="sfapp-subscribe-form">
+                <form action="http://sunlightfoundation.com/subscribe/" method="post" id="sfapp-subscribe-form">
+                    <input type="hidden" name="response" value="json">
                     <ul>
                         <li>
                             <label class="hidden">Email Address</label>
-                            <input type="text" name="q" id="email" placeholder="enter your email address">
+                            <input type="text" name="email" id="email" placeholder="enter your email address">
                         </li>
                         <li>
                             <label class="hidden">Zip Code</label>
-                            <input type="text" name="q" id="zip" placeholder="your zip code">
+                            <input type="text" name="zipcode" id="zip" placeholder="your zip code">
                         </li>
                         <li>
-                            <button type="submit">
-                                <span>Search</span>
-                            </button>
-                        <li>
+                        <button type="submit" class="btn btn-sunlight"><span>Sign Up</span></button>
+                        </li>
                     </ul>
                 </form>
             </div>    
