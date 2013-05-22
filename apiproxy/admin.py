@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import Count
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from .models import SearchDocument, MatchedDocument, Match, IncorrectTextReport
@@ -47,11 +48,32 @@ class IncorrectTextReportAdminForm(forms.ModelForm):
             'search_document': ForeignKeyAsLinkWidget(SearchDocument),
         }
 
+class IncorrectTextDomainFilter(admin.SimpleListFilter):
+    title = u'Domain'
+
+    parameter_name = 'searchdocument_domain'
+
+    def lookups(self, request, model_admin):
+        query = (SearchDocument.objects
+                 .filter(text_problems__isnull=False,
+                         domain__isnull=False)
+                 .values('domain')
+                 .annotate(cnt=Count('pk'))
+                 .order_by('-cnt')[:100])
+        return [(grp['domain'], u'{cnt} {domain}'.format(**grp)) for grp in query[:20]]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(search_document__domain=self.value())
+        else:
+            return queryset
+        
 
 class IncorrectTextReportAdmin(admin.ModelAdmin):
     form = IncorrectTextReportAdminForm
     list_display = ['id', 'created', 'search_document']
     ordering = ['created']
+    list_filter = (IncorrectTextDomainFilter,)
     fieldsets = (
         ('Incorrect Text Report', {
             'fields': ('problem_description', 'remote_addr',
