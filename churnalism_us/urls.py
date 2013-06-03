@@ -6,6 +6,14 @@ from django.template import RequestContext
 from django.contrib import admin
 admin.autodiscover()
 
+from churnalism_us.sitemap import GeneralSitemap
+from sidebyside.sitemap import SidebysideSitemap
+
+sitemaps = {
+    'general': GeneralSitemap,
+    'sidebyside': SidebysideSitemap
+}
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'churnalism_us.views.home', name='home'),
@@ -27,5 +35,6 @@ urlpatterns = patterns('',
     url(r'^submitcontact/', 'sidebyside.views.contact_submission', name='contact-submission'),
     url(r'^cache/', include('django_memcached.urls')),
     url(r'^iframe/', direct_to_template, {'template': 'extension_iframe.html'}, name="iframe"),
+    url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
 )
 
