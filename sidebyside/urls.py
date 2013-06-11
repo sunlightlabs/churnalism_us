@@ -28,7 +28,7 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^ie8/ribbon/$', 'ie8ext_ribbon', name='sidebyside-ie8-ribbon'),
     url(r'^loading/$', direct_to_template, {'template': 'sidebyside/loading.html'}, name='sidebyside-loading'),
     url(r'^ie_loading/$', direct_to_template, {'template': 'sidebyside/ie_loading.html'}, name='sidebyside-ie-loading'),
-    url(r'^firefox/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'ffext_recall', name='sidebyside-chrome-uuid-recall'),
+    url(r'^firefox/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'ffext_recall', name='sidebyside-firefox-uuid-recall'),
     url(r'^chrome/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'chromeext_recall', name='sidebyside-chrome-uuid-recall'),
     url(r'^generic/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'generic_recall', name='sidebyside-generic')
 

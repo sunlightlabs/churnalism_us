@@ -64,7 +64,6 @@ span.churnalism-highlight-selected {
     clear: both;
 }
 #container { border-top: 1px solid #E5E1DD; } 
-#share { display: none; }
 svg#fragment-connector {
     z-index: 999999;
     padding: 0;

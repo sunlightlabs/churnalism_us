@@ -3,6 +3,7 @@
 {% load jsonify %}
 {% load trailingslash %}
 {% load domain %}
+{% load url from future %}
 {% block title %}Churnalism - Side by Side View {% endblock %}
 
 {% comment %}
@@ -19,10 +20,20 @@ so all links output must be absolute.
 
     {% block overlap %}
     <div id="sidebysideHeader">
-        <a href="{% url sidebyside-permalink uuid match.doctype match.docid %}">« Back to all Matches</a>
+        <a href="{% url 'sidebyside-permalink' uuid match.doctype match.docid %}">« Back to all Matches</a>
         <div class="clear"></div>
     </div>
     {% endblock %}
+
+    {% block share_buttons %}
+    <div id="gigya-share"
+        class="share-buttons"
+        data-socialite="auto"
+        data-services="twitter-tweet, facebook-like"
+        data-options="linkback={%block social_media_url%}{% endblock %}"
+        data-twitter-tweet-options="text=Churnalism alert! @SunFoundation's tool detects possible plagiarism: {{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid  %}&amp;url={{BASE_URL}}{% url 'sidebyside-chrome-uuid-recall' uuid match.doctype match.docid  %}"
+        data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
+    {% endblock share_buttons %}
 
     {% block body %}
         <div style="position: relative;">
