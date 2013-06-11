@@ -31,7 +31,7 @@ so all links output must be absolute.
         data-socialite="auto"
         data-services="twitter-tweet, facebook-like"
         data-options="linkback={%block social_media_url%}{% endblock %}"
-        data-twitter-tweet-options="text=Churnalism alert! @SunFoundation's tool detects possible plagiarism: {{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid  %}&amp;url={{BASE_URL}}{% url 'sidebyside-chrome-uuid-recall' uuid match.doctype match.docid  %}"
+        data-twitter-tweet-options="url={{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid  %}&amp;text=Churnalism alert! @SunFoundation's tool detects possible plagiarism: {{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid  %}"
         data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
     {% endblock share_buttons %}
 
