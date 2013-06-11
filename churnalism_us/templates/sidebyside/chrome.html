@@ -25,12 +25,18 @@ so all links output must be absolute.
     </div>
     {% endblock %}
 
+    {% block opengraph %}
+    <meta property="og:url" content="{{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid %}">
+    <meta property="og:title" content="Churnalism US">
+    <meta property="og:description" content="Churnalism alert! THe Sunlight Foundation's tool detects possible plagiarism.">
+    <meta property="og:image" content="{{ STATIC_URL }}images/facebook.jpg">
+    {% endblock opengraph %}
+
     {% block share_buttons %}
     <div id="gigya-share"
         class="share-buttons"
         data-socialite="auto"
         data-services="twitter-tweet, facebook-like"
-        data-options="linkback={%block social_media_url%}{% endblock %}"
         data-twitter-tweet-options="url={{BASE_URL}}{% url 'sidebyside-generic' uuid match.doctype match.docid  %}&amp;text=Churnalism alert! @SunFoundation's tool detects possible plagiarism:"
         data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
     {% endblock share_buttons %}
