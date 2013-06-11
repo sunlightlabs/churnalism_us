@@ -11,7 +11,7 @@ class SidebysideSitemap(Sitemap):
                                     overlapping_characters__gte=minimum_chars)
 
     def location(self, match):
-        return reverse('sidebyside-permalink', args=(
+        return reverse('sidebyside-generic', args=(
             match.search_document.uuid,
             match.matched_document.doc_type,
             match.matched_document.doc_id))
