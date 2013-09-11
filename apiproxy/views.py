@@ -26,7 +26,8 @@ from copy import deepcopy
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
-from django.http import (HttpResponse, HttpResponseNotFound,
+from django.http import (QueryDict,
+                         HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest, HttpResponseServerError,
                          Http404)
 from django.shortcuts import get_object_or_404
@@ -119,10 +120,10 @@ def document(request, doctype, docid):
     """
 
     sfm = from_django_conf()
-    if request.method == 'POST':
-        params = request.POST
+    if request.method == 'POST' or request.method == 'PUT':
+        params = QueryDict(request.raw_post_data) if request.method == 'PUT' else request.POST
+        defer = (request.method == 'PUT')
         text = params['text']
-        defer = ('put' not in params) or (params['put'] == 'False')
         params = dict([(k, v)
                        for (k, v) in params.items()
                        if k not in ['put', 'text']])
