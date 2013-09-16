@@ -149,22 +149,22 @@ class IncorrectTextReport(models.Model):
 
 
 class MatchedDocument(models.Model):
-    """ This caches metadata about matched documents in SFM """ 
-    
-    doc_type = models.IntegerField(blank=False, 
+    """ This caches metadata about matched documents in SFM """
+
+    doc_type = models.IntegerField(blank=False,
                                    null=False)
 
-    doc_id = models.IntegerField(blank=False, 
+    doc_id = models.IntegerField(blank=False,
                                  null=False)
 
-    source_url = models.TextField(blank=False, 
+    source_url = models.TextField(blank=False,
                                   null=False)
 
-    source_name = models.CharField(max_length=200, 
-                                   null=True, 
+    source_name = models.CharField(max_length=200,
+                                   null=True,
                                    blank=False)
 
-   
+
     source_headline = models.TextField( null=True,
                                         blank=False)
 
@@ -188,7 +188,7 @@ class Match(models.Model):
 
     search_document = models.ForeignKey(SearchDocument,
                                         db_index=True)
-    
+
     matched_document = models.ForeignKey(MatchedDocument,
                                          db_index=True)
 
@@ -196,7 +196,7 @@ class Match(models.Model):
                                                  db_index=True)
 
     #This is the percentage of the SearchDocument that is included in the MatchedDocument (source doc) using character overlap
-    percent_churned = models.DecimalField(max_digits=5, 
+    percent_churned = models.DecimalField(max_digits=5,
                                           decimal_places=2,
                                           null=True,
                                           db_index=True)
