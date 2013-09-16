@@ -186,6 +186,10 @@ $(document).ready(function(){
         }
     };
 
+    $("button#textproblem").click(function(click){
+        window.location.href = $(click.currentTarget).attr("data-href");
+    });
+
     $("ol#matches li a.sidebyside-link").click(function(click){
         click.stopPropagation();
     });

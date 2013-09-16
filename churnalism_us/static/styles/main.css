@@ -264,6 +264,17 @@ p.screenshots { padding: 0 60px; }
 p.screenshots img { margin: auto 20px; }
 .screenshot-thumbnail { width: 320px; height: 200px; }
 
+button#textproblem {
+    background-color: transparent;
+    color: #24838e;
+    text-indent: 0;
+    font-style: italic;
+    display: inline;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+}
+
 div.extension-dl
     { float:right; width: 474px; margin-right: -22px; margin-top: -45px;
       border: 1px solid #cccccc; padding: 7px; border-radius: 4px;
