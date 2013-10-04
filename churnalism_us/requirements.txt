@@ -16,6 +16,7 @@ django-compressor>=1.1.2
 google-api-python-client==1.0beta8
 oauth2==1.5.211
 South==0.7.6
+unicodecsv
 
 # These are for publicity machine are aren't strictly required
 python-dateutil
