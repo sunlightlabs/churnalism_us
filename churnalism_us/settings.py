@@ -193,11 +193,12 @@ LOGGING = {
 
 
 EMAIL_HOST = 'smtp.postmarkapp.com'
-EMAIL_HOST_USER = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
-EMAIL_HOST_PASSWORD = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
 EMAIL_BACKEND = 'postmark.backends.PostmarkBackend'
-POSTMARK_API_KEY = '8775185c-f59c-4a2e-8ae3-4950f6cd66eb'
 POSTMARK_SENDER = 'churnalism@sunlightfoundation.com'
+# Set these in local_settings.py:
+# POSTMARK_API_KEY
+# POSTMARK_API_USER
+# POSTMARK_API_PASSWORD
 
 
 SIDEBYSIDE = {
