@@ -10,11 +10,12 @@ import requests
 from operator import itemgetter
 from urlparse import urlparse
 from django.core.mail import send_mail
+from django.contrib import messages
 from lepl.apps.rfc3696 import HttpUrl
 from django import forms
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound
+from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound,HttpResponseBadRequest, HttpResponseRedirect
 from utils.fetch_and_clean import fetch_and_clean
 
 from apiproxy.blacklist import check_url_blacklist
@@ -22,22 +23,39 @@ from apiproxy.models import SearchDocument, Match, MatchedDocument, IncorrectTex
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
+from humanity.forms import HumanityForm
 
 from django.conf import settings
 
 
-def contact_submission(request):
-    params = request.POST
-    if params.has_key('email') and params.has_key('text') and params.has_key('name'):
-        #has required params
-        
-        send_mail('Contact from %s at %s' % (params['name'], params['email']), params['text'], 'contact@sunlightfoundation.com', settings.ADMIN_EMAILS)
-       
-        return HttpResponse('OK', content_type="text/plain")
-        
-    else:
-        raise HttpResponseNotFound
+class ContactForm(HumanityForm):
+    name = forms.CharField(label="Name")
+    email = forms.EmailField(label="Email")
+    text = forms.CharField(widget=forms.Textarea)
 
+def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST, label_suffix='')
+        if form.is_valid():
+            try:
+                send_mail('Contact from %s at %s' % (request.POST['name'],
+                                                     request.POST['email']),
+                          request.POST['text'],
+                          'contact@sunlightfoundation.com',
+                          settings.ADMIN_EMAILS)
+                messages.success(request, 'Thank you for contacting us! We will get back to you shortly.')
+                return HttpResponseRedirect("/contact/")
+            except:
+                messages.error(request, 'Sorry, your message could not be sent. Please email us directly at %s' % settings.NONPROFIT_EMAIL)
+
+        return render(request, "contact.html", {"form": form})
+
+    elif request.method == "GET":
+        form = ContactForm(label_suffix='')
+        return render(request, "contact.html", {"form": form})
+
+    else:
+        raise HttpResponseBadRequest()
 
 def ensure_url(url):
     if url.startswith('http://') or url.startswith('https://'):
