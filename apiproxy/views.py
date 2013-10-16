@@ -116,6 +116,9 @@ def document_list(request, doctype=None):
 def document(request, doctype, docid):
     """
     Proxies requests for specific documents to Superfastmatch.
+
+    Does not implement the DELETE method so as to avoid access
+    control issues.
     """
 
     sfm = from_django_conf()
@@ -129,9 +132,12 @@ def document(request, doctype, docid):
         response = sfm.add(doctype, docid, text=text, defer=defer, **params)
         http_status = 202
 
-    else:
+    elif request.method == 'GET':
         response = sfm.document(doctype, docid)
         http_status = 200
+
+    else:
+        return HttpResponseBadRequest('Only the GET and POST methods are supported.')
 
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
