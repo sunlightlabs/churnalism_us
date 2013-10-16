@@ -1,3 +1,5 @@
+TAGS
+*.log
 *.pyc
 .*.swp
 .*.swo
