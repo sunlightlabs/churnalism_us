@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'sidebyside',
     'apiproxy',
     'analytics',
+    'histograms',
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
