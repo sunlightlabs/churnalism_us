@@ -4,7 +4,9 @@ httplib2
 lxml
 readability-lxml
 requests
-gevent>=1.0dev
+git+git://github.com/surfly/gevent.git@1.0rc3#egg=gevent
+git+https://github.com/sunlightlabs/sfapp.git@5914ae5b0f672f6260d63744d2c22744be59ae82#egg=sfapp
+boto==2.14.0
 progressbar
 ipython
 django>=1.4.1
@@ -13,6 +15,7 @@ django-devserver
 django-staticfiles>=1.2.1
 django-storages>=1.1.4
 django-compressor>=1.1.2
+django-memcached==0.1.2
 google-api-python-client==1.0beta8
 oauth2==1.5.211
 South==0.7.6
