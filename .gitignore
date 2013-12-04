@@ -1,4 +1,8 @@
 TAGS
+/*.csv
+/*.xml
+/*.xml.bz2
+/*.zip
 *.log
 *.pyc
 .*.swp
