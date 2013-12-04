@@ -2,11 +2,11 @@ mysql-python
 lepl
 httplib2
 lxml
-readability-lxml
-requests
-git+git://github.com/surfly/gevent.git@1.0rc3#egg=gevent
 git+https://github.com/sunlightlabs/sfapp.git@5914ae5b0f672f6260d63744d2c22744be59ae82#egg=sfapp
-boto==2.14.0
+boto==2.19.0
+readability-lxml==0.2.6.1
+requests==1.2.3
+gevent==1.0
 progressbar
 ipython
 django>=1.4.1
