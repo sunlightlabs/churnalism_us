@@ -89,11 +89,14 @@ class Histogram(models.Model):
         self.save()
 
     def total_mass(self):
-        if norm_coeff is None:
-            agg = self.bins.aggregate(total_mass=Sum('mass'))
-            return agg['total_mass']
+        if self.norm_coeff is None:
+            agg = self.bins.aggregate(total_mass=models.Sum('mass'))
+            return agg['total_mass'] or 0
         else:
             return self.norm_coeff
+
+    def bin_iterator(self):
+        return self.bins.order_by('ordinal_position')
 
 class HistogramBin(models.Model):
     class Meta:
