@@ -9,17 +9,20 @@ requests==1.2.3
 gevent==1.0
 progressbar
 ipython
-django>=1.4.1
-django-debug-toolbar
+django==1.4.1
+django-extensions==0.9
+django-debug-toolbar==0.9.4
 django-devserver
 django-staticfiles>=1.2.1
 django-storages>=1.1.4
 django-compressor>=1.1.2
 django-memcached==0.1.2
+python-memcached==1.48
 google-api-python-client==1.0beta8
 oauth2==1.5.211
 South==0.7.6
 unicodecsv
+natsort==3.0.2
 
 # These are for publicity machine are aren't strictly required
 python-dateutil
