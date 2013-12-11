@@ -1,3 +1,36 @@
+# -*- coding: utf-8 -*-
+"""
+The Histogram model is a base class for creating your own histogram models.
+To allow your Histogram subclass to provide sufficient precision, the digit
+and decimal widths of the column types are deferred to a metaclass that is
+created by histogram_metaclass() and histogram_bin_metaclass().
+
+At issue is whether you want your data stored in normalized form, where each
+bin represents a proportion of the whole and the sum is 1 versus the
+denormalized form where each bin represents some (possibly very large) tally.
+
+To use Histogram for a normalized histogram:
+    class MyHistogram(Histogram):
+        __metaclass__ = histogram_metaclass(max_digits=22,
+                                            decimal_places=21,
+                                            normalized=True)
+    class MyHistogramBin(HistogramBin):
+        __metaclass__ = histogram_bin_metaclass(MyHistogram)
+
+To use Histogram for a denormalized histogram, where you know your data will
+never represent more than 100 items:
+    class YourHistogram(Histogram):
+        __metaclass__ = histogram_metaclass(max_digits=3,
+                                            decimal_places=0,
+                                            normalized=False)
+    class YourHistogramBin(HistogramBin):
+        __metaclass__ = histogram_bin_metaclass(Histogram)
+
+If the HistogramBin subclasses seem like mostly boiler-plate, that's because
+they are in this case. The bin subclass is kept separate from the histogram
+subclass to allow your own customizations.
+"""
+
 from __future__ import division, print_function
 
 from django.db import models
@@ -107,7 +140,7 @@ class HistogramBin(models.Model):
 
     ordinal_position = models.IntegerField(null=False)
     label = models.CharField(max_length=200)
-    
+
     def denormalized_mass(self):
         return self.mass / (self.histogram.norm_coeff or 1)
 
