@@ -112,7 +112,7 @@ var show_histogram = function (url, target, options) {
                            .orient('left');
 
         var svg = d3.select(target)
-                    .append('svg')
+                    .insert('svg', ':first-child')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
                     .append('g')

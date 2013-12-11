@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load jsonify %}
+{% block head %}
+    <link id="match-dashboard" href="{% url match-dashboard %}" rel="" type="application/json">
+    <link id="match-curve-histogram" href="{% url match-curve-histogram %}" rel="" type="application/json">
+    <link id="match-overlap-pct-histogram" href="{% url pct-overlap-histo %}" rel="" type="application/json">
+    <link id="match-overlap-chars-histogram" href="{% url chars-overlap-histo %}" rel="" type="application/json">
+    <script type="text/javascript">
+        var sel_doc_type = {{ sel_doc_type|jsonify }};
+    </script>
+<style type="text/css">
+    div.histo-container {
+        margin-bottom: 3em;
+    }
+    div.histo-footnote {
+        text-align: right;
+        font-size: 90%;
+    }
+    div#match-curve-histo {
+        width: 800px;
+        height: 420px;
+        margin: 14px 0 0 0;
+    }
+    .centered {
+        margin: 0 auto;
+        text-align: center;
+    }
+    .bar rect {
+        fill: #E3BA22;
+        fill: #F2DA57;
+        shape-rendering: crispEdges;
+    }
+    .bar text {
+        fill: #333;
+    }
+    .axis path, .axis line {
+        fill: none;
+        stroke: #777;
+        shape-rendering: crispEdges;
+    }
+    .axis text {
+        fill: #333;
+    }
+</style>
+{% endblock head %}
+{% block title %}Churnalism Match Dashboard{% endblock title%}
+{% block nav-search %}{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block body %}
+<div id="fullColumn">
+
+    <div class="centered">
+        <span>Doctype:</span>
+        <select id="doc-type">
+            {% for doc_type in doc_types %}
+            <option value="{{ doc_type }}" {% ifequal doc_type sel_doc_type %}selected{% endifequal %}>{{ doc_type }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="match-curve-histo" class="histo-container">
+        {# svg will be inserted here #}
+    </div>
+
+    <div id="match-overlap-pct-histo" class="histo-container">
+        <div class="histo-footnote">
+            The current minimum percentage is {{ minimum_coverage_pct }}%
+        </div>
+    </div>
+
+    <div id="match-overlap-chars-histo" class="histo-container">
+        <div class="histo-footnote">
+            The current minimum character threshold is {{ minimum_coverage_chars }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.master }}
+    <script type="text/javascript" src="{{ STATIC_URL }}d3.v3.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}histograms.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}scripts/sidebyside_dashboards.js"></script>
+{% endblock js %}

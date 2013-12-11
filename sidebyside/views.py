@@ -438,7 +438,9 @@ def match_dashboard(request, doc_type=None):
 
     ctx = {
         'sel_doc_type': doc_type,
-        'doc_types': doc_types
+        'doc_types': doc_types,
+        'minimum_coverage_pct': settings.SIDEBYSIDE['minimum_coverage_pct'],
+        'minimum_coverage_chars': settings.SIDEBYSIDE['minimum_coverage_chars']
     }
     return render(request, 'sidebyside/match_dashboard.html', ctx)
 

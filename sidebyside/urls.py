@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.views.generic.simple import direct_to_template
-from sidebyside.models import MatchCurveHistogram
+from sidebyside.models import MatchCurveHistogram, MatchPercentHistogram, MatchCharsHistogram
 from histograms.views import HistogramJSONView
 
 urlpatterns = patterns('sidebyside.views',
@@ -37,6 +37,8 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^matches/$', 'match_dashboard', name='match-dashboard'),
     url(r'^matches/(?P<doc_type>\d+)/$', 'match_dashboard', name='match-dashboard'),
     url(r'^matchcurve/$', HistogramJSONView.as_view(histogram_model=MatchCurveHistogram), name='match-curve-histogram'),
-    url(r'^matchcurve/(?P<doc_type>\d+)/$', HistogramJSONView.as_view(histogram_model=MatchCurveHistogram), name='match-curve-histogram')
+    url(r'^matchcurve/(?P<doc_type>\d+)/$', HistogramJSONView.as_view(histogram_model=MatchCurveHistogram), name='match-curve-histogram'),
+    url(r'^pctoverlaphisto/$', HistogramJSONView.as_view(histogram_model=MatchPercentHistogram), name='pct-overlap-histo'),
+    url(r'^charoverlaphisto/$', HistogramJSONView.as_view(histogram_model=MatchCharsHistogram), name='chars-overlap-histo')
 )
 
