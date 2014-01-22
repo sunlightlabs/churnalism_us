@@ -32,10 +32,10 @@ def append_month_to_title(page_dom):
     return page_dom
 
 def add_url_attrib(page_dom):
-    title_elem = page_dom.find('title')
-    title1 = urllib.quote(title_elem.text.encode('utf-8'))
-    title2 = title1.replace(u' ', u'_')
-    title3 = title2.replace(u'%28', u'(').replace(u'%29', u')')
+    title = page_dom.find('title').text
+    title1 = title.replace(u' ', u'_')
+    title2 = urllib.quote(title1.encode('utf-8'))
+    title3 = title2.replace('%28', '(').replace('%29', ')')
     title4 = title3[0].upper() + title3[1:]
     url = u"https://en.wikipedia.org/wiki/{title}".format(title=title4)
     page_dom.attrib['url'] = url
