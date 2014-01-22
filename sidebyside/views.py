@@ -20,6 +20,7 @@ from utils.fetch_and_clean import fetch_and_clean
 
 from apiproxy.blacklist import check_url_blacklist
 from apiproxy.models import SearchDocument, Match, MatchedDocument, IncorrectTextReport
+from sidebyside.models import MatchCurveHistogram
 
 import superfastmatch
 from superfastmatch.djangoclient import from_django_conf
@@ -441,4 +442,23 @@ def describe_text_problem(request, uuid):
         scope['form'] = ProblemReportForm()
 
     return render(request, 'sidebyside/text_problem.html', scope)
+
+def match_dashboard(request, doc_type=None):
+    doc_types = [grp['doc_type']
+                 for grp in (MatchCurveHistogram.objects
+                                                .values('doc_type')
+                                                .distinct()
+                                                .order_by('doc_type'))]
+    if doc_type is not None:
+        doc_type = int(doc_type)
+    if doc_type == '':
+        doc_type = None
+
+    ctx = {
+        'sel_doc_type': doc_type,
+        'doc_types': doc_types,
+        'minimum_coverage_pct': settings.SIDEBYSIDE['minimum_coverage_pct'],
+        'minimum_coverage_chars': settings.SIDEBYSIDE['minimum_coverage_chars']
+    }
+    return render(request, 'sidebyside/match_dashboard.html', ctx)
 

@@ -23,19 +23,22 @@ def latest(number_latest):
 
     for rm in recent_matches:
         if rm['search_document__uuid'] not in dedupe and len(churns) < number_latest:
-            churns.append({'title': rm['search_document__title'], 
+            churns.append({'title': rm['search_document__title'],
                            'uuid': rm['search_document__uuid']})
             dedupe.append(rm['search_document__uuid'])
 
     return t.render(template.Context({'latest': churns[:number_latest] }))
- 
+
 @register.simple_tag
 def most_read(number_viewed):
     t = template.loader.get_template('apiproxy/most_viewed.html')
-    with file(os.path.join(settings.PROJECT_ROOT, 'most_read.dat'), 'r') as inf:
-        churns = pickle.load(inf)
-        return t.render(template.Context({'viewed': churns[:number_viewed]}))
- 
+    try:
+        with file(os.path.join(settings.PROJECT_ROOT, 'most_read.dat'), 'r') as inf:
+            churns = pickle.load(inf)
+            return t.render(template.Context({'viewed': churns[:number_viewed]}))
+    except IOError:
+        return t.render(template.Context({'viewed': []}))
+
 @register.simple_tag
 def most_shared(number_shared):
     t = template.loader.get_template('apiproxy/most_shared.html')
@@ -44,6 +47,6 @@ def most_shared(number_shared):
     for s in sh:
         matches = Match.objects.filter(search_document=s)
         if len(matches) > 0:
-            shared.append({'percent': matches[0].percent_churned, 'title': s.title, 'text': s.text, 'uuid': s.uuid}) 
+            shared.append({'percent': matches[0].percent_churned, 'title': s.title, 'text': s.text, 'uuid': s.uuid})
     return t.render(template.Context({'shared': shared }))
- 
+

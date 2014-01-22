@@ -148,8 +148,17 @@ class IncorrectTextReport(models.Model):
         unique_together = ("search_document", "remote_addr")
 
 
+class MatchedDocumentManager(models.Manager):
+    def doc_types(self):
+        return [grp['doc_type']
+                for grp in (self
+                            .values('doc_type')
+                            .distinct())]
+
 class MatchedDocument(models.Model):
     """ This caches metadata about matched documents in SFM """
+
+    objects = MatchedDocumentManager()
 
     doc_type = models.IntegerField(blank=False,
                                    null=False)

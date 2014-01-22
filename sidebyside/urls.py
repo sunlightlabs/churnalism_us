@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.views.generic.simple import direct_to_template
+from sidebyside.models import MatchCurveHistogram, MatchPercentHistogram, MatchCharsHistogram
+from histograms.views import HistogramJSONView
 
 urlpatterns = patterns('sidebyside.views',
     # Examples:
@@ -30,7 +32,13 @@ urlpatterns = patterns('sidebyside.views',
     url(r'^ie_loading/$', direct_to_template, {'template': 'sidebyside/ie_loading.html'}, name='sidebyside-ie-loading'),
     url(r'^firefox/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'ffext_recall', name='sidebyside-firefox-uuid-recall'),
     url(r'^chrome/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'chromeext_recall', name='sidebyside-chrome-uuid-recall'),
-    url(r'^generic/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'generic_recall', name='sidebyside-generic')
+    url(r'^generic/(?P<uuid>[a-z0-9]{32})/(?P<doctype>\d+)/(?P<docid>\d+)/$', 'generic_recall', name='sidebyside-generic'),
 
+    url(r'^matches/$', 'match_dashboard', name='match-dashboard'),
+    url(r'^matches/(?P<doc_type>\d+)/$', 'match_dashboard', name='match-dashboard'),
+    url(r'^matchcurve/$', HistogramJSONView.as_view(histogram_model=MatchCurveHistogram), name='match-curve-histogram'),
+    url(r'^matchcurve/(?P<doc_type>\d+)/$', HistogramJSONView.as_view(histogram_model=MatchCurveHistogram), name='match-curve-histogram'),
+    url(r'^pctoverlaphisto/$', HistogramJSONView.as_view(histogram_model=MatchPercentHistogram), name='pct-overlap-histo'),
+    url(r'^charoverlaphisto/$', HistogramJSONView.as_view(histogram_model=MatchCharsHistogram), name='chars-overlap-histo')
 )
 

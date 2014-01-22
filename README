@@ -1,1 +1,77 @@
-git repo for churnalism US frontend
+# Churnalism US
+
+## Project Setup
+
+### Python and Django
+
+Assuming you use pip to manage your python packages (properly isolated in a virtualenv), install the pre-requisites like so:
+
+```bash
+pip install -r churnalism_us/requirements.txt
+```
+
+### SuperFastMatch
+[SuperFastMatch](https://github.com/mediastandardstrust/superfastmatch) handles the longest-common-substring search. It's README should step you through installing it. How you deploy it is up to you.
+
+### MySQL
+The project is developed against a MySQL database. Your mileage may vary with other database servers. Many MySQL installations use a latin1 character set by default. For Churnalism you will need to use the utf8 character set, like so:
+
+```sql
+CREATE DATABASE `churnalism` DEFAULT CHARACTER SET utf8;
+```
+
+
+### Configuration
+
+The churnalism_us project implements a proxy for superfastmatch that logs matches and augments search results. This requires two superfastmatch configurations. The `default` config should point to your actual superfastmatch server. The 'sidebyside' config should point at the running churnalism_us project. This is config will probably serve well for a development environment:
+
+```json
+SUPERFASTMATCH = {
+    'default': {
+        'url': 'http://127.0.0.1:8080'
+    },
+    'sidebyside': {
+        'url': 'http://127.0.0.1:8000/api'
+    }
+}
+```
+
+The `apiproxy` app augments the results returned by superfastmatch. These are configurable, but these are the settings required by the `sidebyside` app are noted here:
+
+APIPROXY = {
+    'document_timeout': timedelta(hours=4),
+    'proper_noun_threshold': 0.8,
+    'commonality_threshold': 0.3,
+    'minimum_unique_characters': 4,
+    'embellishments': {
+        'reduce_frags': False,      # Required by sidebyside
+        'add_coverage': True,       # Required by sidebyside
+        'add_density': True,        # Required by sidebyside
+        'add_snippets': True,       # Required by sidebyside
+        'prefetch_documents': False
+    }
+}
+
+The `sidebyside` app filters out some results. The filtering thresholds are configuration like so:
+
+```json
+SIDEBYSIDE = {
+    'minimum_coverage_pct': 0,  # Plain-english percentages, e.g. 3 = 3%
+    'minimum_coverage_chars': 0
+}
+```
+
+These thresholds are handled in the `sidebyside` app so that the values can be lowered to expose more matches without having to re-run the searches.
+
+### Google Analytics
+The most-read stories are pulled from Google Analytics. If you want to skip this you can remove `'analytics'` from the `INSTALLED_APPS` in your Django settings.
+
+
+### Last Steps
+Finally, run
+
+```bash
+python manage.py syncdb
+python manage.py migrate
+```
+

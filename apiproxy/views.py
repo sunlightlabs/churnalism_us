@@ -26,7 +26,8 @@ from copy import deepcopy
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
-from django.http import (HttpResponse, HttpResponseNotFound,
+from django.http import (QueryDict,
+                         HttpResponse, HttpResponseNotFound,
                          HttpResponseBadRequest, HttpResponseServerError,
                          Http404)
 from django.shortcuts import get_object_or_404
@@ -116,22 +117,28 @@ def document_list(request, doctype=None):
 def document(request, doctype, docid):
     """
     Proxies requests for specific documents to Superfastmatch.
+
+    Does not implement the DELETE method so as to avoid access
+    control issues.
     """
 
     sfm = from_django_conf()
-    if request.method == 'POST':
-        params = request.POST
+    if request.method == 'POST' or request.method == 'PUT':
+        params = QueryDict(request.raw_post_data) if request.method == 'PUT' else request.POST
+        defer = (request.method == 'PUT')
         text = params['text']
-        defer = ('put' not in params) or (params['put'] == 'False')
         params = dict([(k, v)
                        for (k, v) in params.items()
                        if k not in ['put', 'text']])
         response = sfm.add(doctype, docid, text=text, defer=defer, **params)
         http_status = 202
 
-    else:
+    elif request.method == 'GET':
         response = sfm.document(doctype, docid)
         http_status = 200
+
+    else:
+        return HttpResponseBadRequest('Only the GET and POST methods are supported.')
 
     if isinstance(response, str):
         return HttpResponse(response, content_type='text/html')
