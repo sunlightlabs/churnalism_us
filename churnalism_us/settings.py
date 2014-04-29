@@ -154,7 +154,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'debug_toolbar',
-    'django_memcached',
     'django_extensions',
     'storages',
 

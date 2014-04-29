@@ -32,7 +32,6 @@ urlpatterns = patterns('',
     url(r'^beta/$', direct_to_template, {'template': 'beta.html'}, name='beta-instructions'),
     url(r'^sidebyside/', include('sidebyside.urls')),
     url(r'^api/', include('apiproxy.urls')),
-    url(r'^cache/', include('django_memcached.urls')),
     url(r'^iframe/', direct_to_template, {'template': 'extension_iframe.html'}, name="iframe"),
     url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
 )
