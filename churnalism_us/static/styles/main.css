@@ -163,12 +163,6 @@ ul.messages li.error, ul.errorlist li { font-weight: bold; color: red; }
 #api a { background: url(../images/nav_api.jpg) top left no-repeat; }
 #api a:hover { background: url(../images/nav_api.jpg) bottom left no-repeat; }
 #sunlight { width: 65px; }
-#logo_mst {
-    background: url(../images/logo_mst.jpg) left 3px no-repeat;
-    float: left;
-    width: 65px;
-    margin-right: 15px;
-}
 #logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
 
 #share { float: right; margin-top: 0px; font-size: 95%; margin-right: 34px; vertical-align: top; }
@@ -333,11 +327,11 @@ div#extension-dl-ie a span
     margin: 0 auto;
 }
 .branding-bar .branding-bar_mst-logo {
-    background: rgba(0, 0, 0, 0) url(../images/logo_mst.jpg) no-repeat 50% 50%;
+    background: rgba(0, 0, 0, 0) url(../images/logo_mst.png) no-repeat 50% 50%;
     background-size: 100% 100%;
     font-size: 0;
     vertical-align: middle;
-    width: 65px;
+    width: 49px;
     height: 35px;
     display: inline-block;
 }
