@@ -1,0 +1,5 @@
+Message about Churnalism from {{name}} ({{email}}) at {{now}}:
+
+{{text}}
+
+Humanity verification: {{humanity_question}} = {{humanity_answer}}

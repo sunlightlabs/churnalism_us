@@ -2,11 +2,14 @@
 
 from __future__ import division
 
+import datetime
 import logging
 import json
 import httplib
 import hashlib
 import requests
+import pytz
+from copy import deepcopy
 from operator import itemgetter
 from urlparse import urlparse
 from django.core.mail import send_mail
@@ -16,6 +19,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseServerError, HttpResponseNotFound,HttpResponseBadRequest, HttpResponseRedirect
+from django.template.loader import render_to_string
 from utils.fetch_and_clean import fetch_and_clean
 
 from apiproxy.blacklist import check_url_blacklist
@@ -34,14 +38,29 @@ class ContactForm(HumanityForm):
     email = forms.EmailField(label="Email")
     text = forms.CharField(widget=forms.Textarea)
 
+    def email_subject(self):
+        if self.is_valid() == False:
+            raise StandardError(u"Cannot generate email subject for invalid form.")
+
+        return 'Contact from {name} ({email})'.format(**self.cleaned_data)
+
+    def email_body(self):
+        if self.is_valid() == False:
+            raise StandardError(u"Cannot generate email body for invalid form.")
+
+        local_tz = pytz.timezone(settings.TIME_ZONE)
+        local_now = datetime.datetime.now(local_tz).isoformat()
+        ctx = deepcopy(self.cleaned_data)
+        ctx.update({'now': local_now})
+        return render_to_string("sidebyside/contact_email_body.txt", ctx)
+
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST, label_suffix='')
         if form.is_valid():
             try:
-                send_mail('Contact from %s at %s' % (request.POST['name'],
-                                                     request.POST['email']),
-                          request.POST['text'],
+                send_mail(form.subject(),
+                          form.email_body(),
                           'contact@sunlightfoundation.com',
                           settings.ADMIN_EMAILS)
                 messages.success(request, 'Thank you for contacting us! We will get back to you shortly.')
@@ -61,13 +80,13 @@ def contact(request):
 def ensure_url(url):
     if url.startswith('http://') or url.startswith('https://'):
         return url
-    
+
     url = 'http://' + url
 
     validator = HttpUrl()
     if validator(url) == True:
         return url
-    
+
     raise ValueError('{url} is not a valid URL.'.format(url=url))
 
 
@@ -192,7 +211,7 @@ def search_against_uuid(request, uuid):
 
 def search_against_url(request, url):
     """
-    Accepts a URL as either a suffix of the URI or a POST request 
+    Accepts a URL as either a suffix of the URI or a POST request
     parameter. Downloads the content, feeds it through the
     readability article grabber, then submits the article text
     to superfastmatch for comparison.
@@ -218,7 +237,7 @@ def search_against_url(request, url):
         for r in sfm_results['documents']['rows']:
             if r.get('url') == url:
                 sfm_results['documents']['rows'].remove(r)
-    
+
         if sfm_results.has_key('text'): text = sfm_results['text']
         else: text = ''
 
@@ -378,7 +397,7 @@ def generic_recall(request, uuid, doctype, docid):
 
 def shared(request, uuid):
     """ Mark a SearchDocument as shared -- for analytics and footer modules """
-    
+
     try:
         doc = SearchDocument.objects.get(uuid=uuid)
         if doc.times_shared: 
