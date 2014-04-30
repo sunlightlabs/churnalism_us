@@ -319,7 +319,7 @@ div#extension-dl-ie a span
 .branding-bar {
     background-color: #E7E6E2;
 }
-.branding-bar .branding-bar_trigger {
+.branding-bar a {
     color: inherit;
 }
 .branding-bar .branding-bar_container {
