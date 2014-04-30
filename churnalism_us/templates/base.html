@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 {% load static %}
 {% load churnstats %}
-<html>
+<html class="bb_wrapper">
     <head>
+        <link rel="stylesheet" href="https://sf-icons.s3.amazonaws.com/css/sf-icons.css">
+        {% block brandingbar-css %}
+        <link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/css/brandingbar.css">
+        <link rel="stylesheet" href="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/css/brandingbar-default.css">
+        {% endblock brandingbar-css %}
+
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
         <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}styles/main.css">
         <!--[if lt IE 9]>
@@ -52,14 +58,32 @@
     </head>
 
     <body class="{% block bodyclass %}{% endblock %}">
+        <div class="branding-bar" data-bb-brandingbar="true">
+            <div class="branding-bar_container">
+                <div class="branding-bar_links">
+                    <a class="social" href="https://www.facebook.com/sunlightfoundation"><span class="icon icon-facebook"></span></a>
+                    <a class="social" href="https://twitter.com/sunfoundation"><span class="icon icon-twitter"></span></a>
+                    <a class="social" href="https://plus.google.com/+sunlightfoundation"><span class="icon icon-google-plus"></span></a>
+                    <a class="branding-bar_trigger" data-bb-toggle=".bb_wrapper" href="http://sunlightfoundation.com/about/">About Sunlight Foundation</a>
+                </div>
+                <div class="branding-bar_logo">
+                    <span class="branding-bar_productof">a product of </span>
+                    <a class="branding-bar_sunlight-logo" href="http://www.sunlightfoundation.com">Sunlight Foundation</a>
+                    <span class="branding-bar_productof">&nbsp; and </span>
+                    <a class="branding-bar_mst-logo" href="http://mediastandardstrust.org">Media Standards Trust</a>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+
         <header>
             <nav>
                 <ul>
                     <li id="about"><a class="textReplace" href="{% url about %}">About</a></li>
                     <li id="contact"><a class="textReplace" href="{% url contact %}">Contact</a></li>
-                    <li id="downloads" style="width:105px;"><a class="textReplace" href="{% url downloads %}">Downloads</a></li>
-                    <li id="sunlight" class="textReplace" >Product of: <a class="textReplace" id="logo_mst" href="http://mediastandardstrust.org/">Media Standards Trust</a> <a id="logo_sunlight" class="textReplace" href="http://sunlightfoundation.com">Sunlight Foundation</a></li>
-                </ul>    
+                    <li id="downloads"><a class="textReplace" href="{% url downloads %}">Downloads</a></li>
+                    <!-- <li id="sunlight" class="textReplace" >Product of: <a class="textReplace" id="logo_mst" href="http://mediastandardstrust.org/">Media Standards Trust</a> <a id="logo_sunlight" class="textReplace" href="http://sunlightfoundation.com">Sunlight Foundation</a></li> -->
+                </ul>
             </nav>   
             <div class="clear"></div> 
             <h1>
@@ -174,4 +198,8 @@
         }
     </script>
     {% endblock js %}
+
+    {% block brandingbar-js %}
+    <script src="https://sunlight-cdn.s3.amazonaws.com/brandingbar/0.3/js/brandingbar.min.js.gz"></script>
+    {% endblock brandingbar-js %}
 </html>

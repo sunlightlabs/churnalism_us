@@ -106,7 +106,15 @@ button, .buttonLink { width: auto; text-indent: -9999em; display: block; border:
 .clear { clear: both;}
 
 
-header, #container, #resources, footer { width: 940px; margin: 0 auto; padding: 0 10px;}
+header, #container, #resources, footer {
+    width: 940px; margin: 0 auto;
+}
+#container, #resources, footer {
+    padding: 0 10px;
+}
+header {
+    padding: 0;
+}
 body { background: url(../images/bg.jpg) top left repeat;}
 
 #ltColumn { width: 229px; float: left; background: #fcfbfb url(../images/ltColumnBorder.png) left top repeat-y; border-top: 1px solid #e5e1dd; border-bottom: 1px solid #e5e1dd; margin-top: 2px; padding-top: 77px; padding-bottom: 50px;}
@@ -135,15 +143,16 @@ h4 { font-family: Georgia, 'Times New Roman', Times, serif; font-size: 140%; fon
 h5 { color: #686863; font-family: Georgia, 'Times New Roman', Times, serif; font-weight: normal; font-size: 125%; margin-bottom: 5px;}
 #ltColumn h2 { padding-left: 25px;}
 
-nav { float: right;}
-nav li { width: 88px; height: 45px; float: left;}
-nav li a { width: 88px; height: 45px; }
+header nav { height: 45px; float: right;}
+header nav li { width: 88px; height: 45px; float: left;}
+header nav li a { width: 88px; height: 45px; }
 #about a { background: url(../images/nav_about.jpg) top left no-repeat;  }
 #about a:hover { background: url(../images/nav_about.jpg) bottom left no-repeat; } 
 form#contactform input#id_humanity_answer { width: auto; }
 form#contactform label[for="id_humanity_answer"] { display: inline-block; }
 #contact a { background: url(../images/nav_contact.jpg) top left no-repeat; }
 #contact a:hover { background: url(../images/nav_contact.jpg) bottom left no-repeat; }
+#downloads { width: 105px; }
 #downloads a { background: url(../images/nav_downloads.jpg) top left no-repeat; width:105px; }
 #downloads a:hover { background: url(../images/nav_downloads.jpg) bottom left no-repeat; }
 
@@ -153,11 +162,14 @@ ul.messages li.error, ul.errorlist li { font-weight: bold; color: red; }
 
 #api a { background: url(../images/nav_api.jpg) top left no-repeat; }
 #api a:hover { background: url(../images/nav_api.jpg) bottom left no-repeat; }
-#sunlight { width: 293px;}
-#sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; width: 293px; }
-#logo_mst { background: url(../images/logo_mst.jpg) left 3px no-repeat; margin-left: 100px; float: left; width: 65px;}
+#sunlight { width: 65px; }
+#logo_mst {
+    background: url(../images/logo_mst.jpg) left 3px no-repeat;
+    float: left;
+    width: 65px;
+    margin-right: 15px;
+}
 #logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
-#sunlight { background: url(../images/nav_sunlight.jpg) top left no-repeat; }
 
 #share { float: right; margin-top: 0px; font-size: 95%; margin-right: 34px; vertical-align: top; }
 #share label { margin-top: 17px; float: left; margin-right: 5px;}
@@ -309,3 +321,23 @@ div#extension-dl-ie a img
 div#extension-dl-ie a span
     { font-size: 13px; opacity: 0.9;
       color: rgb(124, 124, 123); margin: 10px 0px; float: right; width: 132px; }
+
+.branding-bar {
+    background-color: #E7E6E2;
+}
+.branding-bar .branding-bar_trigger {
+    color: inherit;
+}
+.branding-bar .branding-bar_container {
+    width: 940px;
+    margin: 0 auto;
+}
+.branding-bar .branding-bar_mst-logo {
+    background: rgba(0, 0, 0, 0) url(../images/logo_mst.jpg) no-repeat 50% 50%;
+    background-size: 100% 100%;
+    font-size: 0;
+    vertical-align: middle;
+    width: 65px;
+    height: 35px;
+    display: inline-block;
+}
