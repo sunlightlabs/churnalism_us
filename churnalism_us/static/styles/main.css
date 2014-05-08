@@ -148,6 +148,9 @@ header nav li { width: 88px; height: 45px; float: left;}
 header nav li a { width: 88px; height: 45px; }
 #about a { background: url(../images/nav_about.jpg) top left no-repeat;  }
 #about a:hover { background: url(../images/nav_about.jpg) bottom left no-repeat; } 
+#get-involved {width: 127px; }
+#get-involved a { width: 127px; background: url(../images/nav_get-involved.jpg) top left no-repeat;  }
+#get-involved a:hover { background: url(../images/nav_get-involved.jpg) bottom left no-repeat; } 
 form#contactform input#id_humanity_answer { width: auto; }
 form#contactform label[for="id_humanity_answer"] { display: inline-block; }
 #contact a { background: url(../images/nav_contact.jpg) top left no-repeat; }
