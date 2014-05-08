@@ -16,10 +16,20 @@
     {% endif %}
     <div id="halfColumn">
         <p id="introText">Ever wonder if the news story you're reading is a product of real journalism or just a spin off of another story posted elsewhere? <span class="introHighlight">Discover the journalism you can trust and what you should question</span>.</p>
+        <div>
+            {% block share_buttons %}
+            <div id="gigya-share" class="share-buttons"
+                data-socialite="auto"
+                data-services="twitter, facebook"
+                data-options="show-counts=true"
+                data-twitter-tweet-options="text=Use @SunFoundation's Churnalism tool to detect possible plagiarism or copy/paste journalism:&amp;url=http://churnalism.sunlightfoundation.com/"
+                data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
+            {% endblock %}
+        </div>
     </div>
     <div id="halfColumnRt">
         {% if allow_search %}
-        <form action="{% url sidebyside-search %}" method="POST">
+        <form action="{% url sidebyside-search %}" method="POST" class="search-form">
             <ul class="withSpace">
                 <li>
                     {% csrf_token %}
@@ -39,7 +49,7 @@
                 <li>
             </ul>
         </form>
-
+        <div class="clear"></div>
         <div id="extension-dl-chrome" style="display: none;" class="extension-dl">
             <a href="https://chrome.google.com/webstore/detail/churnalism/igpjommbbpdncpcnjkombboimdclgdhm?hl=en&gl=US"><img src="{{ STATIC_URL }}images/ChromeWebStore_Badge_v2_206x58.png"></a>
         </div>

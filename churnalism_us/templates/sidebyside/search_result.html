@@ -3,7 +3,6 @@
 {% load domain %}
 {% block head %}
 {% endblock %}
-{% block bodyclass %}home{% endblock %}
 {% block title %}Churnalism - Search Results{% endblock title%}
 {% block share_url %}<label>Share this page:</label><input id="share-page-url" type="text" value="{{ BASE_URL }}{% url sidebyside-uuid-search uuid=results.uuid %}"></input>{% endblock %}
 {% block social_media_url %} {% url sidebyside-uuid-search uuid=results.uuid %} {% endblock %}

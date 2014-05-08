@@ -165,10 +165,41 @@ ul.messages li.error, ul.errorlist li { font-weight: bold; color: red; }
 #sunlight { width: 65px; }
 #logo_sunlight { background: url(../images/logo_sunlight.jpg) left 3px no-repeat; float: left; width: 98px;}
 
-#share { float: right; margin-top: 0px; font-size: 95%; margin-right: 34px; vertical-align: top; }
+#share { float: right; margin-top: 20px; font-size: 95%; vertical-align: top; }
 #share label { margin-top: 17px; float: left; margin-right: 5px;}
 #share input { padding: 4px 5px 2px; width: 130px; float: left; margin-top: 15px;}
-#gigya-share { float:left; margin: 5px 0 0 10px; }
+
+.search-form {
+  margin-bottom: 40px;
+}
+.share-buttons {
+  float: left;
+  margin-top: 11px;
+  margin-left: 17px;
+}
+.home .share-buttons {
+  margin-left: 0;
+}
+.share-buttons [class^="sficon-"], .share-buttons [class*=" sficon-"] {
+  font-size: 24px;
+  vertical-align: middle;
+}
+a.twitter-simple, a.facebook-simple {
+  background-color: #F2F0F1;
+  padding: 14px 25px 16px 25px;
+  border: 1px solid #ffffff;
+}
+a.twitter-simple:hover, a.facebook-simple:hover {
+  background-color: #E7E6E2;
+}
+.sficon-twitter {
+  color: #00aced;
+}
+.sficon-facebook {
+  color: #3b5998;
+}
+
+
 
 input, textarea  { background-color: #fff; border: 1px solid #cdc8c8; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 #fullColumn input, #fullColumn textarea { width: 380px; padding: 10px 10px 5px; font-size: 110%; color: #7C7C7B; margin-bottom: 15px;}
