@@ -6,6 +6,7 @@
 {% block title %}Churnalism Search{% endblock title%}
 {% block nav-search %}<li class="active">Search</li>{% endblock %}
 {% block bodyclass %}home{% endblock %}
+{% block share_buttons %}{% endblock %}
 {% block body %}
 <div id="fullColumn">
     {% if brokenurl %}
@@ -17,14 +18,13 @@
     <div id="halfColumn">
         <p id="introText">Ever wonder if the news story you're reading is a product of real journalism or just a spin off of another story posted elsewhere? <span class="introHighlight">Discover the journalism you can trust and what you should question</span>.</p>
         <div>
-            {% block share_buttons %}
             <div id="gigya-share" class="share-buttons"
                 data-socialite="auto"
                 data-services="twitter, facebook"
                 data-options="show-counts=true"
-                data-twitter-tweet-options="text=Use @SunFoundation's Churnalism tool to detect possible plagiarism or copy/paste journalism:&amp;url=http://churnalism.sunlightfoundation.com/"
-                data-facebook-like-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count"></div> 
-            {% endblock %}
+                data-twitter-options="text=Use @SunFoundation's Churnalism tool to detect possible plagiarism or copy/paste journalism:&amp;url=http://churnalism.sunlightfoundation.com/"
+                data-facebook-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count">
+            </div> 
         </div>
     </div>
     <div id="halfColumnRt">

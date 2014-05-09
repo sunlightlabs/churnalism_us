@@ -1,11 +1,22 @@
 {% extends "base.html" %}
+
 {% load jsonify %}
-{% load domain %}
-{% block head %}
-{% endblock %}
+{% load url from future %}
+
 {% block title %}Churnalism - Search Results{% endblock title%}
-{% block share_url %}<label>Share this page:</label><input id="share-page-url" type="text" value="{{ BASE_URL }}{% url sidebyside-uuid-search uuid=results.uuid %}"></input>{% endblock %}
-{% block social_media_url %} {% url sidebyside-uuid-search uuid=results.uuid %} {% endblock %}
+{% block share_url %}<label>Share this page:</label><input id="share-page-url" type="text" value="{{ BASE_URL }}{% url 'sidebyside-uuid-search' uuid=results.uuid %}"></input>{% endblock %}
+{% block social_media_url %} {% url 'sidebyside-uuid-search' uuid=results.uuid %} {% endblock %}
+
+{% block share_buttons %}
+<div id="gigya-share" class="share-buttons"
+    data-socialite="auto"
+    data-services="twitter, facebook"
+    data-options="show-counts=true"
+    data-twitter-options="url={{BASE_URL}}{% url 'sidebyside-uuid-search' uuid=results.uuid %}&amp;text=Churnalism alert! @SunFoundation's tool detects possible plagiarism:"
+    data-facebook-options="width=100&amp;colorscheme=light&amp;show-faces=false&amp;layout=button_count">
+</div> 
+{% endblock share_buttons %}
+
 {% block body %}
 <div id="ltColumn">
     <h2 class="smallHeader">Results</h2>
@@ -14,9 +25,9 @@
         <li id="match-title-{{ row.doctype }}-{{ row.docid }}" match="{{row.match_id}}"  {% if forloop.last%}class="last"{% endif %}  >
         <span class="textReplace scissorTop hidden">Scissor image</span>
         <span class="percentChurn">
-            <a class="characters" href="{% url sidebyside-permalink results.uuid row.doctype row.docid %}">{{ row.coverage.0 }} Characters</a>
+            <a class="characters" href="{% url 'sidebyside-permalink' results.uuid row.doctype row.docid %}">{{ row.coverage.0 }} Characters</a>
             <a title="View Side by Side" class="sidebyside-link textReplace"
-               href="{% url sidebyside-generic results.uuid row.doctype row.docid %}">View Side by Side</a>
+               href="{% url 'sidebyside-generic' results.uuid row.doctype row.docid %}">View Side by Side</a>
             <div class="clear"></div>
         </span>
         <dl>
@@ -29,7 +40,7 @@
             </span>
             </dd>
         </dl>
-        <a class="permalink" style="display: none;" href="{{ BASE_URL }}{% url sidebyside-permalink results.uuid row.doctype row.docid %}"></a>
+        <a class="permalink" style="display: none;" href="{{ BASE_URL }}{% url 'sidebyside-permalink' results.uuid row.doctype row.docid %}"></a>
         <span class="textReplace scissorBottom hidden">Scissor image</span>
         </li>
         {% endfor %}
@@ -46,7 +57,7 @@
         {% if results.uuid %}
         <span class="url-problem tip">Something wrong with the text?
             <button id="textproblem" class="tip"
-                data-href="{% url sidebyside-textproblem results.uuid %}"
+                data-href="{% url 'sidebyside-textproblem' results.uuid %}"
                 data-uuid="{{ results.uuid }}">Flag it now.</button>
         </span>
         {% endif %}
